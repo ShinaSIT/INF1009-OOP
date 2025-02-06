@@ -1,5 +1,8 @@
 package com.game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MovementManager {
     private List<MoveableObjects> movingEntities = new ArrayList<>();
     private boolean physicsEnabled;
