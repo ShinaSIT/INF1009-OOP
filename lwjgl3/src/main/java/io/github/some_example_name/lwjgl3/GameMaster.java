@@ -1,4 +1,4 @@
-package com.game;
+package io.github.some_example_name.lwjgl3;
 
 public class GameMaster {
     private Timer timer;
@@ -20,4 +20,29 @@ public class GameMaster {
     public void startGame() {
         startTimer();
         System.out.println("Game Started!");
-    }}
+    }
+    
+    public void updateGame() {
+    	
+    }
+    
+    public void endGame() {
+    	
+    }
+    
+    public void createCharacter() {
+    	
+    }
+    
+    public void resetScore() {
+    	
+    }
+
+    public void render() {
+    	
+    }
+    
+    public void dispose() {
+    	
+    }
+}

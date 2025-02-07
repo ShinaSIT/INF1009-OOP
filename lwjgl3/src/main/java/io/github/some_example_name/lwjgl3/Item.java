@@ -1,4 +1,4 @@
-package com.game;
+package io.github.some_example_name.lwjgl3;
 
 public class Item {
     private String type;
