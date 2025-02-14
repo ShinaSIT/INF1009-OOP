@@ -12,20 +12,24 @@ public class GameMaster extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        board = new Board(800, 600); // Set the game board size
+        board = new Board();
     }
 
     @Override
     public void render() {
-        // Clear the screen before drawing
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        board.render(batch);  // Draws the game board
+        board.render(batch);
         batch.end();
     }
 
+    @Override
+    public void resize(int width, int height) {
+        board.updateDimensions();  // Update board dimensions when the window resizes
+    }
+    
     @Override
     public void dispose() {
         board.dispose();
