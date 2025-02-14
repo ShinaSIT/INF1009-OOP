@@ -10,21 +10,23 @@ public class GameMaster extends ApplicationAdapter {
     private SpriteBatch batch;
     private Speaker speaker; 
     private InputOutputManager ioManager;
+    private Keyboard keyboard;  // Declare Keyboard instance
+    private Mouse mouse;        // Declare Mouse instance
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         board = new Board(800, 600); // Set the game board size
         ioManager = new InputOutputManager();
-        Keyboard keyboard = new Keyboard(ioManager);
-        Mouse mouse = new Mouse(ioManager);
         
-     // Ensure speaker is initialized here
-        speaker = new Speaker();  // Initialize the speaker object
+        // Initialize the speaker object first, so it's fully set up before passed to Mouse
+        speaker = new Speaker();  
+        speaker.loadSound("click", "sounds/sample.mp3"); // Ensure the sound is loaded before use
 
-        // Load a sample sound
-        speaker.loadSound("click", "sounds/sample.mp3");
-
+        // Initialize Keyboard and Mouse, passing the speaker to Mouse constructor
+        keyboard = new Keyboard(ioManager);
+        mouse = new Mouse(ioManager, speaker);  // Pass speaker to Mouse constructor
+        
         // Play the sound
         speaker.playSound("click");
     }
@@ -39,16 +41,15 @@ public class GameMaster extends ApplicationAdapter {
         board.render(batch);  // Draws the game board
         batch.end();
         
-        Keyboard keyboard = new Keyboard(ioManager);  // This will handle the input checks
-        keyboard.checkKeys();
-        Mouse mouse = new Mouse(ioManager);  // This will handle the input checks
-        mouse.checkMouse();
+        // Handle keyboard and mouse inputs
+        keyboard.checkKeys();  // Check keyboard inputs
+        mouse.checkMouse();    // Check mouse inputs
     }
 
     @Override
     public void dispose() {
         board.dispose();
         batch.dispose();
-        speaker.stopMusic();
+        speaker.stopSound("click");  // Stop the sound when disposing
     }
 }
