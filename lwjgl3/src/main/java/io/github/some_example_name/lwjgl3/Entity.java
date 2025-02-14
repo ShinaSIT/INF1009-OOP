@@ -1,27 +1,25 @@
 package io.github.some_example_name.lwjgl3;
 
-public class Entity {
-    protected int x;
-    protected int y;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-    public Entity(int x, int y) {
+public abstract class Entity {
+    protected float x, y, tileSize;
+    
+    public Entity(float x, float y, float tileSize) {
         this.x = x;
         this.y = y;
+        this.tileSize = tileSize;
+    }
+    
+    public float getX() {
+        return x;
     }
 
-    public int getX() { 
-    	return x; 
+    public float getY() {
+        return y;
     }
+
     
-    public void setX(int x) {
-    	this.x = x; 
-    }
-    
-    public int getY() {
-    	return y; 
-    }
-    
-    public void setY(int y) { 
-    	this.y = y; 
-    }
+    public abstract void render(SpriteBatch batch);
 }
+

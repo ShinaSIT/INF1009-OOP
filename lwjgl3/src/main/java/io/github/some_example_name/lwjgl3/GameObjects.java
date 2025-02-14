@@ -1,17 +1,57 @@
 package io.github.some_example_name.lwjgl3;
 
-public class GameObjects extends Entity{
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-    protected float speed;
-    protected String direction;
+public class GameObjects extends Entity {
+    protected ShapeRenderer shapeRenderer;
+    protected Board board;
+    protected EntityManager entityManager;  // To check static objects
 
-    public GameObjects(int x, int y, float speed, String direction) {
-        super(x, y);
-        this.speed = speed;
-        this.direction = direction;
+    public GameObjects(Board board, EntityManager entityManager, int gridX, int gridY, float tileSize) {
+        super(gridX * tileSize + board.getStartX(), gridY * tileSize + board.getStartY(), tileSize);
+        this.board = board;
+        this.entityManager = entityManager;
+        this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void updatePosition(Entity entity) {}
-    public void applyPhysics(Entity entity) {}
-    public void move() {}
+    public boolean canMove(int newCol, int newRow) {
+        int mazeRow = newRow;
+        System.out.println("Checking move to tile: (" + newCol + ", " + newRow + ")");
+
+        for (Entity entity : entityManager.getEntities()) {
+            if (entity instanceof StaticObjects) {
+                StaticObjects obj = (StaticObjects) entity;
+                System.out.println("Checking static object at (" + obj.getGridX() + ", " + obj.getGridY() + ")");
+                if (obj.getGridX() == newCol && obj.getGridY() == newRow) {
+                    System.out.println("❌ Blocked: Static object at (" + newCol + ", " + newRow + ")");
+                    return false;
+                }
+            }
+        }
+
+        System.out.println("Checking wall at [" + mazeRow + "][" + newCol + "]");
+        if (board.getMazeLayout()[mazeRow][newCol] == 1) {
+            System.out.println("❌ Blocked: Hit a wall at (" + newCol + ", " + newRow + ")");
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void render(SpriteBatch batch) {
+        float centerX = x + board.getTileSize() / 2; 
+        float centerY = y + board.getTileSize() / 2;
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.circle(centerX, centerY, board.getTileSize() / 3);
+        shapeRenderer.end();
+    }
+
+    public void dispose() {
+        shapeRenderer.dispose();
+    }
 }

@@ -1,25 +1,44 @@
 package io.github.some_example_name.lwjgl3;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class StaticObjects extends Entity{
-
-    public StaticObjects(int x, int y) {
-        super(x, y);
-    }
-
-    public List<Item> items() { 
-    	return new ArrayList<>(); 
+public class StaticObjects extends Entity {
+    private ShapeRenderer shapeRenderer;
+    private Board board;
+    private int gridX, gridY;
+    
+    public StaticObjects(Board board, int gridX, int gridY, float tileSize) {
+    	super(gridX * tileSize + board.getStartX(), (board.getMazeHeight() - 1 - gridY) * tileSize + board.getStartY(), tileSize);
+    	this.board = board;
+        this.shapeRenderer = new ShapeRenderer();
+        this.gridX = gridX;
+        this.gridY = gridY;
+        System.out.println("✅ Static Object Created at Grid (" + gridX + ", " + gridY + ")");
     }
     
-    public Item createItem(String itemType, float param1, float param2) { 
-    	return new Item(); 
+    public int getGridX() {
+        return gridX;
     }
-    
-    public Item createRandomItem(float param1, float param2) { 
-    	return new Item(); 
+
+    public int getGridY() {
+        return gridY;
     }
-    
-    public void disposeTextures() {}
+
+    @Override
+    public void render(SpriteBatch batch) {
+        float objectSize = board.getTileSize();
+        float adjustedX = gridX * board.getTileSize() + board.getStartX();
+        float adjustedY = (board.getMazeHeight() - 1 - gridY) * board.getTileSize() + board.getStartY();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.YELLOW);
+        shapeRenderer.rect(adjustedX, adjustedY, objectSize, objectSize);
+        shapeRenderer.end();
+    }
+
+    public void dispose() {
+        shapeRenderer.dispose();
+    }
 }

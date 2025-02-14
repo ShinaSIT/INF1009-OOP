@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.Gdx;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Board {
     private ShapeRenderer shapeRenderer;
     private float tileSize;
@@ -14,7 +18,8 @@ public class Board {
     private int screenWidth;
     private int screenHeight;
     private OrthographicCamera camera;
-    
+    private List<StaticObjects> staticObjects;
+
     private final int[][] mazeLayout = {
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
             {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1},
@@ -46,7 +51,14 @@ public class Board {
     public Board() {
         this.shapeRenderer = new ShapeRenderer();
         this.camera = new OrthographicCamera();
+        this.staticObjects = new ArrayList<>();
         updateDimensions();
+        System.out.println("Maze Layout:");
+        for (int r = 0; r < mazeLayout.length; r++) {
+            System.out.print("Row " + r + ": ");
+            System.out.println(Arrays.toString(mazeLayout[r]));
+//            System.out.println("Row 18: " + Arrays.toString(mazeLayout[18]));
+        }
     }
 
     public void updateDimensions() {
@@ -57,6 +69,7 @@ public class Board {
         int mazeRows = mazeLayout.length;
 
         tileSize = Math.min((float) screenWidth / mazeColumns, (float) screenHeight / mazeRows);
+
         float mazeWidth = mazeColumns * tileSize;
         float mazeHeight = mazeRows * tileSize;
 
@@ -64,8 +77,9 @@ public class Board {
         startY = (screenHeight - mazeHeight) / 2.0f;
 
         camera.setToOrtho(false, screenWidth, screenHeight);
-        shapeRenderer.setProjectionMatrix(camera.combined);
+        camera.update();
     }
+
 
     public void render(SpriteBatch batch) {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -102,6 +116,43 @@ public class Board {
         shapeRenderer.end();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
     }
+    
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+
+    public int[][] getMazeLayout() {
+        return mazeLayout;
+    }
+
+    public int getMazeWidth() {
+        return mazeLayout[0].length;
+    }
+
+    public int getMazeHeight() {
+        return mazeLayout.length;
+    }
+
+    public float getTileSize() {
+        return tileSize;
+    }
+
+    public float getStartX() {
+        return startX;
+    }
+
+    public float getStartY() {
+        return startY;
+    }
+    
+    public List<StaticObjects> getStaticObjects() {
+        return staticObjects;
+    }
+    
+    public void setStaticObjects(List<StaticObjects> staticObjects) {
+        this.staticObjects = staticObjects;
+    }
+
     
     public void dispose() {
         shapeRenderer.dispose();
