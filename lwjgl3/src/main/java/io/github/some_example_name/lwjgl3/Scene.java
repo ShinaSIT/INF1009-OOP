@@ -2,7 +2,7 @@ package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public abstract class Scene {
+public abstract class Scene { // scene class
     protected SceneManager sceneManager;
 
     public Scene(SceneManager sceneManager) {
