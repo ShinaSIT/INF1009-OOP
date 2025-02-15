@@ -16,10 +16,10 @@ public class GameMaster extends ApplicationAdapter {
     private boolean sPressed = false;
     private boolean aPressed = false;
     private boolean dPressed = false;
-//    private Speaker speaker; 
-//    private InputOutputManager ioManager;
-//    private Keyboard keyboard;  // Declare Keyboard instance
-//    private Mouse mouse;        // Declare Mouse instance
+    private Speaker speaker; 
+    private InputOutputManager ioManager;
+    private Keyboard keyboard;  // Declare Keyboard instance
+    private Mouse mouse;        // Declare Mouse instance
     	
     @Override
     public void create() {
@@ -34,18 +34,18 @@ public class GameMaster extends ApplicationAdapter {
     	Gdx.input.setInputProcessor(null);
     	System.out.println("Player starts at: " + player.getX() + ", " + player.getY());
 
-//        ioManager = new InputOutputManager();
+        ioManager = new InputOutputManager();
         
         // Initialize the speaker object first, so it's fully set up before passed to Mouse
-//        speaker = new Speaker();  
-//        speaker.loadSound("click", "sounds/sample.mp3"); // Ensure the sound is loaded before use
+        speaker = new Speaker();  
+        speaker.loadSound("click", "sounds/sample.mp3"); // Ensure the sound is loaded before use
 
         // Initialize Keyboard and Mouse, passing the speaker to Mouse constructor
-//        keyboard = new Keyboard(ioManager);
-//        mouse = new Mouse(ioManager, speaker);  // Pass speaker to Mouse constructor
+        keyboard = new Keyboard(ioManager);
+        mouse = new Mouse(ioManager, speaker);  // Pass speaker to Mouse constructor
         
         // Play the sound
-//        speaker.playSound("click");
+        speaker.playSound("click");
     }
 
     public void update() {
@@ -82,6 +82,15 @@ public class GameMaster extends ApplicationAdapter {
         } else if (!Gdx.input.isKeyPressed(Input.Keys.D)) {
             dPressed = false;
         }
+        
+        //Space button to pause music
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (speaker.isMusicPlaying()) {
+                speaker.pauseMusic();  // ✅ Pauses without stopping
+            } else {
+                speaker.playMusic("sample.mp3");  // ✅ Resumes from where it paused
+            }
+        }
     }
     
 //    @Override
@@ -96,8 +105,8 @@ public class GameMaster extends ApplicationAdapter {
         batch.end();
         
         // Handle keyboard and mouse inputs
-//        keyboard.checkKeys();  // Check keyboard inputs
-//        mouse.checkMouse();    // Check mouse inputs
+        keyboard.checkKeys();  // Check keyboard inputs
+        mouse.checkMouse();    // Check mouse inputs
     }
 
     @Override
@@ -110,7 +119,7 @@ public class GameMaster extends ApplicationAdapter {
     public void dispose() {
         board.dispose();
         batch.dispose();
-//        speaker.stopSound("click");  // Stop the sound when disposing
+        speaker.stopSound("click");  // Stop the sound when disposing
     }
     
     public static void main(String[] args) {
