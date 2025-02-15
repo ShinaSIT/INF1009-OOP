@@ -38,14 +38,16 @@ public class GameMaster extends ApplicationAdapter {
         
         // Initialize the speaker object first, so it's fully set up before passed to Mouse
         speaker = new Speaker();  
-        speaker.loadSound("click", "sounds/sample.mp3"); // Ensure the sound is loaded before use
-
+        speaker.loadSound("click", "sounds/sample.mp3"); 
+        speaker.playMusic("sounds/sample.mp3");
+        
+        speaker.loadSound("move", "sounds/move.mp3"); 
+   
         // Initialize Keyboard and Mouse, passing the speaker to Mouse constructor
         keyboard = new Keyboard(ioManager);
         mouse = new Mouse(ioManager, speaker);  // Pass speaker to Mouse constructor
         
-        // Play the sound
-        speaker.playSound("click");
+       
     }
 
     public void update() {
@@ -54,6 +56,7 @@ public class GameMaster extends ApplicationAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.W) && !wPressed) {
             System.out.println("Moving Up");
             movementManager.applyMovement((MoveableObjects) player, 0, step);  // ✅ Use movementManager
+            speaker.playSound("move");
             wPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.W)) {
             wPressed = false;
@@ -62,6 +65,7 @@ public class GameMaster extends ApplicationAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.S) && !sPressed) {
             System.out.println("Moving Down");
             movementManager.applyMovement((MoveableObjects) player, 0, -step);
+            speaker.playSound("move");
             sPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.S)) {
             sPressed = false;
@@ -70,6 +74,7 @@ public class GameMaster extends ApplicationAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.A) && !aPressed) {
             System.out.println("Moving Left");
             movementManager.applyMovement((MoveableObjects) player, -step, 0);
+            speaker.playSound("move");
             aPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.A)) {
             aPressed = false;
@@ -78,6 +83,7 @@ public class GameMaster extends ApplicationAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.D) && !dPressed) {
             System.out.println("Moving Right");
             movementManager.applyMovement((MoveableObjects) player, step, 0);
+            speaker.playSound("move");
             dPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.D)) {
             dPressed = false;
@@ -86,9 +92,9 @@ public class GameMaster extends ApplicationAdapter {
         //Space button to pause music
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (speaker.isMusicPlaying()) {
-                speaker.pauseMusic();  // ✅ Pauses without stopping
+                speaker.pauseMusic();  //Pauses without stopping
             } else {
-                speaker.playMusic("sample.mp3");  // ✅ Resumes from where it paused
+                speaker.playMusic("sounds/sample.mp3");  //Resumes from where it paused
             }
         }
     }
