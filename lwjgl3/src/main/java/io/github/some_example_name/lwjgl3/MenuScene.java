@@ -15,7 +15,7 @@ public abstract class MenuScene extends Scene {
 
     @Override
     public void render() {
-        // Implement rendering logic here
+        // Implement rendering logic here. 
     }
     
     @Override
@@ -24,7 +24,7 @@ public abstract class MenuScene extends Scene {
     }
     
     @Override
-    public void create() {
+    public void create() { 
         // Implement scene creation logic here
     }
     
