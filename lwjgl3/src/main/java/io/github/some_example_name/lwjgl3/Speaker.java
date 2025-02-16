@@ -38,31 +38,56 @@ public class Speaker {
 
     // Set master volume
     public void setVolume(float volume) {
-        masterVolume = volume;
+    	 masterVolume = Math.max(0f, Math.min(volume, 1f)); // Ensure volume stays between 0 and 1
+
+    	    if (backgroundMusic != null) {
+    	        backgroundMusic.setVolume(masterVolume * 0.5f); // Adjust the background music volume (50% lower)
+    	    }
     }
 
     // Play background music (already fixed in previous responses)
     public void playMusic(String file) {
-        if (backgroundMusic != null) {
-            backgroundMusic.dispose();
+        if (backgroundMusic == null) {  // Ensure we only create a new instance when needed
+            System.out.println("Creating new music instance: " + file);
+            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal(file));
+            backgroundMusic.setVolume(masterVolume  * 0.5f);
+            backgroundMusic.setLooping(true);
+            backgroundMusic.play();
+            System.out.println("Music started: " + file);
+            return;
         }
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal(file));
-        backgroundMusic.setVolume(masterVolume);
-        backgroundMusic.setLooping(true);
-        backgroundMusic.play();
+
+        if (!backgroundMusic.isPlaying()) { // If music exists but is paused, resume instead of restarting
+            System.out.println("Resuming music...");
+            backgroundMusic.play();
+        } else {
+            System.out.println("Music already playing, no need to restart.");
+        }
     }
+
 
     // Stop the background music
     public void stopMusic() {
         if (backgroundMusic != null) {
+        	System.out.println("Stopping music...");
             backgroundMusic.stop();
+            backgroundMusic.dispose();
+            backgroundMusic = null;
+            System.out.println("Music instance disposed.");
+        } else {
+            System.out.println("No music instance to stop.");
         }
+    }
+    public boolean isMusicPlaying() {
+        return backgroundMusic != null && backgroundMusic.isPlaying();
     }
 
     // Pause the background music
     public void pauseMusic() {
-        if (backgroundMusic != null) {
-            backgroundMusic.pause();
+        if (backgroundMusic != null && backgroundMusic.isPlaying()) {
+            backgroundMusic.pause(); // Pause music so it can resume later
         }
     }
+
+   
 }
