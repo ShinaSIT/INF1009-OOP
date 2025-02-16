@@ -12,6 +12,7 @@ public class GameMaster extends ApplicationAdapter {
     private MovementManager movementManager;
     private GameObjects player;
     private Speaker speaker; 
+    private SceneManager sceneManager;
     private InputOutputManager ioManager;
     private Keyboard keyboard;  
     private Mouse mouse;        
@@ -22,33 +23,32 @@ public class GameMaster extends ApplicationAdapter {
         board = new Board();
         entityManager = new EntityManager();
         movementManager = new MovementManager();
-
+        
         entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
         entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));
 
         player = new MoveableObjects(board, entityManager, 1, 1, board.getTileSize(), movementManager);
         entityManager.addEntity(player);
         Gdx.input.setInputProcessor(null);
+        
         System.out.println("Player starts at: " + player.getX() + ", " + player.getY());
 
-        // Initialize Speaker
-        speaker = new Speaker();  
-        speaker.loadSound("click", "sounds/sample.mp3"); 
-        speaker.playMusic("sounds/sample.mp3");
-        speaker.loadSound("move", "sounds/move.mp3"); 
+        // ✅ Initialize Speaker
+        speaker = new Speaker();
+        
+        // ✅ Initialize Mouse with NULL ioManager temporarily
+        mouse = new Mouse(null, speaker, sceneManager);  
 
-        // Initialize InputOutputManager first
-        ioManager = new InputOutputManager(movementManager, player, speaker, board, null);
-
-        // Initialize Mouse after InputOutputManager
-        mouse = new Mouse(ioManager, speaker);  
-
-        // Now update InputOutputManager with Mouse
+        // ✅ Initialize InputOutputManager
         ioManager = new InputOutputManager(movementManager, player, speaker, board, mouse);
 
-        // Initialize Keyboard
+        // ✅ Now update Mouse with the correct ioManager
+        mouse.setIoManager(ioManager);  // New method in Mouse.java
+
+        // ✅ Initialize Keyboard
         keyboard = new Keyboard(ioManager);
     }
+
 
     @Override
     public void render() {

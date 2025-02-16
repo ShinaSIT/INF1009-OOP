@@ -8,39 +8,15 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Mouse extends InputAdapter {
     private InputOutputManager ioManager;
-    private Speaker speaker;  // Will be initialized via constructor
+    private Speaker speaker;
     private SceneManager sceneManager;
-    
-  //For start button
-    public Mouse(SceneManager sceneManager) {
-        this.sceneManager = sceneManager;
-    }
 
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (button == Buttons.LEFT) { // Left click
-            Vector2 worldCoords = new Vector2(screenX, Gdx.graphics.getHeight() - screenY); // Convert to world coordinates
-            
-            if (isStartButtonClicked(worldCoords)) {
-               // sceneManager.setScene("gameScene"); // Change to game scene for the start button
-            }
-        }
-        return false;
-    }
-
-    private boolean isStartButtonClicked(Vector2 clickPos) {
-        // Example Start Button Bounds (Adjust as per your UI)
-        float buttonX = 300, buttonY = 200, buttonWidth = 200, buttonHeight = 80;
-
-        return (clickPos.x >= buttonX && clickPos.x <= buttonX + buttonWidth &&
-                clickPos.y >= buttonY && clickPos.y <= buttonY + buttonHeight);
-    }
-  //For music
-    public Mouse(InputOutputManager ioManager, Speaker speaker) {
+    // ✅ Unified constructor for both sound and scene management
+    public Mouse(InputOutputManager ioManager, Speaker speaker, SceneManager sceneManager) {
         this.ioManager = ioManager;
         this.speaker = speaker;
+        this.sceneManager = sceneManager;
     }
-    
 
     public void checkMouse() {
         int[] buttons = {Input.Buttons.LEFT, Input.Buttons.RIGHT};
@@ -50,22 +26,44 @@ public class Mouse extends InputAdapter {
                 System.out.println("Mouse Clicked: " + ioManager.getMappedAction(button));
 
                 if (button == Input.Buttons.LEFT) {
-                    // Stop click sound
                     speaker.stopSound("click");
 
-                    // Toggle Background Music for Stop/Restart
                     if (speaker.isMusicPlaying()) {
                         System.out.println("Stopping music...");
-                        speaker.stopMusic();  // Stop completely instead of pausing
+                        speaker.stopMusic();
                     } else {
                         System.out.println("Starting new music instance...");
-                        speaker.playMusic("sounds/sample.mp3");  // Restart from beginning
+                        speaker.playMusic("sounds/sample.mp3");
                     }
                 }
             }
         }
     }
     
-    
+    public void setIoManager(InputOutputManager ioManager) {
+        this.ioManager = ioManager;
+    }
 
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Buttons.LEFT) {
+            Vector2 worldCoords = new Vector2(screenX, Gdx.graphics.getHeight() - screenY); 
+
+            if (isStartButtonClicked(worldCoords)) {
+                if (sceneManager != null) {
+                    sceneManager.transitionTo("gameScene"); // ✅ Transition scene properly
+                } else {
+                    System.err.println("Error: SceneManager is NULL, cannot transition scene!");
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isStartButtonClicked(Vector2 clickPos) {
+        float buttonX = 300, buttonY = 200, buttonWidth = 200, buttonHeight = 80;
+
+        return (clickPos.x >= buttonX && clickPos.x <= buttonX + buttonWidth &&
+                clickPos.y >= buttonY && clickPos.y <= buttonY + buttonHeight);
+    }
 }
