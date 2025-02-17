@@ -29,6 +29,12 @@ public class SceneManager { //scenemanager class
 
     public void addScene(String sceneName, Scene scene) {
         scenes.put(sceneName, scene);
+        if (currentScene == null) { // ✅ Ensure the first scene is MenuScene
+            currentScene = scenes.get("MenuScene");
+            if (currentScene != null) {
+                currentScene.create(); // ✅ Initialize menu scene first
+            }
+        }
     }
 
     public void removeScene(String sceneName) {
@@ -43,9 +49,11 @@ public class SceneManager { //scenemanager class
 
     public void update() {
         if (isTransitioning && nextScene != null) {
+            currentScene.dispose(); // ✅ Dispose current scene before transitioning
             currentScene = nextScene;
             nextScene = null;
             isTransitioning = false;
+            currentScene.create(); // ✅ Ensure scene setup when transitioning
         }
         if (currentScene != null) {
             currentScene.update();
@@ -53,11 +61,19 @@ public class SceneManager { //scenemanager class
     }
 
     public void transitionTo(String sceneName) {
-        loadScene(sceneName);
+        if (scenes.containsKey(sceneName)) {
+            currentScene.dispose(); // ✅ Dispose current scene before transition
+            currentScene = scenes.get(sceneName);
+            currentScene.create(); // ✅ Initialize new scene
+        }
     }
 
     public Scene getScene(String sceneName) {
         return scenes.get(sceneName);
+    }
+
+    public Scene getCurrentScene() { // ✅ Ensure scene is always initialized
+        return currentScene;
     }
 
     public void render(SpriteBatch batch) {
