@@ -1,5 +1,9 @@
 package io.github.some_example_name.lwjgl3;
 
+import java.util.List;
+import java.util.ArrayList;
+
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,7 +20,12 @@ public class GameMaster extends ApplicationAdapter {
     private InputOutputManager ioManager;
     private Keyboard keyboard;  
     private Mouse mouse;        
+    private List<StaticObjects> staticObjects = new ArrayList<StaticObjects>();
 
+
+
+
+    
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -66,9 +75,23 @@ public class GameMaster extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
-        board.updateDimensions();
-        entityManager.updatePositions(board);
+        board.updateDimensions(); // Update board size
+        updatePlayerPosition();   // Ensure player resizes properly
+        updateStaticObjects();    // Ensure static objects adjust
     }
+    private void updatePlayerPosition() {
+        if (player != null) {
+            player.setX(board.getStartX() + player.getGridX() * board.getTileSize());
+            player.setY(board.getStartY() + (board.getMazeHeight() - player.getGridY() - 1) * board.getTileSize());
+        }
+    }
+    private void updateStaticObjects() {
+        for (StaticObjects obj : staticObjects) {
+            obj.updateObjectPosition(board);
+        }
+    }
+
+
 
     @Override
     public void dispose() {

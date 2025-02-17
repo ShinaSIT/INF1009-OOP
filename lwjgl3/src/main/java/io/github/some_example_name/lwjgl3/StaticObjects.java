@@ -25,6 +25,12 @@ public class StaticObjects extends Entity {
     public int getGridY() {
         return gridY;
     }
+    
+    public void updateObjectPosition(Board board) {
+        this.x = board.getStartX() + this.gridX * board.getTileSize();
+        this.y = board.getStartY() + (board.getMazeHeight() - 1 - this.gridY) * board.getTileSize();
+    }
+
 
     @Override
     public void render(SpriteBatch batch) {

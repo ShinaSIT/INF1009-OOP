@@ -11,4 +11,10 @@ public class MoveableObjects extends GameObjects {
     public void move(float dx, float dy) {
         movementManager.applyMovement(this, dx, dy); 
     }
+    
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
 }

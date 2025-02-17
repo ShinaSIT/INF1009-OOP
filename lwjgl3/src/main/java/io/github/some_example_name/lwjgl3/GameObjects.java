@@ -40,6 +40,23 @@ public class GameObjects extends Entity {
         return true;
     }
 
+    public int getGridX() {
+        return (int) ((x - board.getStartX()) / board.getTileSize());
+    }
+
+    public int getGridY() {
+        return (int) ((board.getMazeHeight() - 1) - (y - board.getStartY()) / board.getTileSize());
+    }
+    
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    
     @Override
     public void render(SpriteBatch batch) {
         float centerX = x + board.getTileSize() / 2; 
