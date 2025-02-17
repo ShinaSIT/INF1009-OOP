@@ -29,8 +29,8 @@ public class InputOutputManager {
         this.timer = new Timer(); 
         this.inputMap = new HashMap<>();
         
-        mapDefaultInputs(); // ✅ Initialize the input map
-        initializeSounds(); // ✅ Load sounds when initializing
+        mapDefaultInputs(); // Initialize the input map
+        initializeSounds(); // Load sounds when initializing
     }
 
     private void mapDefaultInputs() {
@@ -69,9 +69,9 @@ public class InputOutputManager {
     public void startTimer() {
         if (timer != null) {
            timer.start();
-            System.out.println("✅ Timer started successfully!");
+            System.out.println("Timer started successfully!");
         } else {
-            System.err.println("❌ Timer is null, could not start!");
+            System.err.println("Timer is null, could not start!");
         }
     }
 
@@ -85,7 +85,7 @@ public class InputOutputManager {
             return;
         }
 
-        float step = board.getTileSize(); // ✅ Safe to call because we checked board is not null
+        float step = board.getTileSize(); // Safe to call because we checked board is not null
         boolean moved = false;
         
         // Move Up
@@ -146,11 +146,10 @@ public class InputOutputManager {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            stopTimer();
             Gdx.app.exit(); // Exit the application
         }
         
-     // ✅ Call mouse click detection
+     // Call mouse click detection
         if (mouse != null) {
             mouse.checkMouse();  
         }
