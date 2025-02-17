@@ -10,31 +10,37 @@ public abstract class SettingScene extends Scene {
     
     @Override
     public void render() {
-        // Implement rendering logic here
+        System.out.println("Rendering settings scene...");
+        // Implement rendering logic for settings UI
     }
     
     @Override
     public void render(SpriteBatch batch) {
-        // Implement rendering logic using SpriteBatch here
+        System.out.println("Rendering settings scene with SpriteBatch...");
+        // Use batch to draw settings UI elements, sliders, buttons, etc.
     }
     
     @Override
     public void create() {
-        // Implement scene creation logic here
+        System.out.println("Creating settings scene...");
+        // Initialize settings UI components such as buttons, sliders, checkboxes
     }
     
     @Override
     public void dispose() {
-        // Implement cleanup logic here
+        System.out.println("Disposing settings scene resources...");
+        // Cleanup textures, UI elements, and other allocated resources
     }
     
     @Override
     public void resume() {
-        // Implement resume logic here
+        System.out.println("Resuming settings scene...");
+        // Restore settings UI state if necessary
     }
     
     @Override
     public void pause() {
-        // Implement pause logic here
+        System.out.println("Pausing settings scene...");
+        // Save settings state if needed before pausing
     }
 }
