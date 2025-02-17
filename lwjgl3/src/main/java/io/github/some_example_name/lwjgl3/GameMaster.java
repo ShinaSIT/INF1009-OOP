@@ -15,7 +15,8 @@ public class GameMaster extends ApplicationAdapter {
     private SceneManager sceneManager;
     private InputOutputManager ioManager;
     private Keyboard keyboard;  
-    private Mouse mouse;        
+    private Mouse mouse;
+    
 
     @Override
     public void create() {
@@ -23,6 +24,7 @@ public class GameMaster extends ApplicationAdapter {
         board = new Board();
         entityManager = new EntityManager();
         movementManager = new MovementManager();
+        sceneManager = new SceneManager(); // ✅ Initialize SceneManager
         
         entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
         entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));
@@ -47,6 +49,10 @@ public class GameMaster extends ApplicationAdapter {
 
         // ✅ Initialize Keyboard
         keyboard = new Keyboard(ioManager);
+        
+        // ✅ Load the initial scene
+        sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager)); 
+        sceneManager.transitionTo("MenuScene");
     }
 
 
@@ -59,6 +65,10 @@ public class GameMaster extends ApplicationAdapter {
         ioManager.handleInput();
 
         batch.begin();
+        
+        // ✅ Render the current scene
+        sceneManager.render(batch);
+        
         board.render(batch);
         entityManager.render(batch);
         batch.end();
@@ -68,12 +78,14 @@ public class GameMaster extends ApplicationAdapter {
     public void resize(int width, int height) {
         board.updateDimensions();
         entityManager.updatePositions(board);
+        sceneManager.getCurrentScene().resize(width, height); // ✅ Resize current scene
     }
 
     @Override
     public void dispose() {
         board.dispose();
         batch.dispose();
+        sceneManager.getCurrentScene().dispose(); // ✅ Dispose current scene resources
         speaker.stopSound("click");
     }
 
