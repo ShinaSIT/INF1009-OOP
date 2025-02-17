@@ -21,10 +21,7 @@ public class GameMaster extends ApplicationAdapter {
     private Keyboard keyboard;  
     private Mouse mouse;        
     private List<StaticObjects> staticObjects = new ArrayList<StaticObjects>();
-
-
-
-
+    
     
     @Override
     public void create() {
@@ -32,6 +29,8 @@ public class GameMaster extends ApplicationAdapter {
         board = new Board();
         entityManager = new EntityManager();
         movementManager = new MovementManager();
+        
+        sceneManager = new SceneManager(); // ✅ Initialize SceneManager
         
         entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
         entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));
@@ -56,6 +55,10 @@ public class GameMaster extends ApplicationAdapter {
 
         // ✅ Initialize Keyboard
         keyboard = new Keyboard(ioManager);
+        
+        // ✅ Load the initial scene
+        sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager)); 
+        sceneManager.transitionTo("MenuScene");
     }
 
 
@@ -68,6 +71,10 @@ public class GameMaster extends ApplicationAdapter {
         ioManager.handleInput();
 
         batch.begin();
+        
+        // ✅ Render the current scene
+        sceneManager.render(batch);
+        
         board.render(batch);
         entityManager.render(batch);
         batch.end();
@@ -78,13 +85,18 @@ public class GameMaster extends ApplicationAdapter {
         board.updateDimensions(); // Update board size
         updatePlayerPosition();   // Ensure player resizes properly
         updateStaticObjects();    // Ensure static objects adjust
+        
+        entityManager.updatePositions(board);
+        sceneManager.getCurrentScene().resize(width, height); // ✅ Resize current scene
     }
+    
     private void updatePlayerPosition() {
         if (player != null) {
             player.setX(board.getStartX() + player.getGridX() * board.getTileSize());
             player.setY(board.getStartY() + (board.getMazeHeight() - player.getGridY() - 1) * board.getTileSize());
         }
     }
+    
     private void updateStaticObjects() {
         for (StaticObjects obj : staticObjects) {
             obj.updateObjectPosition(board);
@@ -98,6 +110,7 @@ public class GameMaster extends ApplicationAdapter {
     	ioManager.stopTimer();
         board.dispose();
         batch.dispose();
+        sceneManager.getCurrentScene().dispose(); // ✅ Dispose current scene resources
         speaker.stopSound("click");
     }
 
