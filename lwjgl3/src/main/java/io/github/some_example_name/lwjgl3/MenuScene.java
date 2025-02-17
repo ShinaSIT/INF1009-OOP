@@ -1,8 +1,19 @@
 package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 public abstract class MenuScene extends Scene {
+    private Stage stage;
+    private Skin skin;
+    private TextButton startButton;
+    private TextButton settingsButton;
+    private TextButton exitButton;
     
     public MenuScene(SceneManager sceneManager) {
         super(sceneManager);
@@ -11,47 +22,87 @@ public abstract class MenuScene extends Scene {
     @Override
     public void resize(int width, int height) {
         System.out.println("Resizing menu scene to width: " + width + ", height: " + height);
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
     public void render() {
         System.out.println("Rendering menu scene...");
-        // Implement menu UI rendering logic
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
     }
     
     @Override
     public void render(SpriteBatch batch) {
         System.out.println("Rendering menu scene with SpriteBatch...");
-        // Use batch to draw textures, UI elements, etc.
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
     }
     
     @Override
     public void create() { 
         System.out.println("Creating menu scene...");
-        // Initialize buttons, assets, background images, etc.
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+        
+        skin = new Skin(Gdx.files.internal("uiskin.json")); // Make sure to include a valid skin file
+
+        startButton = new TextButton("Start Game", skin);
+        settingsButton = new TextButton("Settings", skin);
+        exitButton = new TextButton("Exit", skin);
+        
+        startButton.setPosition(100, 300);
+        settingsButton.setPosition(100, 200);
+        exitButton.setPosition(100, 100);
+        
+        startButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Start Game button clicked");
+                sceneManager.transitionTo("GameScene");
+            }
+        });
+        
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Settings button clicked");
+                sceneManager.transitionTo("SettingScene");
+            }
+        });
+        
+        exitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Exit button clicked");
+                Gdx.app.exit();
+            }
+        });
+        
+        stage.addActor(startButton);
+        stage.addActor(settingsButton);
+        stage.addActor(exitButton);
     }
     
     @Override
     public void dispose() {
         System.out.println("Disposing menu scene resources...");
-        // Cleanup textures, sounds, and other assets
+        stage.dispose();
+        skin.dispose();
     }
     
     @Override
     public void pause() {
         System.out.println("Pausing menu scene...");
-        // Handle logic when the menu scene is paused
     }
     
     @Override
     public void resume() {
         System.out.println("Resuming menu scene...");
-        // Handle logic when the menu scene is resumed
     }
     
     @Override
     public void update(float deltaTime) {
         System.out.println("Updating menu scene with delta time: " + deltaTime);
-        // Implement logic to update menu animations, UI elements, etc.
     }
 }
