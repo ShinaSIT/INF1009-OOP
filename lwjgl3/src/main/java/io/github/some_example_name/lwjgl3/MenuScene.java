@@ -10,41 +10,48 @@ public abstract class MenuScene extends Scene {
     
     @Override
     public void resize(int width, int height) {
-        // Implement resizing logic here
+        System.out.println("Resizing menu scene to width: " + width + ", height: " + height);
     }
 
     @Override
     public void render() {
-        // Implement rendering logic here. 
+        System.out.println("Rendering menu scene...");
+        // Implement menu UI rendering logic
     }
     
     @Override
     public void render(SpriteBatch batch) {
-        // Implement rendering logic using SpriteBatch here
+        System.out.println("Rendering menu scene with SpriteBatch...");
+        // Use batch to draw textures, UI elements, etc.
     }
     
     @Override
     public void create() { 
-        // Implement scene creation logic here
+        System.out.println("Creating menu scene...");
+        // Initialize buttons, assets, background images, etc.
     }
     
     @Override
     public void dispose() {
-        // Implement cleanup logic here
+        System.out.println("Disposing menu scene resources...");
+        // Cleanup textures, sounds, and other assets
     }
     
     @Override
     public void pause() {
-        // Implement pause logic here
+        System.out.println("Pausing menu scene...");
+        // Handle logic when the menu scene is paused
     }
     
     @Override
     public void resume() {
-        // Implement resume logic here
+        System.out.println("Resuming menu scene...");
+        // Handle logic when the menu scene is resumed
     }
     
     @Override
     public void update(float deltaTime) {
-        // Implement update logic here
+        System.out.println("Updating menu scene with delta time: " + deltaTime);
+        // Implement logic to update menu animations, UI elements, etc.
     }
 }
