@@ -13,7 +13,8 @@ public class InputOutputManager {
     private Speaker speaker;
     private Board board;
     private Mouse mouse;
-
+    private Timer timer;
+    private boolean hasMoved = false;
     private boolean wPressed = false;
     private boolean sPressed = false;
     private boolean aPressed = false;
@@ -25,6 +26,7 @@ public class InputOutputManager {
         this.speaker = speaker;
         this.board = board;
         this.mouse = mouse;
+        this.timer = new Timer(); 
         this.inputMap = new HashMap<>();
         
         mapDefaultInputs(); // ✅ Initialize the input map
@@ -64,6 +66,19 @@ public class InputOutputManager {
         speaker.playMusic("sounds/sample.mp3"); // ✅ Start background music
     }
     
+    public void startTimer() {
+        if (timer != null) {
+           timer.start();
+            System.out.println("✅ Timer started successfully!");
+        } else {
+            System.err.println("❌ Timer is null, could not start!");
+        }
+    }
+
+
+    public void stopTimer() {
+        timer.stop();
+    }
     public void handleInput() {
         if (board == null) {
             System.err.println("Error: Board is not initialized!");
@@ -71,13 +86,15 @@ public class InputOutputManager {
         }
 
         float step = board.getTileSize(); // ✅ Safe to call because we checked board is not null
-
+        boolean moved = false;
+        
         // Move Up
         if ((Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) && !wPressed) {
             System.out.println("Moving Up");
             movementManager.applyMovement((MoveableObjects) player, 0, step);
             speaker.playSound("sound");
             wPressed = true;
+            moved=true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.W) && !Gdx.input.isKeyPressed(Input.Keys.UP)) {
             wPressed = false;
         }
@@ -88,6 +105,7 @@ public class InputOutputManager {
             movementManager.applyMovement((MoveableObjects) player, 0, -step);
             speaker.playSound("sound");
             sPressed = true;
+            moved=true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.S) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             sPressed = false;
         }
@@ -98,6 +116,7 @@ public class InputOutputManager {
             movementManager.applyMovement((MoveableObjects) player, -step, 0);
             speaker.playSound("sound");
             aPressed = true;
+            moved=true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             aPressed = false;
         }
@@ -108,6 +127,7 @@ public class InputOutputManager {
             movementManager.applyMovement((MoveableObjects) player, step, 0);
             speaker.playSound("sound");
             dPressed = true;
+            moved=true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             dPressed = false;
         }
@@ -119,6 +139,15 @@ public class InputOutputManager {
             } else {
                 speaker.playMusic("sound/sample.mp3");
             }
+        }
+        if (!hasMoved && moved) {
+            startTimer();
+            hasMoved = true;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            stopTimer();
+            Gdx.app.exit(); // Exit the application
         }
         
      // ✅ Call mouse click detection

@@ -72,6 +72,7 @@ public class GameMaster extends ApplicationAdapter {
 
     @Override
     public void dispose() {
+    	ioManager.stopTimer();
         board.dispose();
         batch.dispose();
         speaker.stopSound("click");
