@@ -8,13 +8,15 @@ public class MoveableObjects extends GameObjects {
         this.movementManager = movementManager;
     }
 
+    /**
+     * Moves the object by the specified delta in grid coordinates.
+     */
     public void move(float dx, float dy) {
         movementManager.applyMovement(this, dx, dy); 
     }
-    
-    public void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
 
+    public void setPosition(int gridX, int gridY) {
+        this.setGridX(gridX);
+        this.setGridY(gridY);
+    }
 }

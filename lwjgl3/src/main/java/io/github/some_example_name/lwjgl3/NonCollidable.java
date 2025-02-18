@@ -1,11 +1,9 @@
 package io.github.some_example_name.lwjgl3;
 
-import com.badlogic.gdx.math.Rectangle;
-
 public class NonCollidable extends Collidable {
 
-    public NonCollidable(String collisionType, Rectangle hitbox) {
-        super(collisionType, hitbox);
+    public NonCollidable(String collisionType, int gridX, int gridY) {
+        super(collisionType, gridX, gridY);
         this.isSolid = false;  // Non-collidables are not solid
     }
 
@@ -14,4 +12,3 @@ public class NonCollidable extends Collidable {
         return false; // Non-collidables should not trigger collisions
     }
 }
-

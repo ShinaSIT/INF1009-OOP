@@ -3,7 +3,6 @@ package io.github.some_example_name.lwjgl3;
 import java.util.List;
 import java.util.ArrayList;
 
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -14,6 +13,7 @@ public class GameMaster extends ApplicationAdapter {
     private SpriteBatch batch;
     private EntityManager entityManager;
     private MovementManager movementManager;
+    private CollisionManager collisionManager; // ✅ Added CollisionManager
     private GameObjects player;
     private Speaker speaker; 
     private SceneManager sceneManager;
@@ -22,29 +22,36 @@ public class GameMaster extends ApplicationAdapter {
     private Mouse mouse;        
     private List<StaticObjects> staticObjects = new ArrayList<StaticObjects>();
     
-    
     @Override
     public void create() {
         batch = new SpriteBatch();
         board = new Board();
-        // ✅ Initialize Speaker
         speaker = new Speaker();
         entityManager = new EntityManager();
-        movementManager = new MovementManager(speaker);
         
+        // ✅ Initialize CollisionManager
+        collisionManager = new CollisionManager(board, entityManager);
+
+        // ✅ Initialize MovementManager with CollisionManager
+        movementManager = new MovementManager(speaker, collisionManager);
+
         sceneManager = new SceneManager(); // ✅ Initialize SceneManager
         
-        entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
-        entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));
+        // Add static objects to the game
+        StaticObjects staticObj1 = new StaticObjects(board, 5, 5, board.getTileSize());
+        StaticObjects staticObj2 = new StaticObjects(board, 10, 13, board.getTileSize());
+        entityManager.addEntity(staticObj1);
+        entityManager.addEntity(staticObj2);
 
+        // ✅ Initialize player with MovementManager
         player = new MoveableObjects(board, entityManager, 1, 1, board.getTileSize(), movementManager);
         entityManager.addEntity(player);
         Gdx.input.setInputProcessor(null);
         
         System.out.println("Player starts at: " + player.getX() + ", " + player.getY());
+        System.out.println("Player starts at: (" + player.getGridX() + ", " + player.getGridY() + ")");
+        System.out.println("Player pixel position: (" + player.x + ", " + player.y + ")");
 
-        
-        
         // ✅ Initialize Mouse with NULL ioManager temporarily
         mouse = new Mouse(null, speaker, sceneManager);  
 
@@ -62,7 +69,6 @@ public class GameMaster extends ApplicationAdapter {
         sceneManager.transitionTo("MenuScene");
     }
 
-
     @Override
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -70,6 +76,9 @@ public class GameMaster extends ApplicationAdapter {
 
         // Call handleInput from InputOutputManager
         ioManager.handleInput();
+
+        // ✅ Check for collisions
+        collisionManager.checkCollisions();
 
         batch.begin();
         
@@ -104,11 +113,9 @@ public class GameMaster extends ApplicationAdapter {
         }
     }
 
-
-
     @Override
     public void dispose() {
-    	ioManager.stopTimer();
+        ioManager.stopTimer();
         board.dispose();
         batch.dispose();
         sceneManager.getCurrentScene().dispose(); // ✅ Dispose current scene resources
