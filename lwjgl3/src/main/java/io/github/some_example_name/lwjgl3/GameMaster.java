@@ -3,7 +3,6 @@ package io.github.some_example_name.lwjgl3;
 import java.util.List;
 import java.util.ArrayList;
 
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -14,6 +13,7 @@ public class GameMaster extends ApplicationAdapter {
     private SpriteBatch batch;
     private EntityManager entityManager;
     private MovementManager movementManager;
+    private CollisionManager collisionManager; // ✅ Added CollisionManager
     private GameObjects player;
     private Speaker speaker; 
     private SceneManager sceneManager;
@@ -22,32 +22,36 @@ public class GameMaster extends ApplicationAdapter {
     private Mouse mouse;        
     private List<StaticObjects> staticObjects = new ArrayList<StaticObjects>();
     
-
-    
     @Override
     public void create() {
         batch = new SpriteBatch();
-        speaker = new Speaker();
-        sceneManager = new SceneManager(); 
         board = new Board();
-        // ✅ Initialize Speaker
-       
+        speaker = new Speaker();
         entityManager = new EntityManager();
-       // movementManager = new MovementManager(speaker);
         
-       // ✅ Initialize SceneManager
-        
-        entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
-        entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));
+        // ✅ Initialize CollisionManager
+        collisionManager = new CollisionManager(board, entityManager);
 
+        // ✅ Initialize MovementManager with CollisionManager
+        movementManager = new MovementManager(speaker, collisionManager);
+
+        sceneManager = new SceneManager(); // ✅ Initialize SceneManager
+        
+        // Add static objects to the game
+        StaticObjects staticObj1 = new StaticObjects(board, 5, 5, board.getTileSize());
+        StaticObjects staticObj2 = new StaticObjects(board, 10, 13, board.getTileSize());
+        entityManager.addEntity(staticObj1);
+        entityManager.addEntity(staticObj2);
+
+        // ✅ Initialize player with MovementManager
         player = new MoveableObjects(board, entityManager, 1, 1, board.getTileSize(), movementManager);
         entityManager.addEntity(player);
         Gdx.input.setInputProcessor(null);
         
         System.out.println("Player starts at: " + player.getX() + ", " + player.getY());
+        System.out.println("Player starts at: (" + player.getGridX() + ", " + player.getGridY() + ")");
+        System.out.println("Player pixel position: (" + player.x + ", " + player.y + ")");
 
-        
-        
         // ✅ Initialize Mouse with NULL ioManager temporarily
         mouse = new Mouse(null, speaker);  
 
@@ -64,22 +68,6 @@ public class GameMaster extends ApplicationAdapter {
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager)); 
         sceneManager.transitionTo("MenuScene");
     }
-    public void initializeGame() {
-        if (board == null) { // Ensure it only initializes once
-            board = new Board();
-            entityManager = new EntityManager();
-          //  movementManager = new MovementManager(speaker);
-
-            entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
-            entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));
-
-            player = new MoveableObjects(board, entityManager, 1, 1, board.getTileSize(), movementManager);
-            entityManager.addEntity(player);
-            
-            System.out.println("✅ Game Scene Initialized");
-        }
-    }
-
 
     @Override
     public void render() {
@@ -89,16 +77,16 @@ public class GameMaster extends ApplicationAdapter {
         // Call handleInput from InputOutputManager
         ioManager.handleInput();
 
+        // ✅ Check for collisions
+        collisionManager.checkCollisions();
+
         batch.begin();
         
         // ✅ Render the current scene
         sceneManager.render(batch);
         
-        if (sceneManager.getCurrentScene() instanceof DefaultScene) {
-            board.render(batch);
-            entityManager.render(batch);
-        }
-        
+        board.render(batch);
+        entityManager.render(batch);
         batch.end();
     }
 
@@ -125,11 +113,9 @@ public class GameMaster extends ApplicationAdapter {
         }
     }
 
-
-
     @Override
     public void dispose() {
-    	ioManager.stopTimer();
+        ioManager.stopTimer();
         board.dispose();
         batch.dispose();
         sceneManager.getCurrentScene().dispose(); // ✅ Dispose current scene resources

@@ -1,4 +1,4 @@
-	package io.github.some_example_name.lwjgl3;
+package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -63,19 +63,13 @@ public abstract class MenuScene extends Scene {
             }
         });
         
-        startButton.addListener(new ClickListener() {
+        settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Start Game button clicked");
-                
-                if (sceneManager.getScene("GameScene") == null) {
-                    sceneManager.addScene("GameScene", new DefaultScene(sceneManager));  // Create the game scene if it doesn't exist
-                }
-                
-                sceneManager.transitionTo("GameScene");
+                System.out.println("Settings button clicked");
+                sceneManager.transitionTo("SettingScene");
             }
         });
-
         
         exitButton.addListener(new ClickListener() {
             @Override
