@@ -11,7 +11,7 @@ public class Mouse extends InputAdapter {
     private Speaker speaker;
     private boolean isClick = true; 
    
-
+//Test
     // ✅ Unified constructor for both sound and scene management
     public Mouse(InputOutputManager ioManager, Speaker speaker) {
         this.ioManager = ioManager;
