@@ -6,10 +6,12 @@ import java.util.ArrayList;
 public class MovementManager {
     private List<MoveableObjects> movingEntities;
     private boolean physicsEnabled;
+    private Speaker speaker;
 
-    public MovementManager() {
+    public MovementManager(Speaker speaker) {
         this.movingEntities = new ArrayList<>();
         this.physicsEnabled = true;
+        this.speaker = speaker;
     }
 
     public void addEntity(MoveableObjects entity) {
@@ -29,8 +31,10 @@ public class MovementManager {
             entity.x = newCol * entity.board.getTileSize() + entity.board.getStartX();
             entity.y = (entity.board.getMazeHeight() - 1 - newRow) * entity.board.getTileSize() + entity.board.getStartY();
             System.out.println("Moved to: " + entity.x + ", " + entity.y);
+            speaker.playSound("sound");
         } else {
             System.out.println("Blocked! Cannot move.");
+            speaker.playSound("block");
         }
     }
 

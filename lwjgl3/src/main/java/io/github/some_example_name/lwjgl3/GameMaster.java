@@ -27,8 +27,10 @@ public class GameMaster extends ApplicationAdapter {
     public void create() {
         batch = new SpriteBatch();
         board = new Board();
+        // ✅ Initialize Speaker
+        speaker = new Speaker();
         entityManager = new EntityManager();
-        movementManager = new MovementManager();
+        movementManager = new MovementManager(speaker);
         
         sceneManager = new SceneManager(); // ✅ Initialize SceneManager
         
@@ -41,8 +43,7 @@ public class GameMaster extends ApplicationAdapter {
         
         System.out.println("Player starts at: " + player.getX() + ", " + player.getY());
 
-        // ✅ Initialize Speaker
-        speaker = new Speaker();
+        
         
         // ✅ Initialize Mouse with NULL ioManager temporarily
         mouse = new Mouse(null, speaker, sceneManager);  

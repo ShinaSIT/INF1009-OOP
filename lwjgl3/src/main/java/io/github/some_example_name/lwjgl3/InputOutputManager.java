@@ -63,6 +63,7 @@ public class InputOutputManager {
     private void initializeSounds() {
         speaker.loadSound("click", "sounds/sample.mp3");
         speaker.loadSound("sound", "sounds/sample2.mp3");
+        speaker.loadSound("block", "sounds/sample3.mp3");
         speaker.playMusic("sounds/sample.mp3"); // ✅ Start background music
     }
     
@@ -92,7 +93,7 @@ public class InputOutputManager {
         if ((Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) && !wPressed) {
             System.out.println("Moving Up");
             movementManager.applyMovement((MoveableObjects) player, 0, step);
-            speaker.playSound("sound");
+            //speaker.playSound("sound");
             wPressed = true;
             moved=true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.W) && !Gdx.input.isKeyPressed(Input.Keys.UP)) {
@@ -103,7 +104,7 @@ public class InputOutputManager {
         if ((Gdx.input.isKeyJustPressed(Input.Keys.S) || Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) && !sPressed) {
             System.out.println("Moving Down");
             movementManager.applyMovement((MoveableObjects) player, 0, -step);
-            speaker.playSound("sound");
+            //speaker.playSound("sound");
             sPressed = true;
             moved=true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.S) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
@@ -114,7 +115,7 @@ public class InputOutputManager {
         if ((Gdx.input.isKeyJustPressed(Input.Keys.A) || Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) && !aPressed) {
             System.out.println("Moving Left");
             movementManager.applyMovement((MoveableObjects) player, -step, 0);
-            speaker.playSound("sound");
+            //speaker.playSound("sound");
             aPressed = true;
             moved=true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
@@ -125,7 +126,7 @@ public class InputOutputManager {
         if ((Gdx.input.isKeyJustPressed(Input.Keys.D) || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) && !dPressed) {
             System.out.println("Moving Right");
             movementManager.applyMovement((MoveableObjects) player, step, 0);
-            speaker.playSound("sound");
+            //speaker.playSound("sound");
             dPressed = true;
             moved=true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
