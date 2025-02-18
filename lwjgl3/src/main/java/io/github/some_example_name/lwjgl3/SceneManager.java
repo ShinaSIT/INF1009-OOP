@@ -3,6 +3,7 @@ package io.github.some_example_name.lwjgl3;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class SceneManager { //scenemanager class
@@ -62,11 +63,19 @@ public class SceneManager { //scenemanager class
 
     public void transitionTo(String sceneName) {
         if (scenes.containsKey(sceneName)) {
-            currentScene.dispose(); // ✅ Dispose current scene before transition
+            if (currentScene != null) {
+                currentScene.dispose();
+            }
             currentScene = scenes.get(sceneName);
-            currentScene.create(); // ✅ Initialize new scene
+            currentScene.create();
+
+            if (sceneName.equals("GameScene")) {
+                ((GameMaster) Gdx.app.getApplicationListener()).initializeGame(); // ✅ Lazy load game objects
+            }
         }
     }
+
+
 
     public Scene getScene(String sceneName) {
         return scenes.get(sceneName);

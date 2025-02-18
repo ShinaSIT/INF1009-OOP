@@ -63,13 +63,19 @@ public abstract class MenuScene extends Scene {
             }
         });
         
-        settingsButton.addListener(new ClickListener() {
+        startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Settings button clicked");
-                sceneManager.transitionTo("SettingScene");
+                System.out.println("Start Game button clicked");
+                
+                if (sceneManager.getScene("GameScene") == null) {
+                    sceneManager.addScene("GameScene", new DefaultScene(sceneManager));  // Create the game scene if it doesn't exist
+                }
+                
+                sceneManager.transitionTo("GameScene");
             }
         });
+
         
         exitButton.addListener(new ClickListener() {
             @Override

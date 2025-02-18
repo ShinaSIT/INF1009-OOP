@@ -22,17 +22,20 @@ public class GameMaster extends ApplicationAdapter {
     private Mouse mouse;        
     private List<StaticObjects> staticObjects = new ArrayList<StaticObjects>();
     
+
     
     @Override
     public void create() {
         batch = new SpriteBatch();
+        speaker = new Speaker();
+        sceneManager = new SceneManager(); 
         board = new Board();
         // ✅ Initialize Speaker
-        speaker = new Speaker();
+       
         entityManager = new EntityManager();
         movementManager = new MovementManager(speaker);
         
-        sceneManager = new SceneManager(); // ✅ Initialize SceneManager
+       // ✅ Initialize SceneManager
         
         entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
         entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));
@@ -46,7 +49,7 @@ public class GameMaster extends ApplicationAdapter {
         
         
         // ✅ Initialize Mouse with NULL ioManager temporarily
-        mouse = new Mouse(null, speaker, sceneManager);  
+        mouse = new Mouse(null, speaker);  
 
         // ✅ Initialize InputOutputManager
         ioManager = new InputOutputManager(movementManager, player, speaker, board, mouse);
@@ -60,6 +63,21 @@ public class GameMaster extends ApplicationAdapter {
         // ✅ Load the initial scene
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager)); 
         sceneManager.transitionTo("MenuScene");
+    }
+    public void initializeGame() {
+        if (board == null) { // Ensure it only initializes once
+            board = new Board();
+            entityManager = new EntityManager();
+            movementManager = new MovementManager(speaker);
+
+            entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
+            entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));
+
+            player = new MoveableObjects(board, entityManager, 1, 1, board.getTileSize(), movementManager);
+            entityManager.addEntity(player);
+            
+            System.out.println("✅ Game Scene Initialized");
+        }
     }
 
 
@@ -76,8 +94,11 @@ public class GameMaster extends ApplicationAdapter {
         // ✅ Render the current scene
         sceneManager.render(batch);
         
-        board.render(batch);
-        entityManager.render(batch);
+        if (sceneManager.getCurrentScene() instanceof DefaultScene) {
+            board.render(batch);
+            entityManager.render(batch);
+        }
+        
         batch.end();
     }
 
