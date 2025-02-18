@@ -1,4 +1,4 @@
-package io.github.some_example_name.lwjgl3;
+	package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
