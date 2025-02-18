@@ -33,7 +33,7 @@ public class GameMaster extends ApplicationAdapter {
         // ✅ Initialize Speaker
        
         entityManager = new EntityManager();
-        movementManager = new MovementManager(speaker);
+       // movementManager = new MovementManager(speaker);
         
        // ✅ Initialize SceneManager
         
@@ -68,7 +68,7 @@ public class GameMaster extends ApplicationAdapter {
         if (board == null) { // Ensure it only initializes once
             board = new Board();
             entityManager = new EntityManager();
-            movementManager = new MovementManager(speaker);
+          //  movementManager = new MovementManager(speaker);
 
             entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
             entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));

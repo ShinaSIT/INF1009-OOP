@@ -10,8 +10,8 @@ public class StaticObjects extends Entity {
     private int gridX, gridY;
     
     public StaticObjects(Board board, int gridX, int gridY, float tileSize) {
-    	super(gridX * tileSize + board.getStartX(), (board.getMazeHeight() - 1 - gridY) * tileSize + board.getStartY(), tileSize);
-    	this.board = board;
+        super(gridX * tileSize + board.getStartX(), (board.getMazeHeight() - 1 - gridY) * tileSize + board.getStartY(), tileSize);
+        this.board = board;
         this.shapeRenderer = new ShapeRenderer();
         this.gridX = gridX;
         this.gridY = gridY;
@@ -25,12 +25,6 @@ public class StaticObjects extends Entity {
     public int getGridY() {
         return gridY;
     }
-    
-    public void updateObjectPosition(Board board) {
-        this.x = board.getStartX() + this.gridX * board.getTileSize();
-        this.y = board.getStartY() + (board.getMazeHeight() - 1 - this.gridY) * board.getTileSize();
-    }
-
 
     @Override
     public void render(SpriteBatch batch) {
@@ -47,4 +41,9 @@ public class StaticObjects extends Entity {
     public void dispose() {
         shapeRenderer.dispose();
     }
+
+	public void updateObjectPosition(Board board2) {
+		// TODO Auto-generated method stub
+		
+	}
 }

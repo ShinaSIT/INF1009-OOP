@@ -7,56 +7,34 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class GameObjects extends Entity {
     protected ShapeRenderer shapeRenderer;
     protected Board board;
-    protected EntityManager entityManager;  // To check static objects
+    protected EntityManager entityManager;
+    protected int gridX, gridY; // Grid coordinates
 
     public GameObjects(Board board, EntityManager entityManager, int gridX, int gridY, float tileSize) {
         super(gridX * tileSize + board.getStartX(), gridY * tileSize + board.getStartY(), tileSize);
         this.board = board;
         this.entityManager = entityManager;
         this.shapeRenderer = new ShapeRenderer();
-    }
-
-    public boolean canMove(int newCol, int newRow) {
-        int mazeRow = newRow;
-        System.out.println("Checking move to tile: (" + newCol + ", " + newRow + ")");
-
-        for (Entity entity : entityManager.getEntities()) {
-            if (entity instanceof StaticObjects) {
-                StaticObjects obj = (StaticObjects) entity;
-                System.out.println("Checking static object at (" + obj.getGridX() + ", " + obj.getGridY() + ")");
-                if (obj.getGridX() == newCol && obj.getGridY() == newRow) {
-                    System.out.println("❌ Blocked: Static object at (" + newCol + ", " + newRow + ")");
-                    return false;
-                }
-            }
-        }
-
-        System.out.println("Checking wall at [" + mazeRow + "][" + newCol + "]");
-        if (board.getMazeLayout()[mazeRow][newCol] == 1) {
-            System.out.println("❌ Blocked: Hit a wall at (" + newCol + ", " + newRow + ")");
-            return false;
-        }
-
-        return true;
+        this.gridX = gridX;
+        this.gridY = gridY;
     }
 
     public int getGridX() {
-        return (int) ((x - board.getStartX()) / board.getTileSize());
+        return gridX;
     }
 
     public int getGridY() {
-        return (int) ((board.getMazeHeight() - 1) - (y - board.getStartY()) / board.getTileSize());
-    }
-    
-    public void setX(float x) {
-        this.x = x;
+        return gridY;
     }
 
-    public void setY(float y) {
-        this.y = y;
+    public void setGridX(int gridX) {
+        this.gridX = gridX;
     }
 
-    
+    public void setGridY(int gridY) {
+        this.gridY = gridY;
+    }
+
     @Override
     public void render(SpriteBatch batch) {
         float centerX = x + board.getTileSize() / 2; 
@@ -71,4 +49,16 @@ public class GameObjects extends Entity {
     public void dispose() {
         shapeRenderer.dispose();
     }
+
+	public void setX(float f) {
+		this.x = f;
+	    System.out.println("Player X updated: " + this.x);
+	}
+		
+
+	public void setY(float f) {
+		this.y = f;
+	    System.out.println("Player Y updated: " + this.y);
+		
+	}
 }

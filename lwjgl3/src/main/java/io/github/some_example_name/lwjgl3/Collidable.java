@@ -1,24 +1,38 @@
 package io.github.some_example_name.lwjgl3;
 
-import com.badlogic.gdx.math.Rectangle;
-
 public abstract class Collidable {
     public boolean isSolid = true;
     public String collisionType;   
-    private Rectangle hitbox;      
+    private int gridX, gridY;  // Grid coordinates instead of hitbox
 
-    public Collidable(String collisionType, Rectangle hitbox) {
+    public Collidable(String collisionType, int gridX, int gridY) {
         this.collisionType = collisionType;
-        this.hitbox = hitbox;
+        this.gridX = gridX;
+        this.gridY = gridY;
     }
 
     public boolean detectCollision(Collidable other) {
-        return this.hitbox.overlaps(other.hitbox);
+        // Check if two objects occupy the same grid cell
+        return this.gridX == other.gridX && this.gridY == other.gridY;
     }
 
-    private void resolveCollision(Collidable other) {
+    public int getGridX() {
+        return gridX;
     }
 
-    private void onCollisionEffect() {
+    public int getGridY() {
+        return gridY;
+    }
+
+    public void setGridX(int gridX) {
+        this.gridX = gridX;
+    }
+
+    public void setGridY(int gridY) {
+        this.gridY = gridY;
+    }
+
+    public void resolveCollision(Collidable other) {
+        // Default collision resolution logic (can be overridden by subclasses)
     }
 }

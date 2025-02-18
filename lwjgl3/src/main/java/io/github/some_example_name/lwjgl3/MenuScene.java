@@ -34,7 +34,7 @@ public abstract class MenuScene extends Scene {
     
     @Override
     public void render(SpriteBatch batch) {
-        System.out.println("Rendering menu scene with SpriteBatch...");
+//        System.out.println("Rendering menu scene with SpriteBatch...");
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
