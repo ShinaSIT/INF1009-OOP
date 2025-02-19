@@ -25,8 +25,9 @@ public class GameMaster extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        board = new Board();
         speaker = new Speaker();
+        sceneManager = new SceneManager(); // ✅ Initialize SceneManager
+        board = new Board();
         entityManager = new EntityManager();
         
         // ✅ Initialize CollisionManager
@@ -35,7 +36,7 @@ public class GameMaster extends ApplicationAdapter {
         // ✅ Initialize MovementManager with CollisionManager
         movementManager = new MovementManager(speaker, collisionManager);
 
-        sceneManager = new SceneManager(); // ✅ Initialize SceneManager
+       
         
         // Add static objects to the game
         StaticObjects staticObj1 = new StaticObjects(board, 5, 5, board.getTileSize());
@@ -66,8 +67,27 @@ public class GameMaster extends ApplicationAdapter {
         
         // ✅ Load the initial scene
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager)); 
+        sceneManager.addScene("GameScene", new DefaultScene(sceneManager));
         sceneManager.transitionTo("MenuScene");
     }
+    public void initializeGame() {
+        if (board == null) { // Ensure it only initializes once
+            board = new Board();
+            entityManager = new EntityManager();
+            
+           
+            movementManager = new MovementManager(speaker,collisionManager);
+
+            entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
+            entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));
+
+            player = new MoveableObjects(board, entityManager, 1, 1, board.getTileSize(), movementManager);
+            entityManager.addEntity(player);
+            
+            System.out.println("✅ Game Scene Initialized");
+        }
+    }
+
 
     @Override
     public void render() {
@@ -84,9 +104,11 @@ public class GameMaster extends ApplicationAdapter {
         
         // ✅ Render the current scene
         sceneManager.render(batch);
+        if (sceneManager.getCurrentScene() instanceof DefaultScene) {
+            board.render(batch);
+            entityManager.render(batch);
+        }
         
-        board.render(batch);
-        entityManager.render(batch);
         batch.end();
     }
 
