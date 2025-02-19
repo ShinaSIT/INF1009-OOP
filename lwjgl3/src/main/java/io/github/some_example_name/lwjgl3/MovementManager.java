@@ -35,23 +35,27 @@ public class MovementManager {
 
         System.out.println("Trying to move from tile (" + currentCol + ", " + currentRow + ") to (" + newCol + ", " + newRow + ")");
 
-        // ✅ Use CollisionManager to check if the move is valid
+        // Clamp new position within the grid
+        newCol = Math.max(0, Math.min(entity.board.getMazeWidth() - 1, newCol));
+        newRow = Math.max(0, Math.min(entity.board.getMazeHeight() - 1, newRow));
+
+        // Use CollisionManager to check if the move is valid
         if (collisionManager.isMoveValid(newCol, newRow)) {
-            // Update the entity's grid position
             entity.setGridX(newCol);
             entity.setGridY(newRow);
 
-            // Update the entity's pixel position
+            // Update pixel position
             entity.x = newCol * entity.board.getTileSize() + entity.board.getStartX();
             entity.y = (entity.board.getMazeHeight() - 1 - newRow) * entity.board.getTileSize() + entity.board.getStartY();
 
-            System.out.println("Moved to: " + entity.x + ", " + entity.y);
+            System.out.println("📌 Player Clamped to Grid (" + newCol + ", " + newRow + ")");
             speaker.playSound("sound");
         } else {
             System.out.println("Blocked! Cannot move.");
             speaker.playSound("block");
         }
     }
+
 
     /**
      * Applies physics to an entity (e.g., gravity, collisions).

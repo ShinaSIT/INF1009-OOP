@@ -8,57 +8,53 @@ public class GameObjects extends Entity {
     protected ShapeRenderer shapeRenderer;
     protected Board board;
     protected EntityManager entityManager;
-    protected int gridX, gridY; // Grid coordinates
 
-    public GameObjects(Board board, EntityManager entityManager, int gridX, int gridY, float tileSize) {
-        super(gridX * tileSize + board.getStartX(), gridY * tileSize + board.getStartY(), tileSize);
+    public GameObjects(Board board, EntityManager entityManager, int gridX, int gridY) {
+        super(board, gridX, gridY);
         this.board = board;
         this.entityManager = entityManager;
         this.shapeRenderer = new ShapeRenderer();
-        this.gridX = gridX;
-        this.gridY = gridY;
-    }
-
-    public int getGridX() {
-        return gridX;
-    }
-
-    public int getGridY() {
-        return gridY;
     }
 
     public void setGridX(int gridX) {
-        this.gridX = gridX;
+        this.gridX = Math.max(0, Math.min(gridX, board.getMazeWidth() - 1));
     }
 
     public void setGridY(int gridY) {
-        this.gridY = gridY;
+        this.gridY = Math.max(0, Math.min(gridY, board.getMazeHeight() - 1));
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        float centerX = x + board.getTileSize() / 2; 
-        float centerY = y + board.getTileSize() / 2;
+        float tileSize = board.getTileSize();
+        float adjustedX = gridX * tileSize + board.getStartX();
+        float adjustedY = (board.getMazeHeight() - 1 - gridY) * tileSize + board.getStartY();
+
+        // ✅ Ensure the player is correctly scaled inside the tile
+        float playerSize = Math.max(10, tileSize * 0.7f);  
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.RED);
-        shapeRenderer.circle(centerX, centerY, board.getTileSize() / 3);
+        shapeRenderer.circle(adjustedX + tileSize / 2, adjustedY + tileSize / 2, playerSize / 2);
         shapeRenderer.end();
     }
+
 
     public void dispose() {
         shapeRenderer.dispose();
     }
+    
+    public void updatePosition(Board board) {
+        this.board = board;
+        updatePixelPosition(board);
+    }
 
-	public void setX(float f) {
-		this.x = f;
-	    System.out.println("Player X updated: " + this.x);
-	}
-		
+    public void updatePixelPosition(Board board) {
+        float tileSize = board.getTileSize();
+        float adjustedX = gridX * tileSize + board.getStartX();
+        float adjustedY = (board.getMazeHeight() - 1 - gridY) * tileSize + board.getStartY();
 
-	public void setY(float f) {
-		this.y = f;
-	    System.out.println("Player Y updated: " + this.y);
-		
-	}
+        System.out.println("📌 Player Updated to (" + adjustedX + ", " + adjustedY + ")");
+    }
+
 }

@@ -123,13 +123,15 @@ public class Board {
         
         tileSize = Math.min((float) screenWidth / mazeColumns, (float) screenHeight / mazeRows);
         float mazePixelWidth = mazeColumns * tileSize;
-        float mazePixelHeight  = mazeRows * tileSize;
+        float mazePixelHeight = mazeRows * tileSize;
         
         startX = (screenWidth - mazePixelWidth) / 2.0f;
         startY = (screenHeight - mazePixelHeight) / 2.0f;
         
         camera.setToOrtho(false, screenWidth, screenHeight);
+        camera.update();
         shapeRenderer.setProjectionMatrix(camera.combined);
+
     }
 
     public void render(SpriteBatch batch) {
@@ -138,6 +140,13 @@ public class Board {
 
         for (int row = 0; row < mazeHeight; row++) {
             for (int col = 0; col < mazeWidth; col++) {
+            	float tileX = startX + col * tileSize;
+                float tileY = startY + (mazeHeight - row - 1) * tileSize;
+
+                if (tileX < 0 || tileY < 0 || tileX > Gdx.graphics.getWidth() || tileY > Gdx.graphics.getHeight()) {
+                    System.out.println("❌ Skipping Tile (" + row + ", " + col + ") - Out of Bounds");
+                    continue;
+                }
                 if (mazeLayout[row][col] == 1) {
                     drawNeonWall(startX + col * tileSize, startY + (mazeHeight - row - 1) * tileSize);
                 }
@@ -193,4 +202,5 @@ public class Board {
     public void dispose() {
         shapeRenderer.dispose();
     }
+
 }

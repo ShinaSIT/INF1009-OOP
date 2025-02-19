@@ -6,35 +6,48 @@ public class CollisionManager {
     private List<Collidable> collidableObjects;
     private Board board;
     private EntityManager entityManager;
+    private HealthManager healthManager;  
+    private int collisionCount = 0;  
 
-    public CollisionManager(Board board, EntityManager entityManager) {
+    public CollisionManager(Board board, EntityManager entityManager, HealthManager healthManager) {
         this.collidableObjects = new ArrayList<>();
         this.board = board;
         this.entityManager = entityManager;
+        this.healthManager = healthManager;  
     }
 
     /**
      * Checks if a move to the specified grid position is valid.
      */
     public boolean isMoveValid(int newCol, int newRow) {
-        // Check if the new position is blocked by a wall
+        // ✅ Check if the new position is a wall
         if (board.getMazeLayout()[newRow][newCol] == 1) {
-        	System.out.println("Blocked by wall");
-            return false; // Blocked by wall
+            System.out.println("Blocked by wall");
+            collisionCount++; 
+            System.out.println("Collision count: " + collisionCount);
+
+            if (collisionCount % 3 == 0) {  // ✅ Reduce life every 3rd wall collision
+                healthManager.reduceLife();
+            }
+            return false;  // Move is not valid
         }
 
-        // Check if the new position is blocked by a static object
+
         for (Entity entity : entityManager.getEntities()) {
             if (entity instanceof StaticObjects) {
                 StaticObjects obj = (StaticObjects) entity;
                 if (obj.getGridX() == newCol && obj.getGridY() == newRow) {
-                	System.out.println("Blocked by Static Object");
-                    return false; // Blocked by static object
+                    System.out.println("❌ Blocked by Static Object");
+                    
+                    // ✅ Immediately reduce a life when hitting a static object
+                    healthManager.reduceLife();
+                    return false;  // Move is not valid
                 }
             }
         }
+
         System.out.println("Free to move");
-        return true; // Move is allowed
+        return true; 
     }
 
     /**
@@ -64,7 +77,6 @@ public class CollisionManager {
                 Collidable obj2 = collidableObjects.get(j);
 
                 if (obj1.detectCollision(obj2)) {
-                    // Resolve the collision
                     obj1.resolveCollision(obj2);
                     obj2.resolveCollision(obj1);
                 }
