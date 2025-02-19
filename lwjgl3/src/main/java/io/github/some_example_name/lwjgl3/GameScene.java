@@ -23,7 +23,7 @@ public class GameScene extends Scene {
 
     @Override
     public void render(SpriteBatch batch) {
-        System.out.println("✅ GameScene Render Called");
+//        System.out.println("✅ GameScene Render Called");
         
         if (gameMaster.getHealthManager().isGameOver()) {  
             gameMaster.getHealthManager().drawGameOverScreen(batch);

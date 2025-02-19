@@ -64,14 +64,14 @@ public class EntityManager {
         }
     }
     
-    public void updateEntitiesOnResize(Board board) {
+    public void updateEntitiesOnResize() {
         for (Entity entity : entities) {
             // Retrieve grid position
             int gridX = entity.getGridX();
             int gridY = entity.getGridY();
 
             // Convert to pixel positions after resizing
-            entity.updatePixelPosition(board);
+            entity.updatePixelPosition();
 
             System.out.println("📌 " + entity.getClass().getSimpleName() +
                 " updated to Grid (" + gridX + ", " + gridY + ") at (" + entity.x + ", " + entity.y + ")");
