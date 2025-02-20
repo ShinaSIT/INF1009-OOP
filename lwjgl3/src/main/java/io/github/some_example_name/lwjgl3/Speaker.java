@@ -57,7 +57,7 @@ public class Speaker {
             return;
         }
 
-        if (!backgroundMusic.isPlaying()) { // If music exists but is paused, resume instead of restarting
+        else if (!backgroundMusic.isPlaying()) { // If music exists but is paused, resume instead of restarting
             System.out.println("Resuming music...");
             backgroundMusic.play();
         } else {
