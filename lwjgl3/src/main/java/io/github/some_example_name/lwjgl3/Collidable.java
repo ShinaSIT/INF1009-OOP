@@ -3,7 +3,7 @@ package io.github.some_example_name.lwjgl3;
 public abstract class Collidable {
     public boolean isSolid = true;
     public String collisionType;   
-    private int gridX, gridY;  // Grid coordinates instead of hitbox
+    private int gridX, gridY;  
 
     public Collidable(String collisionType, int gridX, int gridY) {
         this.collisionType = collisionType;
@@ -32,7 +32,7 @@ public abstract class Collidable {
         this.gridY = gridY;
     }
 
-    public void resolveCollision(Collidable other) {
+    //public void resolveCollision(Collidable other) {
         // Default collision resolution logic (can be overridden by subclasses)
-    }
+    //}
 }

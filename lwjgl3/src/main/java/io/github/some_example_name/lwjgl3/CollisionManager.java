@@ -23,7 +23,7 @@ public class CollisionManager {
     public boolean isMoveValid(int newCol, int newRow) {
         String key = newCol + "," + newRow;
         if (collisionCache.contains(key)) {
-            return false; // 🚀 Instantly return cached result
+            return false; //Instantly return cached result
         }
 
         // ✅ Check if the new position is a wall
@@ -60,18 +60,18 @@ public class CollisionManager {
     /**
      * Checks for collisions between all collidable objects.
      */
-    public void checkCollisions() {
-        for (int i = 0; i < collidableObjects.size(); i++) {
-            Collidable obj1 = collidableObjects.get(i);
-
-            for (int j = i + 1; j < collidableObjects.size(); j++) {
-                Collidable obj2 = collidableObjects.get(j);
-
-                if (obj1.detectCollision(obj2)) {
-                    obj1.resolveCollision(obj2);
-                    obj2.resolveCollision(obj1);
-                }
-            }
-        }
-    }
+//    public void checkCollisions() {
+//        for (int i = 0; i < collidableObjects.size(); i++) {
+//            Collidable obj1 = collidableObjects.get(i);
+//
+//            for (int j = i + 1; j < collidableObjects.size(); j++) {
+//                Collidable obj2 = collidableObjects.get(j);
+//
+//                if (obj1.detectCollision(obj2)) {
+//                    obj1.resolveCollision(obj2);
+//                    obj2.resolveCollision(obj1);
+//                }
+//            }
+//        }
+//    }
 }

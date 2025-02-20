@@ -72,7 +72,7 @@ public class GameMaster extends ApplicationAdapter {
             sceneManager.render(batch);  
         } else {
             ioManager.handleInput();
-            collisionManager.checkCollisions();
+            //collisionManager.checkCollisions();
             sceneManager.render(batch);
             board.render(batch);
             entityManager.render(batch);
