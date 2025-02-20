@@ -3,7 +3,6 @@ package io.github.some_example_name.lwjgl3;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class SceneManager { //scenemanager class
@@ -28,13 +27,33 @@ public class SceneManager { //scenemanager class
         scenes.remove(sceneName);
     }
 
+    public Map<String, Scene> getScenes() {
+        System.out.print("🧐 getScenes() called. Currently stored scenes: ");
+        for (String key : scenes.keySet()) {
+            System.out.print(key + " ");
+        }
+        System.out.println();
+        return scenes;
+    }
+
+
     public void addScene(String sceneName, Scene scene) {
+        System.out.println("✅ SceneManager.addScene() called with: " + sceneName);
+        System.out.println("🧐 SceneManager instance inside addScene: " + this);
+
         scenes.put(sceneName, scene);
-        if (currentScene == null) { // ✅ Ensure the first scene is MenuScene
-            currentScene = scenes.get("MenuScene");
-            if (currentScene != null) {
-                currentScene.create(); // ✅ Initialize menu scene first
-            }
+
+        // ✅ Print all stored scenes after adding
+        System.out.print("📌 Stored Scenes after adding: ");
+        for (String key : scenes.keySet()) {
+            System.out.print(key + " ");
+        }
+        System.out.println();
+
+        if (scenes.containsKey(sceneName)) {
+            System.out.println("✅ Scene '" + sceneName + "' successfully added!");
+        } else {
+            System.out.println("❌ ERROR: Scene '" + sceneName + "' was NOT stored!");
         }
     }
 
@@ -63,18 +82,28 @@ public class SceneManager { //scenemanager class
 
     public void transitionTo(String sceneName) {
         if (scenes.containsKey(sceneName)) {
-            if (currentScene != null) {
-                currentScene.dispose();
-            }
-            currentScene = scenes.get(sceneName);
-            currentScene.create();
+            System.out.println("✅ SceneManager transitioning to: " + sceneName);
 
-            if (sceneName.equals("GameScene")) {
-                ((GameMaster) Gdx.app.getApplicationListener()).initializeGame(); // ✅ Lazy load game objects
+            // ✅ Only dispose currentScene if it is NOT null
+            if (currentScene != null) {
+                System.out.println("✅ Disposing previous scene: " + currentScene.getClass().getSimpleName());
+                currentScene.dispose();
+            } else {
+                System.out.println("⚠️ Warning: No previous scene to dispose.");
             }
+
+            currentScene = scenes.get(sceneName);
+
+            if (currentScene != null) {
+                System.out.println("✅ Current scene set to: " + currentScene.getClass().getSimpleName());
+                currentScene.create();
+            } else {
+                System.out.println("❌ ERROR: Failed to set current scene.");
+            }
+        } else {
+            System.out.println("❌ SceneManager: Scene not found - " + sceneName);
         }
     }
-
 
     public Scene getScene(String sceneName) {
         return scenes.get(sceneName);

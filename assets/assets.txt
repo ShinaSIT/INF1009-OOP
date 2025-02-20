@@ -1,1 +1,8 @@
+default.fnt
 libgdx.png
+sounds/sample.mp3
+sounds/sample2.mp3
+sounds/sample3.mp3
+uiskin.atlas
+uiskin.json
+uiskin.png

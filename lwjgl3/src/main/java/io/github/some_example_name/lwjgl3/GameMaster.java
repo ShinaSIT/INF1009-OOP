@@ -13,137 +13,162 @@ public class GameMaster extends ApplicationAdapter {
     private SpriteBatch batch;
     private EntityManager entityManager;
     private MovementManager movementManager;
-    private CollisionManager collisionManager; // ✅ Added CollisionManager
+    private CollisionManager collisionManager;
     private GameObjects player;
     private Speaker speaker; 
     private SceneManager sceneManager;
     private InputOutputManager ioManager;
     private Keyboard keyboard;  
     private Mouse mouse;        
-    private List<StaticObjects> staticObjects = new ArrayList<StaticObjects>();
+    private StaticObjectManager staticObjectManager;
+    // private HealthManager healthManager; // Part 2: Commented out
     
+    private boolean gameStarted = false; // Track Game Status
+    private boolean isResizing = false; 
+
     @Override
     public void create() {
         batch = new SpriteBatch();
-        speaker = new Speaker();
-        sceneManager = new SceneManager(); // ✅ Initialize SceneManager
-        board = new Board();
-        entityManager = new EntityManager();
-        
-        // ✅ Initialize CollisionManager
-        collisionManager = new CollisionManager(board, entityManager);
+        sceneManager = new SceneManager();
+        // healthManager = new HealthManager(this, sceneManager); // Part 2: Commented out
 
-        // ✅ Initialize MovementManager with CollisionManager
-        movementManager = new MovementManager(speaker, collisionManager);
-
-       
-        
-        // Add static objects to the game
-        StaticObjects staticObj1 = new StaticObjects(board, 5, 5, board.getTileSize());
-        StaticObjects staticObj2 = new StaticObjects(board, 10, 13, board.getTileSize());
-        entityManager.addEntity(staticObj1);
-        entityManager.addEntity(staticObj2);
-
-        // ✅ Initialize player with MovementManager
-        player = new MoveableObjects(board, entityManager, 1, 1, board.getTileSize(), movementManager);
-        entityManager.addEntity(player);
-        Gdx.input.setInputProcessor(null);
-        
-        System.out.println("Player starts at: " + player.getX() + ", " + player.getY());
-        System.out.println("Player starts at: (" + player.getGridX() + ", " + player.getGridY() + ")");
-        System.out.println("Player pixel position: (" + player.x + ", " + player.y + ")");
-
-        // ✅ Initialize Mouse with NULL ioManager temporarily
-        mouse = new Mouse(null, speaker);  
-
-        // ✅ Initialize InputOutputManager
-        ioManager = new InputOutputManager(movementManager, player, speaker, board, mouse);
-
-        // ✅ Now update Mouse with the correct ioManager
-        mouse.setIoManager(ioManager);  // New method in Mouse.java
-
-        // ✅ Initialize Keyboard
-        keyboard = new Keyboard(ioManager);
-        
-        // ✅ Load the initial scene
-        sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager)); 
-        sceneManager.addScene("GameScene", new DefaultScene(sceneManager));
+        // ✅ Load MenuScene
+        sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this)); 
         sceneManager.transitionTo("MenuScene");
     }
-    public void initializeGame() {
-        if (board == null) { // Ensure it only initializes once
-            board = new Board();
-            entityManager = new EntityManager();
-            
-           
-            movementManager = new MovementManager(speaker,collisionManager);
 
-            entityManager.addEntity(new StaticObjects(board, 5, 5, board.getTileSize()));
-            entityManager.addEntity(new StaticObjects(board, 10, 13, board.getTileSize()));
+    public void startGame() {  
+        System.out.println("✅ startGame() called!");
 
-            player = new MoveableObjects(board, entityManager, 1, 1, board.getTileSize(), movementManager);
-            entityManager.addEntity(player);
-            
-            System.out.println("✅ Game Scene Initialized");
-        }
+        gameStarted = true;
+
+        board = new Board();
+        speaker = new Speaker();
+        entityManager = new EntityManager();
+        collisionManager = new CollisionManager(board, entityManager /*, healthManager */); // Part 2: Commented out
+        movementManager = new MovementManager(speaker, collisionManager);
+        player = new MoveableObjects(board, entityManager, 1, 1, movementManager);
+        entityManager.addEntity(player);
+
+        mouse = new Mouse(null, speaker, sceneManager);
+        ioManager = new InputOutputManager(movementManager, player, speaker, board, mouse);
+        mouse.setIoManager(ioManager);
+        keyboard = new Keyboard(ioManager);
+
+        staticObjectManager = new StaticObjectManager(board);
+        staticObjectManager.generateStaticObjects(2, entityManager);
+
+        // ✅ Load GameScene
+        sceneManager.addScene("GameScene", new GameScene(sceneManager, this));  
+        sceneManager.transitionTo("GameScene");  
     }
-
 
     @Override
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Call handleInput from InputOutputManager
-        ioManager.handleInput();
-
-        // ✅ Check for collisions
-        collisionManager.checkCollisions();
-
         batch.begin();
-        
-        // ✅ Render the current scene
-        sceneManager.render(batch);
-        if (sceneManager.getCurrentScene() instanceof DefaultScene) {
+
+        if (!gameStarted) {
+            sceneManager.render(batch);  
+        } else {
+            ioManager.handleInput();
+            collisionManager.checkCollisions();
+            sceneManager.render(batch);
             board.render(batch);
             entityManager.render(batch);
+            // healthManager.drawLivesDisplay(batch); // Part 2: Commented out
         }
         
-        batch.end();
+        batch.end(); 
+        
+        // if (healthManager.isGameOver()) { // Part 2: Commented out
+        //     healthManager.getStage().act(Gdx.graphics.getDeltaTime());
+        //     healthManager.getStage().draw();
+        // }
     }
 
     @Override
     public void resize(int width, int height) {
-        board.updateDimensions(); // Update board size
-        updatePlayerPosition();   // Ensure player resizes properly
-        updateStaticObjects();    // Ensure static objects adjust
-        
-        entityManager.updatePositions(board);
-        sceneManager.getCurrentScene().resize(width, height); // ✅ Resize current scene
-    }
-    
-    private void updatePlayerPosition() {
-        if (player != null) {
-            player.setX(board.getStartX() + player.getGridX() * board.getTileSize());
-            player.setY(board.getStartY() + (board.getMazeHeight() - player.getGridY() - 1) * board.getTileSize());
+        System.out.println("✅ Resizing GameMaster: " + width + "x" + height);
+        isResizing = true; // ✅ Prevents rendering while resizing
+
+        if (sceneManager.getCurrentScene() != null) {
+            sceneManager.getCurrentScene().resize(width, height);
         }
-    }
-    
-    private void updateStaticObjects() {
-        for (StaticObjects obj : staticObjects) {
-            obj.updateObjectPosition(board);
+
+        if (gameStarted && board != null) {
+            board.updateDimensions();
+            entityManager.clearStaticObjects();
+            staticObjectManager.generateStaticObjects(2, entityManager);
+
+            if (entityManager != null) {
+                entityManager.updateAllEntities(board);
+                entityManager.ensurePlayerExists(); // ✅ Ensure the player exists after resize
+            }
+
+            MoveableObjects player = entityManager.getPlayer();
+            if (player != null) {
+                int clampedX = Math.max(0, Math.min(player.getGridX(), board.getMazeWidth() - 1));
+                int clampedY = Math.max(0, Math.min(player.getGridY(), board.getMazeHeight() - 1));
+
+                player.setGridX(clampedX);
+                player.setGridY(clampedY);
+                player.updatePixelPosition();
+             // ✅ Ensure player stays within visible screen bounds
+                float maxScreenY = Gdx.graphics.getHeight() - board.getTileSize();
+                if (player.getY() > maxScreenY) {
+                    player.setGridY(board.getMazeHeight() - 1);
+                    player.updatePixelPosition();
+                }
+
+                System.out.println("📌 Player repositioned to (" + clampedX + ", " + clampedY + "), Pixel (" + player.getX() + ", " + player.getY() + ")");
+            } else {
+                System.out.println("🚨 Player missing after resize! Re-adding...");
+                entityManager.ensurePlayerExists();
+            }
         }
+        // if (healthManager.isGameOver()) { // Part 2: Commented out
+        //     healthManager.resize(width, height);
+        // }
+
+        isResizing = false; // ✅ Allow rendering again after resizing
     }
 
+    
+    public void resetGame() {
+        System.out.println("🔄 Resetting game...");
+        gameStarted = false; 
+        // healthManager.reset(); // Part 2: Commented out
+        sceneManager.transitionTo("MenuScene");
+    }
+    
+    public void returnToMenu() {
+        System.out.println("🔄 Returning to Menu...");
+        gameStarted = false;  
+        // healthManager.reset(); // Part 2: Commented out
+        sceneManager.transitionTo("MenuScene");
+        Gdx.input.setInputProcessor(null);
+    }
+    
     @Override
     public void dispose() {
         ioManager.stopTimer();
         board.dispose();
         batch.dispose();
-        sceneManager.getCurrentScene().dispose(); // ✅ Dispose current scene resources
+        sceneManager.getCurrentScene().dispose();
         speaker.stopSound("click");
     }
+    
+    public Board getBoard() {
+        return board;
+    }
 
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+    
     public static void main(String[] args) {
         Lwjgl3Launcher.main(args);
     }

@@ -9,14 +9,13 @@ import com.badlogic.gdx.math.Vector2;
 public class Mouse extends InputAdapter {
     private InputOutputManager ioManager;
     private Speaker speaker;
-    private boolean isClick = true; 
-   
-//Test
+    private SceneManager sceneManager;
+
     // ✅ Unified constructor for both sound and scene management
-    public Mouse(InputOutputManager ioManager, Speaker speaker) {
+    public Mouse(InputOutputManager ioManager, Speaker speaker, SceneManager sceneManager) {
         this.ioManager = ioManager;
         this.speaker = speaker;
-      
+        this.sceneManager = sceneManager;
     }
 
     public void checkMouse() {
@@ -25,11 +24,6 @@ public class Mouse extends InputAdapter {
         for (int button : buttons) {
             if (Gdx.input.isButtonJustPressed(button)) { 
                 System.out.println("Mouse Clicked: " + ioManager.getMappedAction(button));
-                if (isClick) {
-                    System.out.println("First click, doing nothing...");
-                    isClick = false;  
-                    return;
-                }
 
                 if (button == Input.Buttons.LEFT) {
                     speaker.stopSound("click");
@@ -50,5 +44,26 @@ public class Mouse extends InputAdapter {
         this.ioManager = ioManager;
     }
 
-   
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Buttons.LEFT) {
+            Vector2 worldCoords = new Vector2(screenX, Gdx.graphics.getHeight() - screenY); 
+
+            if (isStartButtonClicked(worldCoords)) {
+                if (sceneManager != null) {
+                    sceneManager.transitionTo("gameScene"); // ✅ Transition scene properly
+                } else {
+                    System.err.println("Error: SceneManager is NULL, cannot transition scene!");
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isStartButtonClicked(Vector2 clickPos) {
+        float buttonX = 300, buttonY = 200, buttonWidth = 200, buttonHeight = 80;
+
+        return (clickPos.x >= buttonX && clickPos.x <= buttonX + buttonWidth &&
+                clickPos.y >= buttonY && clickPos.y <= buttonY + buttonHeight);
+    }
 }

@@ -6,44 +6,27 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class StaticObjects extends Entity {
     private ShapeRenderer shapeRenderer;
-    private Board board;
-    private int gridX, gridY;
-    
-    public StaticObjects(Board board, int gridX, int gridY, float tileSize) {
-        super(gridX * tileSize + board.getStartX(), (board.getMazeHeight() - 1 - gridY) * tileSize + board.getStartY(), tileSize);
-        this.board = board;
-        this.shapeRenderer = new ShapeRenderer();
-        this.gridX = gridX;
-        this.gridY = gridY;
-        System.out.println("✅ Static Object Created at Grid (" + gridX + ", " + gridY + ")");
-    }
-    
-    public int getGridX() {
-        return gridX;
-    }
 
-    public int getGridY() {
-        return gridY;
+    public StaticObjects(Board board, int gridX, int gridY) {
+        super(board, gridX, gridY, EntityType.STATIC);
+        this.shapeRenderer = new ShapeRenderer();
+        System.out.println("✅ Static Object Created at Grid (" + gridX + ", " + gridY + ")");
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        float objectSize = board.getTileSize();
-        float adjustedX = gridX * board.getTileSize() + board.getStartX();
-        float adjustedY = (board.getMazeHeight() - 1 - gridY) * board.getTileSize() + board.getStartY();
+        float tileSize = board.getTileSize();
+        float objectSize = tileSize * 0.8f;
+        float centerX = x + (tileSize - objectSize) / 2;
+        float centerY = y + (tileSize - objectSize) / 2;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.YELLOW);
-        shapeRenderer.rect(adjustedX, adjustedY, objectSize, objectSize);
+        shapeRenderer.rect(centerX, centerY, objectSize, objectSize);
         shapeRenderer.end();
     }
 
     public void dispose() {
         shapeRenderer.dispose();
     }
-
-	public void updateObjectPosition(Board board2) {
-		// TODO Auto-generated method stub
-		
-	}
 }
