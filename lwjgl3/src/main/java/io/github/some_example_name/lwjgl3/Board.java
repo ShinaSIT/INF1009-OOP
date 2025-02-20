@@ -46,7 +46,7 @@ public class Board {
             
             // Entrance and single exit
             mazeLayout[0][1] = 0;  // Entrance
-            mazeLayout[mazeHeight - 2][mazeWidth - 2] = 0; // Exit (Only one exit)
+            mazeLayout[mazeHeight -  1][mazeWidth - 2] = 0; // Exit (Only one exit)
             
             // Ensure maze is solvable
             isSolvable = isMazeSolvable();
@@ -81,7 +81,7 @@ public class Board {
         return row > 0 && col > 0 && row < mazeHeight - 1 && col < mazeWidth - 1 && mazeLayout[row][col] == 1;
     }
 
-    private boolean isMazeSolvable() {
+    public boolean isMazeSolvable() {
         boolean[][] visited = new boolean[mazeHeight][mazeWidth];
         return depthFirstSearch(0, 1, visited); // Start from entrance
     }
