@@ -17,8 +17,7 @@ public class GameMaster extends ApplicationAdapter {
     private GameObjects player;
     private Speaker speaker; 
     private SceneManager sceneManager;
-    private InputOutputManager ioManager;
-    private Keyboard keyboard;  
+    private InputOutputManager ioManager; 
     private Mouse mouse;        
     private StaticObjectManager staticObjectManager;
     // private HealthManager healthManager; // Part 2: Commented out
@@ -53,7 +52,6 @@ public class GameMaster extends ApplicationAdapter {
         mouse = new Mouse(null, speaker, sceneManager);
         ioManager = new InputOutputManager(movementManager, player, speaker, board, mouse);
         mouse.setIoManager(ioManager);
-        keyboard = new Keyboard(ioManager);
 
         staticObjectManager = new StaticObjectManager(board);
         staticObjectManager.generateStaticObjects(2, entityManager);
