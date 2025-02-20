@@ -6,14 +6,14 @@ public class CollisionManager {
     private List<Collidable> collidableObjects;
     private Board board;
     private EntityManager entityManager;
-    private HealthManager healthManager;  
+    // private HealthManager healthManager;  // Part 2: Commented out
     private int collisionCount = 0;  
 
-    public CollisionManager(Board board, EntityManager entityManager, HealthManager healthManager) {
+    public CollisionManager(Board board, EntityManager entityManager /*, HealthManager healthManager */) { // Part 2: Commented out
         this.collidableObjects = new ArrayList<>();
         this.board = board;
         this.entityManager = entityManager;
-        this.healthManager = healthManager;  
+        // this.healthManager = healthManager;  // Part 2: Commented out
     }
 
     /**
@@ -26,12 +26,11 @@ public class CollisionManager {
             collisionCount++; 
             System.out.println("Collision count: " + collisionCount);
 
-            if (collisionCount % 3 == 0) {  // ✅ Reduce life every 3rd wall collision
-                healthManager.reduceLife();
-            }
+            // if (collisionCount % 3 == 0) {  // ✅ Reduce life every 3rd wall collision (Part 2: Commented out)
+            //     healthManager.reduceLife();
+            // }
             return false;  // Move is not valid
         }
-
 
         for (Entity entity : entityManager.getEntities()) {
             if (entity instanceof StaticObjects) {
@@ -39,8 +38,8 @@ public class CollisionManager {
                 if (obj.getGridX() == newCol && obj.getGridY() == newRow) {
                     System.out.println("❌ Blocked by Static Object");
                     
-                    // ✅ Immediately reduce a life when hitting a static object
-                    healthManager.reduceLife();
+                    // ✅ Immediately reduce a life when hitting a static object (Part 2: Commented out)
+                    // healthManager.reduceLife();
                     return false;  // Move is not valid
                 }
             }

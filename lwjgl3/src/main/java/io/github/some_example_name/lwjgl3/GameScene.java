@@ -25,43 +25,52 @@ public class GameScene extends Scene {
     public void render(SpriteBatch batch) {
 //        System.out.println("✅ GameScene Render Called");
         
-        if (gameMaster.getHealthManager().isGameOver()) {  
-            gameMaster.getHealthManager().drawGameOverScreen(batch);
-        } else {
-            gameMaster.getBoard().render(batch);
-            gameMaster.getEntityManager().render(batch);
-            gameMaster.getHealthManager().drawLivesDisplay(batch);
-        }
+        // if (gameMaster.getHealthManager().isGameOver()) {  // Part 2: Commented out
+        //     gameMaster.getHealthManager().drawGameOverScreen(batch);
+        // } else {
+            if (gameMaster != null) {
+                if (gameMaster.getBoard() != null) {
+                    gameMaster.getBoard().render(batch);
+                }
+                if (gameMaster.getEntityManager() != null) {
+                    gameMaster.getEntityManager().render(batch);
+                }
+            }
+            // gameMaster.getHealthManager().drawLivesDisplay(batch); // Part 2: Commented out
+        // }
     }
-
 
     @Override
     public void resize(int width, int height) {
         System.out.println("✅ GameScene.resize() called! New size: " + width + "x" + height);
 
         // ✅ Update Board Dimensions
-        gameMaster.getBoard().updateDimensions();
+        if (gameMaster != null && gameMaster.getBoard() != null) {
+            gameMaster.getBoard().updateDimensions();
+            
+            // ✅ Update All Entities (Ensures static objects & enemies scale correctly)
+            if (gameMaster.getEntityManager() != null) {
+                gameMaster.getEntityManager().updateAllEntities(gameMaster.getBoard());
+
+                // ✅ Ensure Player Stays Inside Grid & Sync Position
+                MoveableObjects player = gameMaster.getEntityManager().getPlayer();
+                if (player != null) {
+                    int clampedX = Math.max(0, Math.min(player.getGridX(), gameMaster.getBoard().getMazeWidth() - 1));
+                    int clampedY = Math.max(0, Math.min(player.getGridY(), gameMaster.getBoard().getMazeHeight() - 1));
+
+                    player.setGridX(clampedX);
+                    player.setGridY(clampedY);
+                    player.updatePixelPosition(gameMaster.getBoard());
+
+                    System.out.println("📌 Player Clamped to Grid (" + clampedX + ", " + clampedY + ")");
+                }
+            }
+        }
         
-        // ✅ Update All Entities (Ensures static objects & enemies scale correctly)
-        gameMaster.getEntityManager().updateAllEntities(gameMaster.getBoard());
-
-        // ✅ Ensure Player Stays Inside Grid & Sync Position
-        MoveableObjects player = gameMaster.getEntityManager().getPlayer();
-        if (player != null) {
-            int clampedX = Math.max(0, Math.min(player.getGridX(), gameMaster.getBoard().getMazeWidth() - 1));
-            int clampedY = Math.max(0, Math.min(player.getGridY(), gameMaster.getBoard().getMazeHeight() - 1));
-
-            player.setGridX(clampedX);
-            player.setGridY(clampedY);
-            player.updatePixelPosition(gameMaster.getBoard());
-
-            System.out.println("📌 Player Clamped to Grid (" + clampedX + ", " + clampedY + ")");
-        }
-
         // ✅ Ensure Game Over UI Resizes Correctly
-        if (gameMaster.getHealthManager().isGameOver()) {
-            gameMaster.getHealthManager().resize(width, height);
-        }
+        // if (gameMaster.getHealthManager().isGameOver()) { // Part 2: Commented out
+        //     gameMaster.getHealthManager().resize(width, height);
+        // }
     }
 
     @Override

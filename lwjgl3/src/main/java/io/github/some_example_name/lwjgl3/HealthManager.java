@@ -1,3 +1,4 @@
+/*
 package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.Gdx;
@@ -47,18 +48,15 @@ public class HealthManager {
     private void setupGameOverUI() {
         stage.clear();
 
-        // ✅ Create Table Layout
         Table table = new Table();
         table.setFillParent(true);
         table.center();
         stage.addActor(table);
 
-        // ✅ "GAME OVER!" Label
         Label gameOverLabel = new Label("GAME OVER!", skin);
         gameOverLabel.setFontScale(4);
         gameOverLabel.setColor(Color.RED);
 
-        // ✅ "Return to Menu" Button
         TextButton returnButton = new TextButton("Return to Menu", skin);
         returnButton.pad(15);
         returnButton.addListener(new ClickListener() {
@@ -69,13 +67,11 @@ public class HealthManager {
             }
         });
 
-        // ✅ Add Elements to Table
         table.add(gameOverLabel).padBottom(50).row();
-        table.add(returnButton).width(Gdx.graphics.getWidth() * 0.3f) // ✅ Scale width
-                              .height(Gdx.graphics.getHeight() * 0.1f) // ✅ Scale height
+        table.add(returnButton).width(Gdx.graphics.getWidth() * 0.3f)
+                              .height(Gdx.graphics.getHeight() * 0.1f)
                               .padTop(20).row();
     }
-
 
     public void drawLivesDisplay(SpriteBatch batch) {
         BitmapFont font = new BitmapFont();
@@ -109,8 +105,6 @@ public class HealthManager {
     public void resize(int width, int height) {
         System.out.println("✅ Resizing HealthManager: " + width + "x" + height);
         stage.getViewport().update(width, height, true);
-
-        // ✅ Rebuild UI elements to maintain proper layout
         setupGameOverUI();
     }
 
@@ -118,3 +112,4 @@ public class HealthManager {
         return stage;
     }
 }
+*/
