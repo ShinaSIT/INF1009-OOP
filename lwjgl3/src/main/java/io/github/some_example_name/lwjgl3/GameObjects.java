@@ -9,52 +9,43 @@ public class GameObjects extends Entity {
     protected Board board;
     protected EntityManager entityManager;
 
-    public GameObjects(Board board, EntityManager entityManager, int gridX, int gridY) {
-        super(board, gridX, gridY);
+    public GameObjects(Board board, EntityManager entityManager, int gridX, int gridY, EntityType type) {
+        super(board, gridX, gridY,type);
         this.board = board;
         this.entityManager = entityManager;
         this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void setGridX(int gridX) {
-        this.gridX = Math.max(0, Math.min(gridX, board.getMazeWidth() - 1));
-    }
-
-    public void setGridY(int gridY) {
-        this.gridY = Math.max(0, Math.min(gridY, board.getMazeHeight() - 1));
-    }
-
     @Override
     public void render(SpriteBatch batch) {
         float tileSize = board.getTileSize();
-        float adjustedX = gridX * tileSize + board.getStartX();
-        float adjustedY = (board.getMazeHeight() - 1 - gridY) * tileSize + board.getStartY();
+        float playerSize = tileSize * 0.7f;  // Base player size
+        float adjustedX = x + tileSize / 2.0f;
+        float adjustedY = y + tileSize / 2.0f;
 
-        // ✅ Ensure the player is correctly scaled inside the tile
-        float playerSize = Math.max(10, tileSize * 0.7f);  
+        if (board.getScreenWidth() > 640) { 
+            float scaleFactor = Math.min(board.getScreenWidth() / 640.0f, board.getScreenHeight() / 480.0f);
+            float aspectRatio = board.getScreenWidth() / (float) board.getScreenHeight();
+            
+            // Apply additional width correction
+            float widthCorrection = Math.max(1.0f, aspectRatio * 1.2f); // reduces width
+            playerSize *= scaleFactor / widthCorrection;  // Scale player width slightly down
+
+            // Reduce player size to fit better in 1 tile
+            playerSize /= 2.0f;  
+
+            // Adjust position proportionally
+            adjustedX -= tileSize * 1.0f;  // Slight left shift
+            adjustedY -= tileSize * 3.1f;   // Keep vertical positioning
+        }
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.RED);
-        shapeRenderer.circle(adjustedX + tileSize / 2, adjustedY + tileSize / 2, playerSize / 2);
+        shapeRenderer.circle(adjustedX, adjustedY, playerSize / 2.0f);
         shapeRenderer.end();
     }
-
-
+    
     public void dispose() {
         shapeRenderer.dispose();
     }
-    
-    public void updatePosition(Board board) {
-        this.board = board;
-        updatePixelPosition(board);
-    }
-
-    public void updatePixelPosition(Board board) {
-        float tileSize = board.getTileSize();
-        float adjustedX = gridX * tileSize + board.getStartX();
-        float adjustedY = (board.getMazeHeight() - 1 - gridY) * tileSize + board.getStartY();
-
-        System.out.println("📌 Player Updated to (" + adjustedX + ", " + adjustedY + ")");
-    }
-
 }

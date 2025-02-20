@@ -103,22 +103,39 @@ public class GameMaster extends ApplicationAdapter {
             entityManager.clearStaticObjects();
             staticObjectManager.generateStaticObjects(2, entityManager);
 
-            // ✅ Remove and regenerate the Player safely
+            if (entityManager != null) {
+                entityManager.updateAllEntities(board);
+                entityManager.ensurePlayerExists(); // ✅ Ensure the player exists after resize
+            }
+
+            MoveableObjects player = entityManager.getPlayer();
             if (player != null) {
-                int lastX = player.getGridX();
-                int lastY = player.getGridY();
-                entityManager.removeEntity(player);
-                player = new MoveableObjects(board, entityManager, lastX, lastY, movementManager);
-                entityManager.addEntity(player);
+                int clampedX = Math.max(0, Math.min(player.getGridX(), board.getMazeWidth() - 1));
+                int clampedY = Math.max(0, Math.min(player.getGridY(), board.getMazeHeight() - 1));
+
+                player.setGridX(clampedX);
+                player.setGridY(clampedY);
+                player.updatePixelPosition();
+             // ✅ Ensure player stays within visible screen bounds
+                float maxScreenY = Gdx.graphics.getHeight() - board.getTileSize();
+                if (player.getY() > maxScreenY) {
+                    player.setGridY(board.getMazeHeight() - 1);
+                    player.updatePixelPosition();
+                }
+
+                System.out.println("📌 Player repositioned to (" + clampedX + ", " + clampedY + "), Pixel (" + player.getX() + ", " + player.getY() + ")");
+            } else {
+                System.out.println("🚨 Player missing after resize! Re-adding...");
+                entityManager.ensurePlayerExists();
             }
         }
-
         // if (healthManager.isGameOver()) { // Part 2: Commented out
         //     healthManager.resize(width, height);
         // }
 
         isResizing = false; // ✅ Allow rendering again after resizing
     }
+
     
     public void resetGame() {
         System.out.println("🔄 Resetting game...");

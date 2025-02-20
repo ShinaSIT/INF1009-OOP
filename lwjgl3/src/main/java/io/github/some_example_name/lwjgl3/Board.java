@@ -198,7 +198,15 @@ public class Board {
     public int getMazeWidth() {
         return mazeWidth;
     }
+    
+    public float getScreenWidth() {
+        return Gdx.graphics.getWidth();
+    }
 
+    public float getScreenHeight() {
+        return Gdx.graphics.getHeight();
+    }
+    
     public void dispose() {
         shapeRenderer.dispose();
     }

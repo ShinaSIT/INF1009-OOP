@@ -23,7 +23,7 @@ public class EntityManager {
 
     public void updatePositions(Board board) {
         for (Entity entity : entities) {
-            if (entity instanceof GameObjects || entity instanceof StaticObjects) {
+            if (entity.getType() == EntityType.MOVEABLE || entity.getType() == EntityType.STATIC) {
                 int gridX = Math.round((entity.x - board.getStartX()) / board.getTileSize());
                 int gridY = Math.round((entity.y - board.getStartY()) / board.getTileSize());
 
@@ -41,63 +41,83 @@ public class EntityManager {
 
     public void render(SpriteBatch batch) {
         for (Entity entity : entities) {
-//            System.out.println("Rendering entity at: (" + entity.getX() + ", " + entity.getY() + ")");
             entity.render(batch);
         }
     }
     
     public void updateAllEntities(Board board) {
         for (Entity entity : entities) {
-            if (entity instanceof GameObjects || entity instanceof StaticObjects) {
+            if (entity.getType() == EntityType.MOVEABLE) {
+                // ✅ Ensure MOVEABLE objects keep their correct position
+                System.out.println("📌 MOVEABLE entity retained at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
+                continue;
+            }
+            
+            if (entity.getType() == EntityType.STATIC) { 
                 int newGridX = Math.round((entity.x - board.getStartX()) / board.getTileSize());
                 int newGridY = Math.round((entity.y - board.getStartY()) / board.getTileSize());
 
                 entity.x = newGridX * board.getTileSize() + board.getStartX();
                 entity.y = newGridY * board.getTileSize() + board.getStartY();
-
-                if (entity instanceof MoveableObjects) {
-                    System.out.println("📌 MoveableObjects updated to Grid (" + newGridX + ", " + newGridY + ")");
-                } else if (entity instanceof StaticObjects) {
-                    System.out.println("📌 StaticObjects updated to Grid (" + newGridX + ", " + newGridY + ")");
-                }
             }
         }
     }
     
     public void updateEntitiesOnResize() {
         for (Entity entity : entities) {
-            // Retrieve grid position
             int gridX = entity.getGridX();
             int gridY = entity.getGridY();
 
-            // Convert to pixel positions after resizing
             entity.updatePixelPosition();
 
-            System.out.println("📌 " + entity.getClass().getSimpleName() +
+            System.out.println("📌 " + entity.getType() +
                 " updated to Grid (" + gridX + ", " + gridY + ") at (" + entity.x + ", " + entity.y + ")");
         }
     }
 
     public void clearStaticObjects() {
-        entities.removeIf(entity -> entity instanceof StaticObjects);
+        System.out.println("⚠️ Clearing Static Objects...");
+        entities.removeIf(entity -> {
+            boolean isStatic = entity.getType() == EntityType.STATIC;
+            if (isStatic) {
+                System.out.println("❌ Removing STATIC entity at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
+            }
+            return isStatic;
+        });
     }
 
+    public void removeEntity(Entity entity) {
+        System.out.println("⚠️ Attempting to remove entity: " + entity.getType() + " at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
+
+        if (entity.getType() == EntityType.MOVEABLE) {
+            System.out.println("🚨 WARNING: Preventing removal of MOVEABLE entity!");
+            return; // ✅ Do NOT remove MOVEABLE entities
+        }
+
+        if (entities.contains(entity)) {
+            entities.remove(entity);
+            System.out.println("❌ Entity removed: " + entity.getType() + " at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
+        } else {
+            System.out.println("⚠ Entity not found: " + entity.getType());
+        }
+    }
+
+
+    
+    public void ensurePlayerExists() {
+        if (getPlayer() == null) {
+            System.out.println("🔄 Player entity was removed. Re-adding...");
+            MoveableObjects player = new MoveableObjects(board, this, 1, 1, new MovementManager(new Speaker(), new CollisionManager(board, this)));
+            addEntity(player);
+        }
+    }
     public MoveableObjects getPlayer() {
         for (Entity entity : entities) {
-            if (entity instanceof MoveableObjects) {
+            if (entity.getType() == EntityType.MOVEABLE) {
                 return (MoveableObjects) entity;
             }
         }
         return null; // No player found
-    }
-
-    public void removeEntity(Entity entity) {
-        if (entities.contains(entity)) {
-            entities.remove(entity);
-            System.out.println("❌ Entity removed: " + entity.getClass().getSimpleName());
-        } else {
-            System.out.println("⚠ Entity not found: " + entity.getClass().getSimpleName());
-        }
     }
 
 }

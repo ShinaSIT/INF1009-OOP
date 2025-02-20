@@ -7,7 +7,8 @@ public class CollisionManager {
     private Board board;
     private EntityManager entityManager;
     // private HealthManager healthManager;  // Part 2: Commented out
-    private int collisionCount = 0;  
+    private int collisionCount = 0;
+    private Set<String> collisionCache = new HashSet<>();
 
     public CollisionManager(Board board, EntityManager entityManager /*, HealthManager healthManager */) { // Part 2: Commented out
         this.collidableObjects = new ArrayList<>();
@@ -20,26 +21,33 @@ public class CollisionManager {
      * Checks if a move to the specified grid position is valid.
      */
     public boolean isMoveValid(int newCol, int newRow) {
+        String key = newCol + "," + newRow;
+        if (collisionCache.contains(key)) {
+            return false; // 🚀 Instantly return cached result
+        }
+
         // ✅ Check if the new position is a wall
         if (board.getMazeLayout()[newRow][newCol] == 1) {
             System.out.println("Blocked by wall");
-            collisionCount++; 
+            collisionCount++;
             System.out.println("Collision count: " + collisionCount);
 
             // if (collisionCount % 3 == 0) {  // ✅ Reduce life every 3rd wall collision (Part 2: Commented out)
             //     healthManager.reduceLife();
             // }
+            collisionCache.add(key); // ✅ Store invalid positions
             return false;  // Move is not valid
         }
 
         for (Entity entity : entityManager.getEntities()) {
-            if (entity instanceof StaticObjects) {
+            if (entity.getType() == EntityType.STATIC) {
                 StaticObjects obj = (StaticObjects) entity;
                 if (obj.getGridX() == newCol && obj.getGridY() == newRow) {
                     System.out.println("❌ Blocked by Static Object");
                     
                     // ✅ Immediately reduce a life when hitting a static object (Part 2: Commented out)
                     // healthManager.reduceLife();
+                    collisionCache.add(key); // ✅ Store invalid positions
                     return false;  // Move is not valid
                 }
             }

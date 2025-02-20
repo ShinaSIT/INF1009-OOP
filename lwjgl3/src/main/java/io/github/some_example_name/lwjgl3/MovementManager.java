@@ -7,55 +7,81 @@ public class MovementManager {
     private List<MoveableObjects> movingEntities;
     private boolean physicsEnabled;
     private Speaker speaker;
-    private CollisionManager collisionManager; // ✅ Added CollisionManager
+    private CollisionManager collisionManager; 
 
     public MovementManager(Speaker speaker, CollisionManager collisionManager) {
         this.movingEntities = new ArrayList<>();
         this.physicsEnabled = true;
         this.speaker = speaker;
-        this.collisionManager = collisionManager; // ✅ Initialize CollisionManager
+        this.collisionManager = collisionManager; 
     }
 
     /**
      * Adds a moveable entity to the manager.
      */
-    public void addEntity(MoveableObjects entity) {
-        movingEntities.add(entity);
+    public void addEntity(Entity entity) {
+        if (entity.getType() == EntityType.MOVEABLE) { 
+            movingEntities.add((MoveableObjects) entity);
+        }
     }
 
     /**
      * Applies movement to an entity based on the specified delta (dx, dy).
      */
-    public void applyMovement(MoveableObjects entity, float dx, float dy) {
+    public void applyMovement(Entity entity, float dx, float dy) {
+        if (entity.getType() != EntityType.MOVEABLE) return;
+
         int currentCol = entity.getGridX();
         int currentRow = entity.getGridY();
+        float tileSize = entity.board.getTileSize();
+        boolean isExpanded = entity.board.getScreenWidth() > 640;
 
-        int newCol = currentCol + Math.round(dx / entity.board.getTileSize());
-        int newRow = currentRow - Math.round(dy / entity.board.getTileSize());
+        // Debugging statements
+        System.out.println("dx: " + dx + ", dy: " + dy);
+        System.out.println("Tile size: " + tileSize);
 
-        System.out.println("Trying to move from tile (" + currentCol + ", " + currentRow + ") to (" + newCol + ", " + newRow + ")");
+        // Adjust dx and dy if expanded
+        if (isExpanded) {
+            dx /= 2.0f; // Adjust step size (experiment with divisor)
+            dy /= 2.0f;
+        }
 
-        // Clamp new position within the grid
+        // Determine new grid position
+        int newCol = currentCol + (dx > tileSize / 2 ? 1 : dx < -tileSize / 2 ? -1 : 0);
+        int newRow = currentRow - (dy > tileSize / 2 ? 1 : dy < -tileSize / 2 ? -1 : 0);
+
+        // Debugging new position
+        System.out.println("Calculated newCol: " + newCol + ", newRow: " + newRow);
+
+        // Ensure new position is within bounds
         newCol = Math.max(0, Math.min(entity.board.getMazeWidth() - 1, newCol));
         newRow = Math.max(0, Math.min(entity.board.getMazeHeight() - 1, newRow));
 
-        // Use CollisionManager to check if the move is valid
+        // Ensure movement always moves at least one tile
+        if (newCol == currentCol && newRow == currentRow) {
+            newCol += (dx > 0) ? 1 : (dx < 0) ? -1 : 0;
+            newRow += (dy > 0) ? -1 : (dy < 0) ? 1 : 0;
+        }
+
+        // Collision check
+        System.out.println("Collision check for (" + newCol + ", " + newRow + "): " + collisionManager.isMoveValid(newCol, newRow));
+
+        // Validate move
         if (collisionManager.isMoveValid(newCol, newRow)) {
             entity.setGridX(newCol);
             entity.setGridY(newRow);
 
             // Update pixel position
-            entity.x = newCol * entity.board.getTileSize() + entity.board.getStartX();
-            entity.y = (entity.board.getMazeHeight() - 1 - newRow) * entity.board.getTileSize() + entity.board.getStartY();
+            entity.x = newCol * tileSize + entity.board.getStartX();
+            entity.y = (entity.board.getMazeHeight() - 1 - newRow) * tileSize + entity.board.getStartY();
 
-            System.out.println("📌 Player Clamped to Grid (" + newCol + ", " + newRow + ")");
+            System.out.println("📌 Player moved to Grid (" + newCol + ", " + newRow + ")");
             speaker.playSound("sound");
         } else {
-            System.out.println("Blocked! Cannot move.");
+            System.out.println("❌ Blocked! Cannot move.");
             speaker.playSound("block");
         }
     }
-
 
     /**
      * Applies physics to an entity (e.g., gravity, collisions).

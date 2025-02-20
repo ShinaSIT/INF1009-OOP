@@ -23,54 +23,30 @@ public class GameScene extends Scene {
 
     @Override
     public void render(SpriteBatch batch) {
-//        System.out.println("✅ GameScene Render Called");
-        
-        // if (gameMaster.getHealthManager().isGameOver()) {  // Part 2: Commented out
-        //     gameMaster.getHealthManager().drawGameOverScreen(batch);
-        // } else {
-            if (gameMaster != null) {
-                if (gameMaster.getBoard() != null) {
-                    gameMaster.getBoard().render(batch);
-                }
-                if (gameMaster.getEntityManager() != null) {
-                    gameMaster.getEntityManager().render(batch);
-                }
-            }
-            // gameMaster.getHealthManager().drawLivesDisplay(batch); // Part 2: Commented out
-        // }
+        // ✅ Return early if `gameMaster` is null
+        if (gameMaster == null) return;
+
+        // ✅ Render Board & Entities safely
+        if (getBoard() != null) getBoard().render(batch);
+        if (getEntityManager() != null) getEntityManager().render(batch);
+
+        // gameMaster.getHealthManager().drawLivesDisplay(batch); // Part 2: Commented out
     }
 
     @Override
     public void resize(int width, int height) {
-        System.out.println("✅ GameScene.resize() called! New size: " + width + "x" + height);
+        System.out.println("✅ Resizing GameScene: " + width + "x" + height);
 
-        // ✅ Update Board Dimensions
-        if (gameMaster != null && gameMaster.getBoard() != null) {
-            gameMaster.getBoard().updateDimensions();
-            
-            // ✅ Update All Entities (Ensures static objects & enemies scale correctly)
-            if (gameMaster.getEntityManager() != null) {
-                gameMaster.getEntityManager().updateAllEntities(gameMaster.getBoard());
+        if (gameMaster == null) return;
 
-                // ✅ Ensure Player Stays Inside Grid & Sync Position
-                MoveableObjects player = gameMaster.getEntityManager().getPlayer();
-                if (player != null) {
-                    int clampedX = Math.max(0, Math.min(player.getGridX(), gameMaster.getBoard().getMazeWidth() - 1));
-                    int clampedY = Math.max(0, Math.min(player.getGridY(), gameMaster.getBoard().getMazeHeight() - 1));
+        if (getBoard() != null) {
+            getBoard().updateDimensions();
 
-                    player.setGridX(clampedX);
-                    player.setGridY(clampedY);
-                    player.updatePixelPosition(gameMaster.getBoard());
-
-                    System.out.println("📌 Player Clamped to Grid (" + clampedX + ", " + clampedY + ")");
-                }
+            if (getEntityManager() != null) {
+                getEntityManager().updateAllEntities(getBoard());
+                getEntityManager().ensurePlayerExists(); // ✅ Ensure the player exists after resize
             }
         }
-        
-        // ✅ Ensure Game Over UI Resizes Correctly
-        // if (gameMaster.getHealthManager().isGameOver()) { // Part 2: Commented out
-        //     gameMaster.getHealthManager().resize(width, height);
-        // }
     }
 
     @Override
@@ -87,6 +63,18 @@ public class GameScene extends Scene {
     @Override
     public void update(float deltaTime) {}
 
+    // ✅ Helper Methods to Get `gameMaster` Dependencies
+    private Board getBoard() {
+        return (gameMaster != null) ? gameMaster.getBoard() : null;
+    }
+
+    private EntityManager getEntityManager() {
+        return (gameMaster != null) ? gameMaster.getEntityManager() : null;
+    }
+
 	@Override
-	public void update() {}
+	public void update() {
+		// TODO Auto-generated method stub
+		
+	}
 }
