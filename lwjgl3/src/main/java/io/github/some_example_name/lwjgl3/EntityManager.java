@@ -34,7 +34,7 @@ public class EntityManager {
                 entity.x = gridX * board.getTileSize() + board.getStartX();
                 entity.y = gridY * board.getTileSize() + board.getStartY();
 
-                System.out.println("📌 Entity Clamped to Grid (" + gridX + ", " + gridY + ")");
+//                System.out.println("📌 Entity Clamped to Grid (" + gridX + ", " + gridY + ")");
             }
         }
     }
@@ -70,8 +70,8 @@ public class EntityManager {
 
             entity.updatePixelPosition();
 
-            System.out.println("📌 " + entity.getType() +
-                " updated to Grid (" + gridX + ", " + gridY + ") at (" + entity.x + ", " + entity.y + ")");
+//            System.out.println("📌 " + entity.getType() +
+//                " updated to Grid (" + gridX + ", " + gridY + ") at (" + entity.x + ", " + entity.y + ")");
         }
     }
 
