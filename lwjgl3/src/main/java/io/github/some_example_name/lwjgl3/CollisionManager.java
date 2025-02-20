@@ -44,7 +44,8 @@ public class CollisionManager {
                 StaticObjects obj = (StaticObjects) entity;
                 if (obj.getGridX() == newCol && obj.getGridY() == newRow) {
                     System.out.println("❌ Blocked by Static Object");
-                    
+                    collisionCount++;
+                    System.out.println("Collision count: " + collisionCount);
                     // ✅ Immediately reduce a life when hitting a static object (Part 2: Commented out)
                     // healthManager.reduceLife();
                     collisionCache.add(key); // ✅ Store invalid positions
@@ -56,23 +57,6 @@ public class CollisionManager {
         System.out.println("Free to move");
         return true; 
     }
-
-    /**
-     * Adds a collidable object to the manager.
-     */
-    public void addCollidable(Collidable obj) {
-        if (!collidableObjects.contains(obj)) {
-            collidableObjects.add(obj);
-        }
-    }
-
-    /**
-     * Removes a collidable object from the manager.
-     */
-    public void removeCollidable(Collidable obj) {
-        collidableObjects.remove(obj);
-    }
-
     /**
      * Checks for collisions between all collidable objects.
      */
