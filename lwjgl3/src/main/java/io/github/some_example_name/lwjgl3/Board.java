@@ -29,7 +29,7 @@ public class Board {
         updateDimensions();
     }
 
-    private void generateRandomMaze() {
+    protected void generateRandomMaze() {
         mazeLayout = new int[mazeHeight][mazeWidth];
 
         boolean isSolvable = false;

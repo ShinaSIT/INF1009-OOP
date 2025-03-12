@@ -65,7 +65,7 @@ public class GameScene extends Scene {
 
     // ✅ Helper Methods to Get `gameMaster` Dependencies
     private Board getBoard() {
-        return (gameMaster != null) ? gameMaster.getBoard() : null;
+        return (gameMaster != null) ? gameMaster.getBoardManager().getBoard() : null;
     }
 
     private EntityManager getEntityManager() {
