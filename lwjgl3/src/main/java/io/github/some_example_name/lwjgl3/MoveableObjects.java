@@ -1,7 +1,7 @@
 package io.github.some_example_name.lwjgl3;
 
 public class MoveableObjects extends GameObjects implements IMoveable {
-    private MovementManager movementManager;
+    protected MovementManager movementManager;
 
     public MoveableObjects(Board board, EntityManager entityManager, int gridX, int gridY, MovementManager movementManager) {
         super(board, entityManager, gridX, gridY, EntityType.MOVEABLE); 
