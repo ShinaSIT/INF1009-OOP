@@ -7,11 +7,11 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 
 public class Mouse extends InputAdapter {
-    private InputOutputManager ioManager;
+    private InputManager ioManager;
     private Speaker speaker;
 
     // ✅ Unified constructor for both sound and scene management
-    public Mouse(InputOutputManager ioManager, Speaker speaker, SceneManager sceneManager) {
+    public Mouse(InputManager ioManager, Speaker speaker, SceneManager sceneManager) {
         this.ioManager = ioManager;
         this.speaker = speaker;
     }
@@ -38,7 +38,7 @@ public class Mouse extends InputAdapter {
         }
     }
     
-    public void setIoManager(InputOutputManager ioManager) {
+    public void setIoManager(InputManager ioManager) {
         this.ioManager = ioManager;
     }
 

@@ -14,7 +14,8 @@ public class GameMaster extends ApplicationAdapter {
     private GameObjects player;
     private Speaker speaker;
     private SceneManager sceneManager;
-    private InputOutputManager ioManager;
+    private InputManager inputManager;
+    private OutputManager outputManager;
     private Mouse mouse;
     private StaticObjectManager staticObjectManager;
     private boolean gameStarted = false;
@@ -41,8 +42,9 @@ public class GameMaster extends ApplicationAdapter {
         player = new MoveableObjects(boardManager.getBoard(), entityManager, 1, 1, movementManager);
         entityManager.addEntity(player);
         mouse = new Mouse(null, speaker, sceneManager);
-        ioManager = new InputOutputManager(movementManager, player, speaker, boardManager.getBoard(), mouse);
-        mouse.setIoManager(ioManager);
+        inputManager = new InputManager(movementManager, player, boardManager.getBoard(), mouse);
+        outputManager = new OutputManager(speaker);
+        mouse.setIoManager(inputManager);
         staticObjectManager = new StaticObjectManager(boardManager.getBoard());
         staticObjectManager.generateStaticObjects(2, entityManager);
         
@@ -59,7 +61,12 @@ public class GameMaster extends ApplicationAdapter {
         if (!gameStarted) {
             sceneManager.render(batch);
         } else {
-            ioManager.handleInput();
+            inputManager.handleInput();
+            if (!outputManager.isHasMoved()) {
+                outputManager.startTimer();
+                outputManager.setHasMoved(true);
+            }
+            outputManager.handleOutput();
             sceneManager.render(batch);
             boardManager.render(batch);
             entityManager.render(batch);
@@ -103,7 +110,7 @@ public class GameMaster extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        ioManager.stopTimer();
+        outputManager.stopTimer();
         boardManager.dispose();
         batch.dispose();
         sceneManager.getCurrentScene().dispose();
