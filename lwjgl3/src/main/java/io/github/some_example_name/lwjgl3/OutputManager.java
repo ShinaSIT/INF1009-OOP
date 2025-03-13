@@ -2,26 +2,27 @@ package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 
-public class OutputManager {
+public class OutputManager extends OutputClass {
 
-    private Speaker speaker;
-    private Timer timer;
     private boolean hasMoved = false;
+    private boolean hasTimerStarted = false;
 
     public OutputManager(Speaker speaker) {
-        this.speaker = speaker;
-        this.timer = new Timer();
-        initializeSounds();
+        super(speaker);
     }
 
-    private void initializeSounds() {
+    @Override
+    protected void initializeOutput() {
         speaker.loadSound("click", "sounds/sample.mp3");
         speaker.loadSound("sound", "sounds/sample2.mp3");
         speaker.loadSound("block", "sounds/sample3.mp3");
-        speaker.playMusic("sounds/sample.mp3"); // ✅ Start background music
+        speaker.playMusic("sounds/sample.mp3");
     }
 
+    @Override
     public void startTimer() {
         if (timer != null) {
             timer.start();
@@ -31,10 +32,12 @@ public class OutputManager {
         }
     }
 
+    @Override
     public void stopTimer() {
         timer.stop();
     }
 
+    @Override
     public void handleOutput() {
         // Spacebar: Pause/Resume Music
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -52,5 +55,13 @@ public class OutputManager {
 
     public void setHasMoved(boolean hasMoved) {
         this.hasMoved = hasMoved;
+    }
+
+    public boolean isHasTimerStarted() {
+        return hasTimerStarted;
+    }
+
+    public void setHasTimerStarted(boolean hasTimerStarted) {
+        this.hasTimerStarted = hasTimerStarted;
     }
 }
