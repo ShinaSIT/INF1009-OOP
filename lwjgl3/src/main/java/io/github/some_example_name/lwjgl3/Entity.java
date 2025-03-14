@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class Entity {
+public abstract class Entity implements IMoveable {
     protected float x, y;
     protected int gridX, gridY;
     protected Board board;
@@ -60,4 +60,9 @@ public abstract class Entity {
     }
     
     public abstract void render(SpriteBatch batch);
+    
+    @Override
+    public void move(float dx, float dy) {
+        // Default empty implementation, subclasses like MoveableObjects will override it
+    }
 }
