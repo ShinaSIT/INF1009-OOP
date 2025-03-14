@@ -4,7 +4,7 @@ public class MoveableObjects extends GameObjects implements IMoveable {
     protected MovementManager movementManager;
 
     public MoveableObjects(Board board, EntityManager entityManager, int gridX, int gridY, MovementManager movementManager) {
-        super(board, entityManager, gridX, gridY, EntityType.MOVEABLE); 
+        super(board, entityManager, gridX, gridY, "moveable");
         this.movementManager = movementManager;
     }
 

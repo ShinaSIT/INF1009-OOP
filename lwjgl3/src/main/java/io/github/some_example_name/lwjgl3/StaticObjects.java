@@ -10,7 +10,7 @@ public class StaticObjects extends Entity {
     private static Set<String> staticObjectPositions = new HashSet<>(); // ✅ Track placed objects
 
     public StaticObjects(Board board, int gridX, int gridY) {
-        super(board, gridX, gridY, EntityType.STATIC);
+        super(board, gridX, gridY, "static", "collidable"); // ✅ Replaced EntityType with tags
         this.shapeRenderer = new ShapeRenderer();
         staticObjectPositions.add(gridX + "," + gridY); // Track position globally
         System.out.println("✅ Static Object Created at Grid (" + gridX + ", " + gridY + ")");

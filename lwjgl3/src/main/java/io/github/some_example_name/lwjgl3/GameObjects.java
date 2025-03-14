@@ -9,8 +9,8 @@ public class GameObjects extends Entity {
     protected Board board;
     protected EntityManager entityManager;
 
-    public GameObjects(Board board, EntityManager entityManager, int gridX, int gridY, EntityType type) {
-        super(board, gridX, gridY,type);
+    public GameObjects(Board board, EntityManager entityManager, int gridX, int gridY, String... tags) {
+        super(board, gridX, gridY, tags); 
         this.board = board;
         this.entityManager = entityManager;
         this.shapeRenderer = new ShapeRenderer();
