@@ -17,7 +17,6 @@ public class GameMaster extends ApplicationAdapter {
     private InputManager inputManager;
     private OutputManager outputManager;
     private Mouse mouse;
-    private StaticObjectManager staticObjectManager;
     private boolean gameStarted = false;
     private boolean isResizing = false;
 
@@ -37,7 +36,7 @@ public class GameMaster extends ApplicationAdapter {
         gameStarted = true;
         speaker = new Speaker();
         entityManager = new EntityManager();
-        collisionManager = new CollisionManager(boardManager.getBoard(), entityManager); // ✅ Use getBoard()
+        collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
         movementManager = new MovementManager(speaker, collisionManager);
         player = new MoveableObjects(boardManager.getBoard(), entityManager, 1, 1, movementManager);
         entityManager.addEntity(player);
@@ -45,8 +44,7 @@ public class GameMaster extends ApplicationAdapter {
         inputManager = new InputManager(movementManager, player, boardManager.getBoard(), mouse);
         outputManager = new OutputManager(speaker);
         mouse.setIoManager(inputManager);
-        staticObjectManager = new StaticObjectManager(boardManager.getBoard());
-        staticObjectManager.generateStaticObjects(2, entityManager);
+        StaticObjects.generateStaticObjects(boardManager.getBoard(), 2, entityManager);
         
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
@@ -87,8 +85,8 @@ public class GameMaster extends ApplicationAdapter {
         if (gameStarted) {
             boardManager.updateBoard();
             entityManager.clearStaticObjects();
-            staticObjectManager.generateStaticObjects(2, entityManager);
-            entityManager.updateAllEntities(boardManager.getBoard()); // ✅ Use getBoard() to avoid unintended resets
+            StaticObjects.generateStaticObjects(boardManager.getBoard(), 2, entityManager);
+            entityManager.updateAllEntities(boardManager.getBoard());
             entityManager.ensurePlayerExists();
         }
         

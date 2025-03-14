@@ -44,7 +44,7 @@ public abstract class Entity {
         this.x = gridX * tileSize + board.getStartX();
         this.y = (board.getMazeHeight() - gridY - 1) * tileSize + board.getStartY();
 
-//        System.out.println("📌 Updated pixel position: (" + x + ", " + y + "), Screen Height: " + Gdx.graphics.getHeight());
+        System.out.println("📌 Updated pixel position: (" + x + ", " + y + "), Screen Height: " + Gdx.graphics.getHeight());
     }
     
     public abstract void render(SpriteBatch batch);

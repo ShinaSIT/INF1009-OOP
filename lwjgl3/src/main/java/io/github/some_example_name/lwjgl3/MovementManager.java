@@ -43,8 +43,8 @@ public class MovementManager {
         // Determine mode: expanded if the screen width is greater than 640.
         boolean isExpanded = entity.board.getScreenWidth() > 640;
         
-//        System.out.println("applyMovement called with dx: " + dx + ", dy: " + dy);
-//        System.out.println("Tile size: " + tileSize);
+        System.out.println("applyMovement called with dx: " + dx + ", dy: " + dy);
+        System.out.println("Tile size: " + tileSize);
         
         // If expanded, normalize dx and dy to the base tile size.
         // For example, if tileSize is 128, then scale = baseTile / 128.
@@ -52,7 +52,7 @@ public class MovementManager {
             float scale = baseTile / tileSize;
             dx = dx * scale;
             dy = dy * scale;
-//            System.out.println("Normalized dx: " + dx + ", dy: " + dy);
+            System.out.println("Normalized dx: " + dx + ", dy: " + dy);
         }
         
         // Use the baseTile as the threshold for moving one grid cell.
@@ -68,13 +68,13 @@ public class MovementManager {
         int newCol = currentCol + deltaCol;
         int newRow = currentRow + deltaRow;
         
-//        System.out.println("Calculated grid position: (" + newCol + ", " + newRow + ")");
+        System.out.println("Calculated grid position: (" + newCol + ", " + newRow + ")");
         
         // Clamp new grid coordinates to the board boundaries.
         newCol = Math.max(0, Math.min(entity.board.getMazeWidth() - 1, newCol));
         newRow = Math.max(0, Math.min(entity.board.getMazeHeight() - 1, newRow));
         
-//        System.out.println("Clamped grid position: (" + newCol + ", " + newRow + ")");
+        System.out.println("Clamped grid position: (" + newCol + ", " + newRow + ")");
         
         // Check collision once.
         if (collisionManager.isMoveValid(newCol, newRow)) {
