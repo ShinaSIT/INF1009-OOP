@@ -2,7 +2,6 @@ package io.github.some_example_name.lwjgl3;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class EntityManager {
@@ -23,7 +22,7 @@ public class EntityManager {
 
     public void updatePositions(Board board) {
         for (Entity entity : entities) {
-            if (entity.getType() == EntityType.MOVEABLE || entity.getType() == EntityType.STATIC) {
+            if (entity.hasTag("moveable") || entity.hasTag("static")) { 
                 int gridX = Math.round((entity.x - board.getStartX()) / board.getTileSize());
                 int gridY = Math.round((entity.y - board.getStartY()) / board.getTileSize());
 
@@ -34,7 +33,7 @@ public class EntityManager {
                 entity.x = gridX * board.getTileSize() + board.getStartX();
                 entity.y = gridY * board.getTileSize() + board.getStartY();
 
-//                System.out.println("📌 Entity Clamped to Grid (" + gridX + ", " + gridY + ")");
+                System.out.println("📌 Entity Clamped to Grid (" + gridX + ", " + gridY + ")");
             }
         }
     }
@@ -47,13 +46,12 @@ public class EntityManager {
     
     public void updateAllEntities(Board board) {
         for (Entity entity : entities) {
-            if (entity.getType() == EntityType.MOVEABLE) {
-                // ✅ Ensure MOVEABLE objects keep their correct position
+            if (entity.hasTag("moveable")) {
                 System.out.println("📌 MOVEABLE entity retained at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
                 continue;
             }
             
-            if (entity.getType() == EntityType.STATIC) { 
+            if (entity.hasTag("static")) {
                 int newGridX = Math.round((entity.x - board.getStartX()) / board.getTileSize());
                 int newGridY = Math.round((entity.y - board.getStartY()) / board.getTileSize());
 
@@ -67,18 +65,15 @@ public class EntityManager {
         for (Entity entity : entities) {
             int gridX = entity.getGridX();
             int gridY = entity.getGridY();
-
             entity.updatePixelPosition();
-
-//            System.out.println("📌 " + entity.getType() +
-//                " updated to Grid (" + gridX + ", " + gridY + ") at (" + entity.x + ", " + entity.y + ")");
+            System.out.println("📌 " + entity.getTags() + " updated to Grid (" + gridX + ", " + gridY + ") at (" + entity.x + ", " + entity.y + ")");
         }
     }
 
     public void clearStaticObjects() {
         System.out.println("⚠️ Clearing Static Objects...");
         entities.removeIf(entity -> {
-            boolean isStatic = entity.getType() == EntityType.STATIC;
+            boolean isStatic = entity.hasTag("static");
             if (isStatic) {
                 System.out.println("❌ Removing STATIC entity at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
             }
@@ -87,23 +82,21 @@ public class EntityManager {
     }
 
     public void removeEntity(Entity entity) {
-        System.out.println("⚠️ Attempting to remove entity: " + entity.getType() + " at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
+        System.out.println("⚠️ Attempting to remove entity: " + entity.getTags() + " at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
 
-        if (entity.getType() == EntityType.MOVEABLE) {
+        if (entity.hasTag("moveable")) {
             System.out.println("🚨 WARNING: Preventing removal of MOVEABLE entity!");
-            return; // ✅ Do NOT remove MOVEABLE entities
+            return;
         }
 
         if (entities.contains(entity)) {
             entities.remove(entity);
-            System.out.println("❌ Entity removed: " + entity.getType() + " at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
+            System.out.println("❌ Entity removed: " + entity.getTags() + " at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
         } else {
-            System.out.println("⚠ Entity not found: " + entity.getType());
+            System.out.println("⚠ Entity not found: " + entity.getTags());
         }
     }
 
-
-    
     public void ensurePlayerExists() {
         if (getPlayer() == null) {
             System.out.println("🔄 Player entity was removed. Re-adding...");
@@ -111,13 +104,13 @@ public class EntityManager {
             addEntity(player);
         }
     }
+    
     public MoveableObjects getPlayer() {
         for (Entity entity : entities) {
-            if (entity.getType() == EntityType.MOVEABLE) {
+            if (entity.hasTag("moveable")) {
                 return (MoveableObjects) entity;
             }
         }
-        return null; // No player found
+        return null;
     }
-
 }

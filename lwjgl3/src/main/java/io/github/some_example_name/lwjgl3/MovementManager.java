@@ -9,9 +9,6 @@ public class MovementManager {
     private Speaker speaker;
     private CollisionManager collisionManager;
     
-    // (Optional) You can add a cooldown mechanism here if needed.
-    
-    // Base tile size used for input normalization (when minimized)
     private final float baseTile = 42.666668f;
 
     public MovementManager(Speaker speaker, CollisionManager collisionManager) {
@@ -25,7 +22,7 @@ public class MovementManager {
      * Adds a moveable entity to the manager.
      */
     public void addEntity(Entity entity) {
-        if (entity.getType() == EntityType.MOVEABLE) {
+        if (entity.hasTag("moveable")) { // ✅ Replaced EntityType with tags
             movingEntities.add((MoveableObjects) entity);
         }
     }
@@ -34,55 +31,42 @@ public class MovementManager {
      * Applies movement to an entity based on the specified delta (dx, dy).
      */
     public void applyMovement(Entity entity, float dx, float dy) {
-        // Only process MOVEABLE entities.
-        if (entity.getType() != EntityType.MOVEABLE) return;
+        if (!entity.hasTag("moveable")) return; // ✅ Replaced EntityType check
         
         int currentCol = entity.getGridX();
         int currentRow = entity.getGridY();
         float tileSize = entity.board.getTileSize();
-        // Determine mode: expanded if the screen width is greater than 640.
         boolean isExpanded = entity.board.getScreenWidth() > 640;
+
+        System.out.println("applyMovement called with dx: " + dx + ", dy: " + dy);
+        System.out.println("Tile size: " + tileSize);
         
-//        System.out.println("applyMovement called with dx: " + dx + ", dy: " + dy);
-//        System.out.println("Tile size: " + tileSize);
-        
-        // If expanded, normalize dx and dy to the base tile size.
-        // For example, if tileSize is 128, then scale = baseTile / 128.
         if (isExpanded) {
             float scale = baseTile / tileSize;
             dx = dx * scale;
             dy = dy * scale;
-//            System.out.println("Normalized dx: " + dx + ", dy: " + dy);
+            System.out.println("Normalized dx: " + dx + ", dy: " + dy);
         }
         
-        // Use the baseTile as the threshold for moving one grid cell.
         float threshold = baseTile;
         
-        // Determine horizontal grid movement.
         int deltaCol = (dx >= threshold) ? 1 : (dx <= -threshold ? -1 : 0);
-        // For vertical movement:
-        //   Positive dy (swipe up) should decrease the grid row.
-        //   Negative dy (swipe down) should increase the grid row.
         int deltaRow = (dy >= threshold) ? -1 : (dy <= -threshold ? 1 : 0);
         
         int newCol = currentCol + deltaCol;
         int newRow = currentRow + deltaRow;
         
-//        System.out.println("Calculated grid position: (" + newCol + ", " + newRow + ")");
+        System.out.println("Calculated grid position: (" + newCol + ", " + newRow + ")");
         
-        // Clamp new grid coordinates to the board boundaries.
         newCol = Math.max(0, Math.min(entity.board.getMazeWidth() - 1, newCol));
         newRow = Math.max(0, Math.min(entity.board.getMazeHeight() - 1, newRow));
         
-//        System.out.println("Clamped grid position: (" + newCol + ", " + newRow + ")");
+        System.out.println("Clamped grid position: (" + newCol + ", " + newRow + ")");
         
-        // Check collision once.
         if (collisionManager.isMoveValid(newCol, newRow)) {
             entity.setGridX(newCol);
             entity.setGridY(newRow);
             
-            // Update pixel position.
-            // Using an inverted y formula so that row 0 is at the bottom:
             entity.x = newCol * tileSize + entity.board.getStartX();
             entity.y = (entity.board.getMazeHeight() - 1 - newRow) * tileSize + entity.board.getStartY();
             
