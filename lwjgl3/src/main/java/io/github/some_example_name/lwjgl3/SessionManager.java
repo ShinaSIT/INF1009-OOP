@@ -9,7 +9,7 @@ public class SessionManager {
     public SessionManager() {
         this.timer = new Timer();
         this.isTimerRunning = false;
-        this.elapsedTime = 0;
+        this.elapsedTime = 1;
     }
 
     public void startTimer() {
