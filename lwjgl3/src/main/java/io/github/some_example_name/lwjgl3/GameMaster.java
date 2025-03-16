@@ -16,6 +16,7 @@ public class GameMaster extends ApplicationAdapter {
     private SceneManager sceneManager;
     private InputManager inputManager;
     private OutputManager outputManager;
+    private SessionManager sessionManager;
     private Mouse mouse;
     private StaticObjectManager staticObjectManager;
     private boolean gameStarted = false;
@@ -44,6 +45,7 @@ public class GameMaster extends ApplicationAdapter {
         mouse = new Mouse(null, speaker, sceneManager);
         inputManager = new InputManager(movementManager, player, boardManager.getBoard(), mouse);
         outputManager = new OutputManager(speaker);
+        sessionManager = new SessionManager();
         mouse.setIoManager(inputManager);
         staticObjectManager = new StaticObjectManager(boardManager.getBoard());
         staticObjectManager.generateStaticObjects(2, entityManager);
@@ -63,7 +65,7 @@ public class GameMaster extends ApplicationAdapter {
         } else {
             inputManager.handleInput();
             if (!outputManager.isHasMoved()) {
-                outputManager.startTimer();
+                sessionManager.startTimer();
                 outputManager.setHasMoved(true);
             }
             outputManager.handleOutput();
@@ -110,7 +112,7 @@ public class GameMaster extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        outputManager.stopTimer();
+        sessionManager.stopTimer();
         boardManager.dispose();
         batch.dispose();
         sceneManager.getCurrentScene().dispose();

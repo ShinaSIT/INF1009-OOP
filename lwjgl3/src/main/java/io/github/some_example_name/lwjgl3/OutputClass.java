@@ -17,9 +17,5 @@ public abstract class OutputClass {
 
     protected abstract void initializeOutput();
 
-    public abstract void startTimer();
-
-    public abstract void stopTimer();
-
     public abstract void handleOutput();
 }

@@ -23,21 +23,6 @@ public class OutputManager extends OutputClass {
     }
 
     @Override
-    public void startTimer() {
-        if (timer != null) {
-            timer.start();
-            System.out.println("Timer started successfully!");
-        } else {
-            System.err.println("Timer is null, could not start!");
-        }
-    }
-
-    @Override
-    public void stopTimer() {
-        timer.stop();
-    }
-
-    @Override
     public void handleOutput() {
         // Spacebar: Pause/Resume Music
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
