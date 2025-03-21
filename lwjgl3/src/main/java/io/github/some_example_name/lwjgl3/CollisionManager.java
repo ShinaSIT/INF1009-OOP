@@ -49,4 +49,32 @@ public class CollisionManager {
         System.out.println("Free to move");
         return true; 
     }
+    
+    public void checkCollisions() {
+        for (int i = 0; i < collidableObjects.size(); i++) {
+            for (int j = i + 1; j < collidableObjects.size(); j++) {
+                Collidable a = collidableObjects.get(i);
+                Collidable b = collidableObjects.get(j);
+
+                if (a.detectCollision(b)) {
+                    System.out.println("Collision Detected between: " + a.getClass().getSimpleName() + " and " + b.getClass().getSimpleName());
+                    resolveCollision(a, b);
+                }
+            }
+        }
+    }
+
+    private void resolveCollision(Collidable a, Collidable b) {
+        if (a instanceof NonCollidable || b instanceof NonCollidable) {
+            return;
+        }
+
+        int tempX = a.getGridX();
+        int tempY = a.getGridY();
+        a.setGridX(b.getGridX());
+        a.setGridY(b.getGridY());
+        b.setGridX(tempX);
+        b.setGridY(tempY);
+    }
+
 }

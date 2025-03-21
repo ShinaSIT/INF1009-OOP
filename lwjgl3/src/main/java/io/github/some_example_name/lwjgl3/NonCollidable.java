@@ -1,14 +1,42 @@
 package io.github.some_example_name.lwjgl3;
 
-public class NonCollidable extends Collidable {
+public class NonCollidable implements Collidable {
 
-    public NonCollidable(String collisionType, int gridX, int gridY) {
-        super(collisionType, gridX, gridY);
-        this.isSolid = false;  // Non-collidables are not solid
+    private int gridX, gridY;
+
+    public NonCollidable(int gridX, int gridY) {
+        this.gridX = gridX;
+        this.gridY = gridY;
+    }
+
+    @Override
+    public boolean isSolid() {
+        return false;
+    }
+
+
+    @Override
+    public int getGridX() {
+        return gridX;
+    }
+
+    @Override
+    public int getGridY() {
+        return gridY;
+    }
+
+    @Override
+    public void setGridX(int gridX) {
+        this.gridX = gridX;
+    }
+
+    @Override
+    public void setGridY(int gridY) {
+        this.gridY = gridY;
     }
 
     @Override
     public boolean detectCollision(Collidable other) {
-        return false; // Non-collidables should not trigger collisions
+        return false;
     }
 }
