@@ -39,8 +39,8 @@ public class Player extends MoveableObjects {
         // Convert float movement to grid-based movement
         if (dx > 0) targetGridX++;
         else if (dx < 0) targetGridX--;
-        else if (dy > 0) targetGridY--;
-        else if (dy < 0) targetGridY++;
+        else if (dy > 0) targetGridY++;
+        else if (dy < 0) targetGridY--;
 
         System.out.println("🔄 Attempting Move: (" + gridX + ", " + gridY + ") → (" + targetGridX + ", " + targetGridY + ")");
 
