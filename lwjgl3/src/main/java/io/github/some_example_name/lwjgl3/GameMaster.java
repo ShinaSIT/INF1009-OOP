@@ -11,7 +11,7 @@ public class GameMaster extends ApplicationAdapter {
     private EntityManager entityManager;
     private MovementManager movementManager;
     private CollisionManager collisionManager;
-    private GameObjects player;
+    private Player player;
     private Speaker speaker;
     private SceneManager sceneManager;
     private InputManager inputManager;
@@ -23,11 +23,12 @@ public class GameMaster extends ApplicationAdapter {
 
     @Override
     public void create() {
+        Asset.load(); // ✅ Ensure assets are loaded before the game starts
         batch = new SpriteBatch();
         sceneManager = new SceneManager();
         boardManager = new BoardManager();
         boardManager.generateBoard(); // ✅ Only call this once at the start
-        
+
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.transitionTo("MenuScene");
     }
@@ -41,19 +42,22 @@ public class GameMaster extends ApplicationAdapter {
         entityManager = new EntityManager(boardManager.getBoard());
         collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
         movementManager = new MovementManager(speaker, collisionManager);
-        player = new MoveableObjects(boardManager.getBoard(), entityManager, 1, 1, movementManager);
-        entityManager.addEntity(player);
+
+        // ✅ Instantiate player at a valid position on the board
+        player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3);
+        entityManager.addEntity(player); // ✅ Ensure player is added
+
         mouse = new Mouse(null, speaker, sceneManager);
         inputManager = new InputManager(movementManager, player, boardManager.getBoard(), mouse);
         outputManager = new OutputManager(speaker);
         sessionManager = new SessionManager();
         mouse.setIoManager(inputManager);
-//        StaticObjects.generateStaticObjects(boardManager.getBoard(), entityManager);
+
+        // ✅ Add Germ entity (if needed)
         Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 2, movementManager);
         entityManager.addEntity(germ);
         movementManager.addEntity(germ);
 
-        
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
     }
@@ -64,35 +68,39 @@ public class GameMaster extends ApplicationAdapter {
             Gdx.gl.glClearColor(0, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-            if (!batch.isDrawing()) { 
-                batch.begin(); // ✅ Ensure batch starts here
+            if (!batch.isDrawing()) {
+                batch.begin(); // ✅ Ensures batch starts
             }
 
             if (!gameStarted) {
                 sceneManager.render(batch);
             } else {
-                inputManager.handleInput();
-                for (Entity entity : entityManager.getEntities()) {
-                	if (entity instanceof Germ) {
-                	    ((Germ) entity).moveSmartly();
-                	}
+                System.out.println("🎮 Game is running...");
 
+                // 🔍 Check if input is being processed
+                System.out.println("🔍 Handling Input...");
+                inputManager.handleInput(); // Make sure input is still working
+
+                for (Entity entity : entityManager.getEntities()) {
+                    if (entity instanceof Germ) {
+                        System.out.println("🦠 Germ Moving...");
+                        ((Germ) entity).moveSmartly();
+                    }
                 }
 
                 if (!outputManager.isHasMoved()) {
+                    System.out.println("⏳ Timer Started: " + sessionManager.isTimerRunning());
                     sessionManager.startTimer();
                     outputManager.setHasMoved(true);
                 }
                 outputManager.handleOutput();
 
-                // ✅ Ensure Board and Entities render only if batch is active
                 if (batch.isDrawing()) {
-                    boardManager.render(batch);  
+                    boardManager.render(batch);
                     entityManager.render(batch);
                 }
             }
 
-            // ✅ Always end the batch properly
             if (batch.isDrawing()) {
                 batch.end();
             }
@@ -100,12 +108,12 @@ public class GameMaster extends ApplicationAdapter {
             e.printStackTrace();
             System.err.println("❌ Error occurred while rendering GameMaster!");
 
-            // ✅ Prevent batch from staying open if an error occurs
             if (batch.isDrawing()) {
                 batch.end();
             }
         }
     }
+
 
     @Override
     public void resize(int width, int height) {
@@ -149,10 +157,14 @@ public class GameMaster extends ApplicationAdapter {
 
     @Override
     public void dispose() {
+        System.out.println("🛑 Disposing GameMaster...");
+        Asset.dispose(); // ✅ Release textures before closing
         sessionManager.stopTimer();
         boardManager.dispose();
         batch.dispose();
-        sceneManager.getCurrentScene().dispose();
+        if (sceneManager.getCurrentScene() != null) {
+            sceneManager.getCurrentScene().dispose();
+        }
         speaker.stopSound("click");
     }
 
