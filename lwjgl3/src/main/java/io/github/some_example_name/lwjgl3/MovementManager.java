@@ -48,10 +48,9 @@ public class MovementManager {
             System.out.println("Normalized dx: " + dx + ", dy: " + dy);
         }
         
-        float threshold = baseTile;
-        
-        int deltaCol = (dx >= threshold) ? 1 : (dx <= -threshold ? -1 : 0);
-        int deltaRow = (dy >= threshold) ? -1 : (dy <= -threshold ? 1 : 0);
+        int deltaCol = (int) dx;
+        int deltaRow = (int) dy;
+
         
         int newCol = currentCol + deltaCol;
         int newRow = currentRow + deltaRow;

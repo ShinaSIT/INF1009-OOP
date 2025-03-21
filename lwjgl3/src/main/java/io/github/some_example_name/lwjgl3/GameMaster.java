@@ -49,6 +49,10 @@ public class GameMaster extends ApplicationAdapter {
         sessionManager = new SessionManager();
         mouse.setIoManager(inputManager);
 //        StaticObjects.generateStaticObjects(boardManager.getBoard(), entityManager);
+        Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 2, movementManager);
+        entityManager.addEntity(germ);
+        movementManager.addEntity(germ);
+
         
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
@@ -68,6 +72,13 @@ public class GameMaster extends ApplicationAdapter {
                 sceneManager.render(batch);
             } else {
                 inputManager.handleInput();
+                for (Entity entity : entityManager.getEntities()) {
+                	if (entity instanceof Germ) {
+                	    ((Germ) entity).moveSmartly();
+                	}
+
+                }
+
                 if (!outputManager.isHasMoved()) {
                     sessionManager.startTimer();
                     outputManager.setHasMoved(true);
