@@ -68,22 +68,20 @@ public class Germ extends MoveableObjects {
 
     private List<Integer> getValidDirections() {
         List<Integer> directions = new ArrayList<>();
-
+        char[][] maze = board.getMazeLayout();
         int currentX = getGridX();
         int currentY = getGridY();
 
-        // Check Up (0)
-		/*
-		 * if (board.isPath(currentX, currentY - 1) && lastDirection != 2) {
-		 * directions.add(0); } // Check Right (1) if (board.isPath(currentX + 1,
-		 * currentY) && lastDirection != 3) { directions.add(1); } // Check Down (2) if
-		 * (board.isPath(currentX, currentY + 1) && lastDirection != 0) {
-		 * directions.add(2); } // Check Left (3) if (board.isPath(currentX - 1,
-		 * currentY) && lastDirection != 1) { directions.add(3); }
-		 */
-        Collections.shuffle(directions); // ✅ Shuffle to add randomness while keeping valid movement
+        // Bounds check first
+        if (currentY > 0 && maze[currentY - 1][currentX] == ' ') directions.add(0); // Up
+        if (currentX < maze[0].length - 1 && maze[currentY][currentX + 1] == ' ') directions.add(1); // Right
+        if (currentY < maze.length - 1 && maze[currentY + 1][currentX] == ' ') directions.add(2); // Down
+        if (currentX > 0 && maze[currentY][currentX - 1] == ' ') directions.add(3); // Left
+
+        Collections.shuffle(directions); // ✅ Add randomness
         return directions;
     }
+
 
     private int chooseBestDirection(List<Integer> validDirections) {
         return validDirections.get(random.nextInt(validDirections.size())); // ✅ Pick a random valid move
@@ -93,11 +91,13 @@ public class Germ extends MoveableObjects {
         float step = board.getTileSize();
 
         switch (direction) {
-            case 0: movementManager.applyMovement(this, 0, -step); break; // Move Up
-            case 1: movementManager.applyMovement(this, step, 0); break;  // Move Right
-            case 2: movementManager.applyMovement(this, 0, step); break;  // Move Down
-            case 3: movementManager.applyMovement(this, -step, 0); break; // Move Left
-        }
+        case 0: movementManager.applyMovement(this, 0, -1); break; // Up
+        case 1: movementManager.applyMovement(this, 1, 0); break;  // Right
+        case 2: movementManager.applyMovement(this, 0, 1); break;  // Down
+        case 3: movementManager.applyMovement(this, -1, 0); break; // Left
+    }
+
+
     }
 
     public void dispose() {

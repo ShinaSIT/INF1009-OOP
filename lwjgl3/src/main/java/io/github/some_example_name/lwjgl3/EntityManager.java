@@ -59,18 +59,17 @@ public class EntityManager {
     }
 
     public void render(SpriteBatch batch) {
-        if (!batch.isDrawing()) {  // ✅ Ensure batch is active before drawing
+        if (!batch.isDrawing()) {
             batch.begin();
         }
 
         for (Entity entity : entities) {
-            if (entity instanceof StaticObjects) {
-                ((StaticObjects) entity).render(batch);
-            }
+            entity.render(batch); // ✅ Render *all* entities, not just StaticObjects
         }
 
-        batch.end();  // ✅ End the batch properly
+        batch.end();
     }
+
     
     public void updateAllEntities(Board board) {
         if (entities == null) {
