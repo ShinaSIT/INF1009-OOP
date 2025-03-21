@@ -128,7 +128,7 @@ public class GameMaster extends ApplicationAdapter {
 
             Board board = boardManager.getBoard();
             if (board != null) {
-                board.updateDimensions(); // ✅ Ensure board resizes correctly
+//                board.updateDimensions(); // ✅ Ensure board resizes correctly
                 entityManager.updateBoardReference(board); // ✅ Ensure entities have the right reference
                 entityManager.updateEntitiesOnResize(); // ✅ Ensure entities reposition
 

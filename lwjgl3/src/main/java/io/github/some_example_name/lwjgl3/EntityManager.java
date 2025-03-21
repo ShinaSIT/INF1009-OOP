@@ -11,6 +11,9 @@ public class EntityManager {
     public EntityManager(Board board) {  // ✅ Accept Board in constructor
         this.board = board;
         entities = new ArrayList<>();
+        
+        System.out.println("🔄 Calling generateStaticObjects() from EntityManager!");
+        StaticObjects.generateStaticObjects(board, this);
     }
 
 

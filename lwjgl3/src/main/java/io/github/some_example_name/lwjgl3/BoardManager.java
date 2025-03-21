@@ -31,7 +31,8 @@ public class BoardManager {
                 // ❌ Wrong: new StaticObjects(charMaze[row][col], tileX, tileY);
                 // ✅ Fix: Add gridX and gridY
                 if (charMaze[row][col] == '.' ) {
-                    staticObjects.add(new StaticObjects(board, charMaze[row][col], tileX, tileY, col, row));
+                	staticObjects.add(new StaticObjects(board, charMaze[row][col], col, row));
+
                 }
             }
         }

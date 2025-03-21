@@ -20,7 +20,7 @@ public class Board {
     
     private final char[][] mazeLayout = {
             {'1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'},
-            {'|', '@', '.', '.', '.', '.', '.', '.', '.', '.', '|'},
+            {'|', '.', '.', '.', '.', '.', '.', '.', '.', '.', '|'},
             {'|', '.', 'b', '.', '[', '7', ']', '.', 'b', '.', '|'},
             {'|', '.', '.', '.', '.', '_', '.', '.', '.', '.', '|'},
             {'|', '.', '[', ']', '.', '.', '.', '[', ']', '.', '|'},
@@ -41,7 +41,8 @@ public class Board {
         loadTextures();
         updateDimensions();
     }
-
+    private boolean texturesLoaded = false;
+    
     private void loadTextures() {
         textures.add(new Texture(Gdx.files.internal("board/pipeHorizontal.png"))); // index 0
         textures.add(new Texture(Gdx.files.internal("board/pipeVertical.png")));   // index 1
@@ -59,7 +60,9 @@ public class Board {
         textures.add(new Texture(Gdx.files.internal("board/pipeConnectorRight.png")));// index 13
         textures.add(new Texture(Gdx.files.internal("board/pipeConnectorBottom.png")));// index 14
         textures.add(new Texture(Gdx.files.internal("board/pipeConnectorLeft.png")));// index 15
-        textures.add(new Texture(Gdx.files.internal("board/End.png")));// index 16
+//        textures.add(new Texture(Gdx.files.internal("board/End.png")));// index 16
+        
+        texturesLoaded = true;
     }
 
     private int lastScreenWidth = -1;
@@ -159,8 +162,9 @@ public class Board {
     }
 
     private Texture getTextureForSymbol(char symbol) {
-        if (symbol == '.') { 
-            return null; // ✅ Prevents texture lookup for paths
+        if (!texturesLoaded) {
+            System.err.println("⚠️ Attempted to get texture before textures were loaded! Symbol: " + symbol);
+            return null;
         }
     	
         switch (symbol) {
@@ -180,11 +184,15 @@ public class Board {
             case '6': return textures.get(13);
             case '7': return textures.get(14);
             case '8': return textures.get(15);
-            case '$': return textures.get(16);
             default: return null;
         }
     }
 
+    public boolean areTexturesLoaded() {
+        return texturesLoaded;
+    }
+
+    
     public void dispose() {
         shapeRenderer.dispose();
         for (Texture texture : textures) {
