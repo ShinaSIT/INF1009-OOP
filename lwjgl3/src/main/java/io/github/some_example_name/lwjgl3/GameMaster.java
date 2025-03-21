@@ -23,7 +23,7 @@ public class GameMaster extends ApplicationAdapter {
 
     @Override
     public void create() {
-        Asset.load(); // ✅ Ensure assets are loaded before the game starts
+    	AssetManager.loadAll(); // ✅ Ensure assets are loaded before the game starts
         batch = new SpriteBatch();
         sceneManager = new SceneManager();
         boardManager = new BoardManager();
@@ -160,7 +160,7 @@ public class GameMaster extends ApplicationAdapter {
     @Override
     public void dispose() {
         System.out.println("🛑 Disposing GameMaster...");
-        Asset.dispose(); // ✅ Release textures before closing
+        AssetManager.disposeAll(); // ✅ Release textures before closing
         sessionManager.stopTimer();
         boardManager.dispose();
         batch.dispose();

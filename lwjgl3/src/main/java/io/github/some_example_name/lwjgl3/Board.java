@@ -138,22 +138,22 @@ public class Board {
 
     private Texture getTextureForSymbol(char symbol) {
         switch (symbol) {
-            case '-': return Asset.pipeHorizontal;
-            case '|': return Asset.pipeVertical;
-            case '1': return Asset.pipeCorner1;
-            case '2': return Asset.pipeCorner2;
-            case '3': return Asset.pipeCorner3;
-            case '4': return Asset.pipeCorner4;
-            case 'b': return Asset.block;
-            case '[': return Asset.capLeft;
-            case ']': return Asset.capRight;
-            case '_': return Asset.capBottom;
-            case '^': return Asset.capTop;
-            case '+': return Asset.pipeCross;
-            case '5': return Asset.pipeConnectorTop;
-            case '6': return Asset.pipeConnectorRight;
-            case '7': return Asset.pipeConnectorBottom;
-            case '8': return Asset.pipeConnectorLeft;
+            case '-': return BoardAssets.pipeHorizontal;
+            case '|': return BoardAssets.pipeVertical;
+            case '1': return BoardAssets.pipeCorner1;
+            case '2': return BoardAssets.pipeCorner2;
+            case '3': return BoardAssets.pipeCorner3;
+            case '4': return BoardAssets.pipeCorner4;
+            case 'b': return BoardAssets.block;
+            case '[': return BoardAssets.capLeft;
+            case ']': return BoardAssets.capRight;
+            case '_': return BoardAssets.capBottom;
+            case '^': return BoardAssets.capTop;
+            case '+': return BoardAssets.pipeCross;
+            case '5': return BoardAssets.pipeConnectorTop;
+            case '6': return BoardAssets.pipeConnectorRight;
+            case '7': return BoardAssets.pipeConnectorBottom;
+            case '8': return BoardAssets.pipeConnectorLeft;
             default: return null;
         }
     }
