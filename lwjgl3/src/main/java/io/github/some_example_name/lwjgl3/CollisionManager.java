@@ -15,6 +15,10 @@ public class CollisionManager {
         this.entityManager = entityManager;
     }
 
+    public void addCollidable(Collidable collidable) {
+        collidableObjects.add(collidable);
+    }
+
     /**
      * Checks if a move to the specified grid position is valid.
      */
@@ -33,21 +37,19 @@ public class CollisionManager {
             return false;  // Move is not valid
         }
 
-        for (Entity entity : entityManager.getEntities()) {
-            if (entity.hasTag("static")) { 
-                StaticObjects obj = (StaticObjects) entity;
-                if (obj.getGridX() == newCol && obj.getGridY() == newRow) {
-                    System.out.println("❌ Blocked by Static Object");
-                    collisionCount++;
-                    System.out.println("Collision count: " + collisionCount);
-                    collisionCache.add(key); // ✅ Store invalid positions
-                    return false;  // Move is not valid
-                }
+        // Check against collidable objects
+        for (Collidable collidable : collidableObjects) {
+            if (collidable.getGridX() == newCol && collidable.getGridY() == newRow && collidable.isSolid()) {
+                System.out.println("❌ Blocked by Collidable Object");
+                collisionCount++;
+                System.out.println("Collision count: " + collisionCount);
+                collisionCache.add(key); // ✅ Store invalid positions
+                return false;  // Move is not valid
             }
         }
 
         System.out.println("Free to move");
-        return true; 
+        return true;
     }
     
     public void checkCollisions() {
@@ -76,5 +78,4 @@ public class CollisionManager {
         b.setGridX(tempX);
         b.setGridY(tempY);
     }
-
 }

@@ -57,6 +57,7 @@ public class GameMaster extends ApplicationAdapter {
         Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 2, movementManager);
         entityManager.addEntity(germ);
         movementManager.addEntity(germ);
+        collisionManager.addCollidable(germ);
 
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");

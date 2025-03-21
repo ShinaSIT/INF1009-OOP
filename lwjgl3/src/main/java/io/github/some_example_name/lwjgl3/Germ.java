@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class Germ extends MoveableObjects {
+public class Germ extends MoveableObjects implements Collidable { // Implement Collidable
     private Texture germTexture;
     private Random random;
     private int moveCooldown = 60;
@@ -42,10 +42,8 @@ public class Germ extends MoveableObjects {
         batch.begin(); // ✅ Restart batch after drawing germ
     }
 
-
-
     public void moveSmartly() {
-        if (moveCooldown > 0) {  
+        if (moveCooldown > 0) {
             moveCooldown--; // ✅ Decrease cooldown every frame
             return;
         }
@@ -82,7 +80,6 @@ public class Germ extends MoveableObjects {
         return directions;
     }
 
-
     private int chooseBestDirection(List<Integer> validDirections) {
         return validDirections.get(random.nextInt(validDirections.size())); // ✅ Pick a random valid move
     }
@@ -91,16 +88,46 @@ public class Germ extends MoveableObjects {
         float step = board.getTileSize();
 
         switch (direction) {
-        case 0: movementManager.applyMovement(this, 0, -1); break; // Up
-        case 1: movementManager.applyMovement(this, 1, 0); break;  // Right
-        case 2: movementManager.applyMovement(this, 0, 1); break;  // Down
-        case 3: movementManager.applyMovement(this, -1, 0); break; // Left
-    }
-
-
+            case 0: movementManager.applyMovement(this, 0, -1); break; // Up
+            case 1: movementManager.applyMovement(this, 1, 0); break;  // Right
+            case 2: movementManager.applyMovement(this, 0, 1); break;  // Down
+            case 3: movementManager.applyMovement(this, -1, 0); break; // Left
+        }
     }
 
     public void dispose() {
         germTexture.dispose();
+    }
+
+    // Implement Collidable interface methods
+    @Override
+    public boolean isSolid() {
+        return true; // Germ is solid
+    }
+
+    @Override
+    public int getGridX() {
+        return super.getGridX();
+    }
+
+    @Override
+    public int getGridY() {
+        return super.getGridY();
+    }
+
+    @Override
+    public void setGridX(int gridX) {
+        super.setGridX(gridX);
+    }
+
+    @Override
+    public void setGridY(int gridY) {
+        super.setGridY(gridY);
+    }
+
+    @Override
+    public boolean detectCollision(Collidable other) {
+        if (other == this) return false; // No self-collision
+        return getGridX() == other.getGridX() && getGridY() == other.getGridY();
     }
 }
