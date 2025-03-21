@@ -1,76 +1,80 @@
 package io.github.some_example_name.lwjgl3;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import java.util.*;
+import com.badlogic.gdx.Gdx;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-public class StaticObjects extends Entity {
-    private ShapeRenderer shapeRenderer;
-    private static Set<String> staticObjectPositions = new HashSet<>(); // ✅ Track placed objects
+public class StaticObjects extends Entity {  // ✅ Ensure StaticObjects extends Entity
+    private float x, y;
+    private Texture texture;
+    private char type;
+    private int gridX, gridY;
+    
+ // ✅ Store textures in a static HashMap to avoid reloading
+    private static final HashMap<Character, Texture> textureMap = new HashMap<>();
 
-    public StaticObjects(Board board, int gridX, int gridY) {
-        super(board, gridX, gridY, "static", "collidable"); // ✅ Replaced EntityType with tags
-        this.shapeRenderer = new ShapeRenderer();
-        staticObjectPositions.add(gridX + "," + gridY); // Track position globally
-        System.out.println("✅ Static Object Created at Grid (" + gridX + ", " + gridY + ")");
-    }
+    // ✅ Call super() because Entity has no default constructor
+    public StaticObjects(Board board, char type, float x, float y, int gridX, int gridY) {
+        super(board, gridX, gridY, "static"); // ✅ Call Entity constructor
+        this.x = x;
+        this.y = y;
+        this.gridX = gridX;
+        this.gridY = gridY;
+        this.type = type;
 
-    public static void generateStaticObjects(Board board, int count, EntityManager entityManager) {
-        System.out.println("🛠 Generating " + count + " static objects **before** maze generation...");
-
-        List<Entity> moveableEntities = entityManager.getEntities();
-        staticObjectPositions.clear();
-        Random random = new Random();
-        int generated = 0;
-
-        while (generated < count) {
-            int gridX = random.nextInt(board.getMazeWidth());
-            int gridY = random.nextInt(board.getMazeHeight());
-            String positionKey = gridX + "," + gridY;
-
-            // ✅ Ensure placement doesn't block paths or key areas
-            if (board.getMazeLayout()[gridY][gridX] == 0 // Must be on a path
-                && !staticObjectPositions.contains(positionKey) // Avoid duplicate positions
-                && !isMoveableEntityAt(gridX, gridY, moveableEntities) // Avoid overlap
-                && isPathFromStartToExitClear(board, gridX, gridY)) { // Ensure solvability
-                
-                entityManager.addEntity(new StaticObjects(board, gridX, gridY));
-                generated++; // ✅ Successfully placed
-            }
+        // ✅ Load textures once and store in a HashMap
+        if (textureMap.isEmpty()) {
+            textureMap.put('.', new Texture(Gdx.files.internal("board/pellet.png")));
+//            textureMap.put('p', new Texture(Gdx.files.internal("board/powerup.png")));
         }
-    }
 
-    private static boolean isMoveableEntityAt(int gridX, int gridY, List<Entity> moveableEntities) {
-        for (Entity entity : moveableEntities) {
-            if (entity.getGridX() == gridX && entity.getGridY() == gridY) {
-                return true; // ✅ A moveable object is already here
-            }
-        }
-        return false;
-    }
+        // ✅ Set texture
+        texture = textureMap.get(type);
 
-    private static boolean isPathFromStartToExitClear(Board board, int gridX, int gridY) {
-        board.getMazeLayout()[gridY][gridX] = 1; // Temporarily block
-        boolean solvable = board.isMazeSolvable(); // ✅ Check solvability using BFS/DFS
-        board.getMazeLayout()[gridY][gridX] = 0; // Restore state
-        return solvable;
-    }
+        if (texture == null) {
+            System.err.println("⚠️ No texture found for symbol: '" + type + "' at (" + gridX + "," + gridY + ")");
+        }    }
 
-    @Override
     public void render(SpriteBatch batch) {
-        float tileSize = board.getTileSize();
-        float objectSize = tileSize * 0.8f;
-        float centerX = x + (tileSize - objectSize) / 2;
-        float centerY = y + (tileSize - objectSize) / 2;
+        if (type == '.' || type == 'p') {
+            return; // ❌ Skip drawing pellets & power-ups
+        }
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.YELLOW);
-        shapeRenderer.rect(centerX, centerY, objectSize, objectSize);
-        shapeRenderer.end();
+        if (texture != null) {
+            batch.draw(texture, x, y, 16, 16);
+        }
     }
+
 
     public void dispose() {
-        shapeRenderer.dispose();
+        if (texture != null) {
+            texture.dispose();
+        }
+    }
+
+    public int getGridX() { // ✅ Ensure gridX can be accessed
+        return gridX;
+    }
+
+    public int getGridY() { // ✅ Ensure gridY can be accessed
+        return gridY;
+    }
+
+    /**
+     * ✅ Generates all Static Objects like pellets and power-ups.
+     */
+    public static void generateStaticObjects(Board board, EntityManager entityManager) {
+        char[][] maze = board.getMazeLayout();
+
+        // ✅ Skip pellet ('.') and power-up ('p') generation
+        for (int row = 0; row < maze.length; row++) {
+            for (int col = 0; col < maze[row].length; col++) {
+                if (maze[row][col] == '.' || maze[row][col] == 'p') {
+                    continue; // ✅ Ignore pellets & power-ups
+                }
+            }
+        }
     }
 }

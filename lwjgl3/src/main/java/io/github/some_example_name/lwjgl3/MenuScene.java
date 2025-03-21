@@ -24,7 +24,7 @@ public abstract class MenuScene extends Scene {
 
     @Override
     public void create() { 
-        System.out.println("✅ Creating Menu Scene...");
+        System.out.println("✅ Creating Meu Scene...");
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 

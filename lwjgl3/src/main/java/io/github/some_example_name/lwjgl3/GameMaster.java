@@ -34,9 +34,11 @@ public class GameMaster extends ApplicationAdapter {
 
     public void startGame() {
         System.out.println("✅ startGame() called!");
+        System.out.println("🟢 GameMaster.startGame() - Board reference: " + boardManager);
+
         gameStarted = true;
         speaker = new Speaker();
-        entityManager = new EntityManager();
+        entityManager = new EntityManager(boardManager.getBoard());
         collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
         movementManager = new MovementManager(speaker, collisionManager);
         player = new MoveableObjects(boardManager.getBoard(), entityManager, 1, 1, movementManager);
@@ -46,7 +48,7 @@ public class GameMaster extends ApplicationAdapter {
         outputManager = new OutputManager(speaker);
         sessionManager = new SessionManager();
         mouse.setIoManager(inputManager);
-        StaticObjects.generateStaticObjects(boardManager.getBoard(), 2, entityManager);
+//        StaticObjects.generateStaticObjects(boardManager.getBoard(), entityManager);
         
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
@@ -54,45 +56,71 @@ public class GameMaster extends ApplicationAdapter {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
-        
-        if (!gameStarted) {
-            sceneManager.render(batch);
-        } else {
-            inputManager.handleInput();
-            if (!outputManager.isHasMoved()) {
-                sessionManager.startTimer();
-                outputManager.setHasMoved(true);
+        try {
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+            if (!batch.isDrawing()) { 
+                batch.begin(); // ✅ Ensure batch starts here
             }
-            outputManager.handleOutput();
-            sceneManager.render(batch);
-            boardManager.render(batch);
-            entityManager.render(batch);
+
+            if (!gameStarted) {
+                sceneManager.render(batch);
+            } else {
+                inputManager.handleInput();
+                if (!outputManager.isHasMoved()) {
+                    sessionManager.startTimer();
+                    outputManager.setHasMoved(true);
+                }
+                outputManager.handleOutput();
+
+                // ✅ Ensure Board and Entities render only if batch is active
+                if (batch.isDrawing()) {
+                    boardManager.render(batch);  
+                    entityManager.render(batch);
+                }
+            }
+
+            // ✅ Always end the batch properly
+            if (batch.isDrawing()) {
+                batch.end();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Error occurred while rendering GameMaster!");
+
+            // ✅ Prevent batch from staying open if an error occurs
+            if (batch.isDrawing()) {
+                batch.end();
+            }
         }
-        
-        batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
         System.out.println("✅ Resizing GameMaster: " + width + "x" + height);
-        isResizing = true;
-        
+
         if (sceneManager.getCurrentScene() != null) {
             sceneManager.getCurrentScene().resize(width, height);
         }
 
         if (gameStarted) {
-            boardManager.updateBoard();
-            entityManager.clearStaticObjects();
-            StaticObjects.generateStaticObjects(boardManager.getBoard(), 2, entityManager);
-            entityManager.updateAllEntities(boardManager.getBoard());
+            System.out.println("🔄 Resizing Board & Entities...");
+
+            Board board = boardManager.getBoard();
+            if (board != null) {
+                board.updateDimensions(); // ✅ Ensure board resizes correctly
+                entityManager.updateBoardReference(board); // ✅ Ensure entities have the right reference
+                entityManager.updateEntitiesOnResize(); // ✅ Ensure entities reposition
+
+                System.out.println("🔄 Forcing a Board Re-render!");
+                board.render(batch);  // ✅ Force re-render
+            } else {
+                System.out.println("⚠️ Error: Board is NULL after resizing!");
+            }
+
             entityManager.ensurePlayerExists();
         }
-        
-        isResizing = false;
     }
 
     public void resetGame() {

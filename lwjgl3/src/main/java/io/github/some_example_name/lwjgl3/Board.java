@@ -1,12 +1,12 @@
 package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.Gdx;
-
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Board {
     private ShapeRenderer shapeRenderer;
@@ -16,199 +16,179 @@ public class Board {
     private int screenWidth;
     private int screenHeight;
     private OrthographicCamera camera;
+    private List<Texture> textures;
     
-    private int[][] mazeLayout;
-    private int mazeWidth = 15;  // Must be odd
-    private int mazeHeight = 7;  // Must be odd
-    private Random random = new Random();
+    private final char[][] mazeLayout = {
+            {'1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'},
+            {'|', '@', '.', '.', '.', '.', '.', '.', '.', '.', '|'},
+            {'|', '.', 'b', '.', '[', '7', ']', '.', 'b', '.', '|'},
+            {'|', '.', '.', '.', '.', '_', '.', '.', '.', '.', '|'},
+            {'|', '.', '[', ']', '.', '.', '.', '[', ']', '.', '|'},
+            {'|', '.', '.', '.', '.', '^', '.', '.', '.', '.', '|'},
+            {'|', '.', 'b', '.', '[', '+', ']', '.', 'b', '.', '|'},
+            {'|', '.', '.', '.', '.', '_', '.', '.', '.', '.', '|'},
+            {'|', '.', '[', ']', '.', '.', '.', '[', ']', '.', '|'},
+            {'|', '.', '.', '.', '.', '^', '.', '.', '.', '.', '|'},
+            {'|', '.', 'b', '.', '[', '5', ']', '.', 'b', '.', '|'},
+            {'|', '.', '.', '.', '.', '.', '.', '.', '.', '.', '$'},
+            {'4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '3'}
+    };
 
     public Board() {
         this.shapeRenderer = new ShapeRenderer();
         this.camera = new OrthographicCamera();
-        generateRandomMaze(); 
+        this.textures = new ArrayList<>();
+        loadTextures();
         updateDimensions();
     }
 
-    protected void generateRandomMaze() {
-        mazeLayout = new int[mazeHeight][mazeWidth];
-
-        boolean isSolvable = false;
-        while (!isSolvable) {
-            // Fill maze with walls
-            for (int r = 0; r < mazeHeight; r++) {
-                for (int c = 0; c < mazeWidth; c++) {
-                    mazeLayout[r][c] = 1;
-                }
-            }
-
-            // Generate paths
-            carvePath(1, 1);
-            
-            // Entrance and single exit
-            mazeLayout[0][1] = 0;  // Entrance
-            mazeLayout[mazeHeight -  1][mazeWidth - 2] = 0; // Exit (Only one exit)
-            
-            // Ensure maze is solvable
-            isSolvable = isMazeSolvable();
-        }
-        System.out.println("✅ Maze Board Created (" + mazeHeight + ", " + mazeWidth + ")");
+    private void loadTextures() {
+        textures.add(new Texture(Gdx.files.internal("board/pipeHorizontal.png"))); // index 0
+        textures.add(new Texture(Gdx.files.internal("board/pipeVertical.png")));   // index 1
+        textures.add(new Texture(Gdx.files.internal("board/pipeCorner1.png")));    // index 2
+        textures.add(new Texture(Gdx.files.internal("board/pipeCorner2.png")));    // index 3
+        textures.add(new Texture(Gdx.files.internal("board/pipeCorner3.png")));    // index 4
+        textures.add(new Texture(Gdx.files.internal("board/pipeCorner4.png")));    // index 5
+        textures.add(new Texture(Gdx.files.internal("board/block.png")));          // index 6
+        textures.add(new Texture(Gdx.files.internal("board/capLeft.png")));        // index 7
+        textures.add(new Texture(Gdx.files.internal("board/capRight.png")));       // index 8
+        textures.add(new Texture(Gdx.files.internal("board/capBottom.png")));      // index 9
+        textures.add(new Texture(Gdx.files.internal("board/capTop.png")));         // index 10
+        textures.add(new Texture(Gdx.files.internal("board/pipeCross.png")));      // index 11
+        textures.add(new Texture(Gdx.files.internal("board/pipeConnectorTop.png")));// index 12
+        textures.add(new Texture(Gdx.files.internal("board/pipeConnectorRight.png")));// index 13
+        textures.add(new Texture(Gdx.files.internal("board/pipeConnectorBottom.png")));// index 14
+        textures.add(new Texture(Gdx.files.internal("board/pipeConnectorLeft.png")));// index 15
+        textures.add(new Texture(Gdx.files.internal("board/End.png")));// index 16
     }
 
-    private void carvePath(int row, int col) {
-        int[] directions = {0, 1, 2, 3}; 
-        shuffleArray(directions); 
-
-        for (int direction : directions) {
-            int newRow = row;
-            int newCol = col;
-
-            switch (direction) {
-                case 0: newRow -= 2; break; 
-                case 1: newCol += 2; break; 
-                case 2: newRow += 2; break; 
-                case 3: newCol -= 2; break; 
-            }
-
-            if (isValidCell(newRow, newCol)) {
-                mazeLayout[newRow][newCol] = 0;
-                mazeLayout[(row + newRow) / 2][(col + newCol) / 2] = 0; 
-                carvePath(newRow, newCol);
-            }
-        }
-    }
-
-    private boolean isValidCell(int row, int col) {
-        return row > 0 && col > 0 && row < mazeHeight - 1 && col < mazeWidth - 1 && mazeLayout[row][col] == 1;
-    }
-
-    public boolean isMazeSolvable() {
-        boolean[][] visited = new boolean[mazeHeight][mazeWidth];
-        return depthFirstSearch(0, 1, visited); // Start from entrance
-    }
-
-    private boolean depthFirstSearch(int row, int col, boolean[][] visited) {
-        if (row == mazeHeight - 2 && col == mazeWidth - 2) {
-            return true; // Exit found
-        }
-
-        if (row < 0 || col < 0 || row >= mazeHeight || col >= mazeWidth || 
-            mazeLayout[row][col] == 1 || visited[row][col]) {
-            return false; // Out of bounds, wall, or already visited
-        }
-
-        visited[row][col] = true;
-
-        // Explore in all four directions
-        return depthFirstSearch(row - 1, col, visited) || 
-               depthFirstSearch(row + 1, col, visited) || 
-               depthFirstSearch(row, col - 1, visited) || 
-               depthFirstSearch(row, col + 1, visited);
-    }
-
-    private void shuffleArray(int[] array) {
-        for (int i = array.length - 1; i > 0; i--) {
-            int index = random.nextInt(i + 1);
-            int temp = array[i];
-            array[i] = array[index];
-            array[index] = temp;
-        }
-    }
+    private int lastScreenWidth = -1;
+    private int lastScreenHeight = -1;
 
     public void updateDimensions() {
-        screenWidth = Gdx.graphics.getWidth();
-        screenHeight = Gdx.graphics.getHeight();
-        
-        int mazeColumns = mazeLayout[0].length;
-        int mazeRows = mazeLayout.length;
-        
-        tileSize = Math.min((float) screenWidth / mazeColumns, (float) screenHeight / mazeRows);
-        float mazePixelWidth = mazeColumns * tileSize;
-        float mazePixelHeight = mazeRows * tileSize;
-        
+        int newWidth = Gdx.graphics.getWidth();
+        int newHeight = Gdx.graphics.getHeight();
+
+        // ✅ Prevent excessive resize calls
+        if (newWidth == lastScreenWidth && newHeight == lastScreenHeight) {
+            return;
+        }
+
+        lastScreenWidth = newWidth;
+        lastScreenHeight = newHeight;
+
+        screenWidth = newWidth;
+        screenHeight = newHeight;
+        tileSize = Math.min((float) screenWidth / mazeLayout[0].length, (float) screenHeight / mazeLayout.length);
+        float mazePixelWidth = mazeLayout[0].length * tileSize;
+        float mazePixelHeight = mazeLayout.length * tileSize;
         startX = (screenWidth - mazePixelWidth) / 2.0f;
         startY = (screenHeight - mazePixelHeight) / 2.0f;
-        
         camera.setToOrtho(false, screenWidth, screenHeight);
         camera.update();
-        shapeRenderer.setProjectionMatrix(camera.combined);
 
+        System.out.println("✅ Board Resized: TileSize = " + tileSize + ", StartX = " + startX + ", StartY = " + startY);
     }
 
-    public void render(SpriteBatch batch) {
-        updateDimensions(); // Ensure resizing works
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+    protected char[][] getMazeLayout() {
+        char[][] charMazeCopy = new char[mazeLayout.length][mazeLayout[0].length];
 
-        for (int row = 0; row < mazeHeight; row++) {
-            for (int col = 0; col < mazeWidth; col++) {
-            	float tileX = startX + col * tileSize;
-                float tileY = startY + (mazeHeight - row - 1) * tileSize;
-
-                if (tileX < 0 || tileY < 0 || tileX > Gdx.graphics.getWidth() || tileY > Gdx.graphics.getHeight()) {
-                    System.out.println("❌ Skipping Tile (" + row + ", " + col + ") - Out of Bounds");
-                    continue;
-                }
-                if (mazeLayout[row][col] == 1) {
-                    drawNeonWall(startX + col * tileSize, startY + (mazeHeight - row - 1) * tileSize);
+        for (int row = 0; row < mazeLayout.length; row++) {
+            for (int col = 0; col < mazeLayout[row].length; col++) {
+                if (mazeLayout[row][col] == '.' || mazeLayout[row][col] == 'p') {
+                    charMazeCopy[row][col] = ' '; // ✅ Replace pellets & power-ups with empty paths
+                } else {
+                    charMazeCopy[row][col] = mazeLayout[row][col]; // ✅ Copy everything else
                 }
             }
         }
-
-        shapeRenderer.end();
+        return charMazeCopy;
     }
 
-    private void drawNeonWall(float x, float y) {
-        float glowSize = tileSize * 0.1f; 
-        Color neonGlow = new Color(0.0f, 0.8f, 1.0f, 0.3f);
-        Color neonCore = new Color(0.0f, 0.8f, 1.0f, 1.0f);
 
-        shapeRenderer.setColor(neonGlow);
-        shapeRenderer.rect(x - glowSize, y - glowSize, tileSize + 2 * glowSize, tileSize + 2 * glowSize);
-
-        shapeRenderer.setColor(neonCore);
-        shapeRenderer.rect(x, y, tileSize, tileSize);
-
-        shapeRenderer.end();
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.CYAN);
-        shapeRenderer.rect(x, y, tileSize, tileSize);
-        shapeRenderer.end();
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+    public int getMazeHeight() {
+        return mazeLayout.length;
     }
-
-    public int[][] getMazeLayout() {
-        return mazeLayout;
+    public int getMazeWidth() {
+        return mazeLayout[0].length;
     }
-
     public float getTileSize() {
         return tileSize;
     }
-
     public float getStartX() {
         return startX;
     }
-
     public float getStartY() {
         return startY;
     }
-
-    public int getMazeHeight() {
-        return mazeHeight;
-    }
-
-    public int getMazeWidth() {
-        return mazeWidth;
-    }
-    
     public float getScreenWidth() {
-        return Gdx.graphics.getWidth();
+        return screenWidth;
+    }
+    public float getScreenHeight() {
+        return screenHeight;
     }
 
-    public float getScreenHeight() {
-        return Gdx.graphics.getHeight();
+    public void render(SpriteBatch batch) {
+        try {
+
+            updateDimensions();
+
+            if (!batch.isDrawing()) { // ✅ Ensure batch is active before drawing
+                batch.begin();
+            }
+
+            for (int row = 0; row < mazeLayout.length; row++) {
+                for (int col = 0; col < mazeLayout[row].length; col++) {
+                    float tileX = startX + col * tileSize;
+                    float tileY = startY + (mazeLayout.length - row - 1) * tileSize;
+
+                    char symbol = mazeLayout[row][col];
+                    Texture texture = getTextureForSymbol(symbol);
+
+                    if (texture != null) {
+                        batch.draw(texture, tileX, tileY, tileSize, tileSize);
+                    }
+                }
+            }
+
+            batch.end(); // ✅ Ensure batch ends correctly
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Error occurred while rendering the maze!");
+        }
     }
-    
+
+    private Texture getTextureForSymbol(char symbol) {
+        if (symbol == '.') { 
+            return null; // ✅ Prevents texture lookup for paths
+        }
+    	
+        switch (symbol) {
+            case '-': return textures.get(0);
+            case '|': return textures.get(1);
+            case '1': return textures.get(2);
+            case '2': return textures.get(3);
+            case '3': return textures.get(4);
+            case '4': return textures.get(5);
+            case 'b': return textures.get(6);
+            case '[': return textures.get(7);
+            case ']': return textures.get(8);
+            case '_': return textures.get(9);
+            case '^': return textures.get(10);
+            case '+': return textures.get(11);
+            case '5': return textures.get(12);
+            case '6': return textures.get(13);
+            case '7': return textures.get(14);
+            case '8': return textures.get(15);
+            case '$': return textures.get(16);
+            default: return null;
+        }
+    }
+
     public void dispose() {
         shapeRenderer.dispose();
+        for (Texture texture : textures) {
+            texture.dispose();
+        }
     }
-
 }

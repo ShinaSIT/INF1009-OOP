@@ -40,14 +40,17 @@ public class GameScene extends Scene {
         if (gameMaster == null) return;
 
         if (getBoard() != null) {
-            getBoard().updateDimensions();
+            getBoard().updateDimensions(); // ✅ Resize board
 
             if (getEntityManager() != null) {
-                getEntityManager().updateAllEntities(getBoard());
-                getEntityManager().ensurePlayerExists(); // ✅ Ensure the player exists after resize
+                getEntityManager().updateAllEntities(getBoard()); // ✅ Recalculate positions
+                getEntityManager().ensurePlayerExists(); // ✅ Ensure player is placed correctly
             }
         }
     }
+
+
+
 
     @Override
     public void dispose() {

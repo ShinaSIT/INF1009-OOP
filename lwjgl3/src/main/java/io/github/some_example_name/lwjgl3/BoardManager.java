@@ -1,34 +1,71 @@
 package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import java.util.ArrayList;
 
 public class BoardManager {
     private Board board;
+    private ArrayList<StaticObjects> staticObjects = new ArrayList<>(); // ✅ Store pellets & power-ups
 
     protected BoardManager() {
         this.board = new Board();
+        generateStaticObjects(); // ✅ Generate pellets & power-ups
     }
 
     protected void generateBoard() {
-        board.generateRandomMaze();
+        if (board == null) {
+            System.err.println("❌ Board is NULL in BoardManager! Creating a new instance...");
+            this.board = new Board();
+        }
         board.updateDimensions();
     }
 
-    protected void updateBoard() {
-        board.updateDimensions();
+    protected void generateStaticObjects() {
+        char[][] charMaze = board.getMazeLayout();
+
+        for (int row = 0; row < charMaze.length; row++) {
+            for (int col = 0; col < charMaze[row].length; col++) {
+                float tileX = board.getStartX() + col * board.getTileSize();
+                float tileY = board.getStartY() + (charMaze.length - row - 1) * board.getTileSize();
+
+                // ❌ Wrong: new StaticObjects(charMaze[row][col], tileX, tileY);
+                // ✅ Fix: Add gridX and gridY
+                if (charMaze[row][col] == '.' ) {
+                    staticObjects.add(new StaticObjects(board, charMaze[row][col], tileX, tileY, col, row));
+                }
+            }
+        }
     }
+
 
     public void render(SpriteBatch batch) {
-        board.render(batch);
+        board.render(batch); // ✅ Render the maze first
+
+        for (StaticObjects obj : staticObjects) { // ✅ Render all pellets & power-ups
+            obj.render(batch);
+        }
     }
 
-    protected Board getBoard() {  // ✅ Ensure GameMaster can access Board instance
+    protected Board getBoard() {
         return board;
     }
 
     protected int[][] getMazeLayout() {
-        return board.getMazeLayout();
+        char[][] charMaze = board.getMazeLayout();
+        int[][] intMaze = new int[charMaze.length][charMaze[0].length];
+
+        for (int row = 0; row < charMaze.length; row++) {
+            for (int col = 0; col < charMaze[row].length; col++) {
+                if (charMaze[row][col] == '.' || charMaze[row][col] == 'p') {
+                    intMaze[row][col] = 0;  // ✅ Replace pellets and power-ups with open paths
+                } else {
+                    intMaze[row][col] = (charMaze[row][col] == '1') ? 1 : 0; // ✅ Walls stay as 1
+                }
+            }
+        }
+        return intMaze;
     }
+
 
     protected float getTileSize() {
         return board.getTileSize();
@@ -52,5 +89,8 @@ public class BoardManager {
 
     public void dispose() {
         board.dispose();
+        for (StaticObjects obj : staticObjects) { // ✅ Dispose of static objects
+            obj.dispose();
+        }
     }
 }
