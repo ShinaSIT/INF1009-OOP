@@ -28,16 +28,12 @@ public class BoardManager {
                 float tileX = board.getStartX() + col * board.getTileSize();
                 float tileY = board.getStartY() + (charMaze.length - row - 1) * board.getTileSize();
 
-                // ❌ Wrong: new StaticObjects(charMaze[row][col], tileX, tileY);
-                // ✅ Fix: Add gridX and gridY
-                if (charMaze[row][col] == '.' ) {
-                	staticObjects.add(new StaticObjects(board, charMaze[row][col], col, row));
-
+                if (charMaze[row][col] == '.') {
+                    staticObjects.add(new StaticObjects(board, charMaze[row][col], col, row));
                 }
             }
         }
     }
-
 
     public void render(SpriteBatch batch) {
         board.render(batch); // ✅ Render the maze first
@@ -57,16 +53,19 @@ public class BoardManager {
 
         for (int row = 0; row < charMaze.length; row++) {
             for (int col = 0; col < charMaze[row].length; col++) {
-                if (charMaze[row][col] == '.' || charMaze[row][col] == 'p') {
-                    intMaze[row][col] = 0;  // ✅ Replace pellets and power-ups with open paths
+                char tile = charMaze[row][col];
+
+                // ✅ Only these are walkable
+                if (tile == '.' || tile == 'p' || tile == ' ') {
+                    intMaze[row][col] = 0;
                 } else {
-                    intMaze[row][col] = (charMaze[row][col] == '1') ? 1 : 0; // ✅ Walls stay as 1
+                    intMaze[row][col] = 1; // ✅ Treat all other characters as wall/obstacle
                 }
             }
         }
+
         return intMaze;
     }
-
 
     protected float getTileSize() {
         return board.getTileSize();
@@ -90,7 +89,7 @@ public class BoardManager {
 
     public void dispose() {
         board.dispose();
-        for (StaticObjects obj : staticObjects) { // ✅ Dispose of static objects
+        for (StaticObjects obj : staticObjects) {
             obj.dispose();
         }
     }

@@ -25,33 +25,34 @@ public class CollisionManager {
     public boolean isMoveValid(int newCol, int newRow) {
         String key = newCol + "," + newRow;
         if (collisionCache.contains(key)) {
-            return false; //Instantly return cached result
+            return false; // Instantly return cached result
         }
 
-        // ✅ Check if the new position is a wall
-        if (board.getMazeLayout()[newRow][newCol] == 1) {
-            System.out.println("Blocked by wall");
+        // ✅ Updated: Check wall collision using tile characters
+        char tile = board.getMazeLayout()[newRow][newCol];
+        if (tile != ' ' && tile != '.' && tile != 'p') {
+            System.out.println("🚧 Blocked by wall");
             collisionCount++;
-            System.out.println("Collision count: " + collisionCount);
-            collisionCache.add(key); // ✅ Store invalid positions
-            return false;  // Move is not valid
+            System.out.println("🔢 Collision count: " + collisionCount);
+            collisionCache.add(key); // Cache invalid position
+            return false;
         }
 
-        // Check against collidable objects
+        // ✅ Check against collidable objects
         for (Collidable collidable : collidableObjects) {
             if (collidable.getGridX() == newCol && collidable.getGridY() == newRow && collidable.isSolid()) {
                 System.out.println("❌ Blocked by Collidable Object");
                 collisionCount++;
-                System.out.println("Collision count: " + collisionCount);
-                collisionCache.add(key); // ✅ Store invalid positions
-                return false;  // Move is not valid
+                System.out.println("🔢 Collision count: " + collisionCount);
+                collisionCache.add(key); // Cache invalid position
+                return false;
             }
         }
 
-        System.out.println("Free to move");
+        System.out.println("✅ Free to move");
         return true;
     }
-    
+
     public void checkCollisions() {
         for (int i = 0; i < collidableObjects.size(); i++) {
             for (int j = i + 1; j < collidableObjects.size(); j++) {
@@ -59,7 +60,9 @@ public class CollisionManager {
                 Collidable b = collidableObjects.get(j);
 
                 if (a.detectCollision(b)) {
-                    System.out.println("Collision Detected between: " + a.getClass().getSimpleName() + " and " + b.getClass().getSimpleName());
+                    System.out.println("⚠️ Collision Detected between: " +
+                            a.getClass().getSimpleName() + " and " +
+                            b.getClass().getSimpleName());
                     resolveCollision(a, b);
                 }
             }
