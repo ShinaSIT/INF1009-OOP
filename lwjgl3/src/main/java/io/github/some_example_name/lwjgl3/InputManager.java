@@ -5,15 +5,20 @@ import com.badlogic.gdx.Input;
 import java.util.HashMap;
 
 public class InputManager extends InputClass {
-    
+	private Player player;
     private boolean wPressed = false;
     private boolean sPressed = false;
     private boolean aPressed = false;
     private boolean dPressed = false;
 
 
-    public InputManager(MovementManager movementManager, GameObjects player, Board board, Mouse mouse) {
+    public InputManager(MovementManager movementManager, Player player, Board board, Mouse mouse) {
         super(movementManager, player, board, mouse);
+        this.player = player;
+    }
+    
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     @Override
@@ -89,5 +94,10 @@ public class InputManager extends InputClass {
         }
 
         return moved;
+    }
+    
+    public void setDependencies(MovementManager movementManager, Board board) {
+        this.movementManager = movementManager;
+        this.board = board;
     }
 }

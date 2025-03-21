@@ -19,45 +19,52 @@ public class GameMaster extends ApplicationAdapter {
     private SessionManager sessionManager;
     private Mouse mouse;
     private boolean gameStarted = false;
-    private boolean isResizing = false;
+
+    public GameMaster() {
+        sceneManager = new SceneManager();
+        sessionManager = new SessionManager();
+
+        mouse = new Mouse(null, null, sceneManager);
+        inputManager = new InputManager(null, null, null, mouse);  // Delay initialization
+        outputManager = null;  // Delay initialization
+    }
 
     @Override
     public void create() {
-    	AssetManager.loadAll(); // ✅ Ensure assets are loaded before the game starts
-        batch = new SpriteBatch();
-        sceneManager = new SceneManager();
+        AssetManager.loadAll(); // ✅ Ensure assets are loaded first
+        batch = new SpriteBatch(); // ✅ Must be initialized after Gdx is ready
+
         boardManager = new BoardManager();
-        boardManager.generateBoard(); // ✅ Only call this once at the start
+        boardManager.generateBoard();
+
+        entityManager = new EntityManager(boardManager.getBoard());
+        collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
+        movementManager = new MovementManager(speaker, collisionManager);
+
+        speaker = new Speaker(); // ✅ Move here to avoid NullPointerException
+        outputManager = new OutputManager(speaker); // ✅ Move here
+
+        inputManager.setDependencies(movementManager, boardManager.getBoard()); // ✅ Update inputManager
 
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.transitionTo("MenuScene");
     }
 
+
     public void startGame() {
         System.out.println("✅ startGame() called!");
-        System.out.println("🟢 GameMaster.startGame() - Board reference: " + boardManager);
-
         gameStarted = true;
-        speaker = new Speaker();
-        entityManager = new EntityManager(boardManager.getBoard());
-        collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
-        movementManager = new MovementManager(speaker, collisionManager);
 
-        // ✅ Instantiate player at a valid position on the board
-        Player player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager);
-        entityManager.addEntity(player); // ✅ Ensure player is added
+        player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager);
+        entityManager.addEntity(player);
 
-        mouse = new Mouse(null, speaker, sceneManager);
-        inputManager = new InputManager(movementManager, player, boardManager.getBoard(), mouse);
-        outputManager = new OutputManager(speaker);
-        sessionManager = new SessionManager();
+        // ✅ Set the player reference in inputManager
+        inputManager.setPlayer(player);
         mouse.setIoManager(inputManager);
 
-        // ✅ Add Germ entity (if needed)
         Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 2, movementManager);
         entityManager.addEntity(germ);
         movementManager.addEntity(germ);
-//        collisionManager.addCollidable(germ);
 
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
@@ -78,7 +85,6 @@ public class GameMaster extends ApplicationAdapter {
             } else {
                 boolean moved = inputManager.handleInput();  // ✅ Check if input is detected
 
-                // ✅ Print logs only if movement occurs
                 if (moved) {  
                     System.out.println("🎮 Game is running...");
                     System.out.println("📌 Player position (render): " + player.getX() + ", " + player.getY());
@@ -87,8 +93,7 @@ public class GameMaster extends ApplicationAdapter {
                 boolean germMoved = false;
                 for (Entity entity : entityManager.getEntities()) {
                     if (entity instanceof Germ) {
-                        if (!germMoved) { // ✅ Print "Germ Moving..." only once per cycle
-//                            System.out.println("🦠 Germ Moving...");
+                        if (!germMoved) { 
                             germMoved = true;
                         }
                         ((Germ) entity).moveSmartly();
@@ -126,16 +131,11 @@ public class GameMaster extends ApplicationAdapter {
         }
 
         if (gameStarted) {
-            System.out.println("🔄 Resizing Board & Entities...");
-
             Board board = boardManager.getBoard();
             if (board != null) {
-//                board.updateDimensions(); // ✅ Ensure board resizes correctly
-                entityManager.updateBoardReference(board); // ✅ Ensure entities have the right reference
-                entityManager.updateEntitiesOnResize(); // ✅ Ensure entities reposition
-
-                System.out.println("🔄 Forcing a Board Re-render!");
-                board.render(batch);  // ✅ Force re-render
+                entityManager.updateBoardReference(board);
+                entityManager.updateEntitiesOnResize();
+                board.render(batch);
             } else {
                 System.out.println("⚠️ Error: Board is NULL after resizing!");
             }
@@ -156,29 +156,27 @@ public class GameMaster extends ApplicationAdapter {
         sceneManager.transitionTo("MenuScene");
         Gdx.input.setInputProcessor(null);
     }
-
-    @Override
-    public void dispose() {
-        System.out.println("🛑 Disposing GameMaster...");
-        AssetManager.disposeAll(); // ✅ Release textures before closing
-        sessionManager.stopTimer();
-        boardManager.dispose();
-        batch.dispose();
-        if (sceneManager.getCurrentScene() != null) {
-            sceneManager.getCurrentScene().dispose();
-        }
-        speaker.stopSound("click");
-    }
-
+    
+    // ✅ Returns the BoardManager instance
     public BoardManager getBoardManager() {
         return boardManager;
     }
 
+    // ✅ Returns the EntityManager instance
     public EntityManager getEntityManager() {
         return entityManager;
     }
 
-    public static void main(String[] args) {
-        Lwjgl3Launcher.main(args);
+    @Override
+    public void dispose() {
+        System.out.println("🛑 Disposing GameMaster...");
+        AssetManager.disposeAll();
+        sessionManager.stopTimer();
+        boardManager.dispose();
+        batch.dispose();
+        if (sceneManager != null && sceneManager.getCurrentScene() != null) {
+            sceneManager.getCurrentScene().dispose();
+        }
+        speaker.stopSound("click");
     }
 }
