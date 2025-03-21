@@ -31,6 +31,10 @@ public abstract class Entity implements IMoveable {
     public int getGridX() { return gridX; }
     public int getGridY() { return gridY; }
     
+    public void addTag(String tag) {
+        entityTags.add(tag);
+    }
+    
     public boolean hasTag(String tag) {
         return entityTags.contains(tag);
     }

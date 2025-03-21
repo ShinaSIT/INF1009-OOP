@@ -4,26 +4,61 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 
 public class Player extends MoveableObjects {
+	private CollisionManager collisionManager;
     private int health;
     private int lives;
 
     // Character facing
     private String facingDirection = "RIGHT";  // Default facing right
-    private String facingSide = "RIGHT";      // Default using right-facing sprites
+    private String facingSide = "RIGHT";       // Default using right-facing sprites
 
-    public Player(Board board, EntityManager entityManager, int x, int y, MovementManager movementManager, int initialHealth, int initialLives) {
-        super(board, entityManager, x, y, movementManager);
-        this.health = initialHealth;
-        this.lives = initialLives;
-    }
+    // Animation toggle (used to simulate stepping)
+    private boolean isRightStep = true;
+    private float stepDistance = 0f;
+    private final float STEP_TRIGGER = 20f; // toggle every 20 pixels
+    private float lastX = -1;
+    private float lastY = -1;
+
+
+
+    public Player(Board board, EntityManager entityManager, int x, int y,
+	            MovementManager movementManager, int initialHealth, int initialLives,
+	            CollisionManager collisionManager) {
+	  super(board, entityManager, x, y, movementManager);
+	  this.health = initialHealth;
+	  this.lives = initialLives;
+	  this.collisionManager = collisionManager;
+	  addTag("moveable");  
+	}
 
     @Override
     public void move(float dx, float dy) {
-        int oldX = getGridX();
-        int oldY = getGridY();
-        System.out.println("🚀 Player.move() called with dx: " + dx + ", dy: " + dy);
-        
-        // Update facing direction
+        int targetGridX = gridX;
+        int targetGridY = gridY;
+
+        // Convert float movement to grid-based movement
+        if (dx > 0) targetGridX++;
+        else if (dx < 0) targetGridX--;
+        else if (dy > 0) targetGridY--;
+        else if (dy < 0) targetGridY++;
+
+        System.out.println("🔄 Attempting Move: (" + gridX + ", " + gridY + ") → (" + targetGridX + ", " + targetGridY + ")");
+
+        // ✅ Check if destination is valid
+        if (!collisionManager.isMoveValid(targetGridX, targetGridY)) {
+            System.out.println("🚧 Collision detected! Staying at (" + gridX + ", " + gridY + ")");
+            return;
+        }
+
+        // ✅ Update grid position
+        setGridX(targetGridX);
+        setGridY(targetGridY);
+        updatePixelPosition();
+
+        // ✅ Toggle walking animation step
+        isRightStep = !isRightStep;
+
+        // ✅ Update facing direction
         if (dx > 0) {
             facingDirection = "RIGHT";
             facingSide = "RIGHT";
@@ -36,40 +71,52 @@ public class Player extends MoveableObjects {
             facingDirection = "DOWN";
         }
 
-        // Apply movement
-        movementManager.applyMovement(this, dx, dy);
-        updatePixelPosition();
-
-        // ✅ Force pixel position update if the grid position changed
-        if (oldX != getGridX() || oldY != getGridY()) {
-            updatePixelPosition();
-            System.out.println("✅ Player Pixel Updated: (" + getX() + ", " + getY() + ")");
-        } else {
-            System.out.println("❌ Player did NOT move! Check for collisions or input issues.");
-        }
+        System.out.println("✅ Move Successful!");
+        System.out.println("✅ Step toggled to: " + (isRightStep ? "Right" : "Left"));
     }
-
 
     @Override
     public void render(SpriteBatch batch) {
         System.out.println("🎨 Rendering Player at (x=" + x + ", y=" + y + "), Grid (" + gridX + ", " + gridY + ")");
+        System.out.println("🦶 Current Step: " + (isRightStep ? "Right Leg" : "Left Leg"));
 
-        Texture currentSprite = Asset.psyduckRRight; // Default sprite
+        Texture currentSprite = Asset.psyduckRDown; // fallback
 
         if (facingSide.equals("LEFT")) {
-            if (facingDirection.equals("UP")) currentSprite = Asset.psyduckLUp;
-            else if (facingDirection.equals("DOWN")) currentSprite = Asset.psyduckLDown;
-            else if (facingDirection.equals("LEFT")) currentSprite = Asset.psyduckLLeft;
-            else if (facingDirection.equals("RIGHT")) currentSprite = Asset.psyduckLRight;
+            switch (facingDirection) {
+                case "UP":
+                    currentSprite = isRightStep ? Asset.psyduckLUp : Asset.psyduckLUp2;
+                    break;
+                case "DOWN":
+                    currentSprite = isRightStep ? Asset.psyduckLDown : Asset.psyduckLDown2;
+                    break;
+                case "LEFT":
+                    currentSprite = isRightStep ? Asset.psyduckLLeft : Asset.psyduckLLeft2;
+                    break;
+                case "RIGHT":
+                    currentSprite = isRightStep ? Asset.psyduckLRight : Asset.psyduckLRight2;
+                    break;
+            }
         } else {
-            if (facingDirection.equals("UP")) currentSprite = Asset.psyduckRUp;
-            else if (facingDirection.equals("DOWN")) currentSprite = Asset.psyduckRDown;
-            else if (facingDirection.equals("LEFT")) currentSprite = Asset.psyduckRLeft;
-            else if (facingDirection.equals("RIGHT")) currentSprite = Asset.psyduckRRight;
+            switch (facingDirection) {
+                case "UP":
+                    currentSprite = isRightStep ? Asset.psyduckRUp : Asset.psyduckRUp2;
+                    break;
+                case "DOWN":
+                    currentSprite = isRightStep ? Asset.psyduckRDown : Asset.psyduckRDown2;
+                    break;
+                case "LEFT":
+                    currentSprite = isRightStep ? Asset.psyduckRLeft : Asset.psyduckRLeft2;
+                    break;
+                case "RIGHT":
+                    currentSprite = isRightStep ? Asset.psyduckRRight : Asset.psyduckRRight2;
+                    break;
+            }
         }
 
         batch.draw(currentSprite, x, y, board.getTileSize(), board.getTileSize());
     }
+
 
 
     public void eatFood(Food food) {

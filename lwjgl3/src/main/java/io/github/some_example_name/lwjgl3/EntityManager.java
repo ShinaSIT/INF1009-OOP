@@ -148,22 +148,26 @@ public class EntityManager {
 
             if (board == null) {
                 System.out.println("⚠️ Error: Board reference is NULL in EntityManager.ensurePlayerExists()!");
-                return; // ✅ Prevent crashing
+                return;
             }
 
-            MoveableObjects player = new MoveableObjects(board, this, 1, 1, new MovementManager(new Speaker(), new CollisionManager(board, this)));
+            CollisionManager collisionManager = new CollisionManager(board, this);
+            MovementManager movementManager = new MovementManager(new Speaker(), collisionManager);
+
+            Player player = new Player(board, this, 1, 1, movementManager, 100, 3, collisionManager);
             addEntity(player);
         }
     }
-
-
     
-    public MoveableObjects getPlayer() {
+    public Player getPlayer() {
         for (Entity entity : entities) {
-            if (entity.hasTag("moveable")) {
-                return (MoveableObjects) entity;
+            if (entity instanceof Player && entity.hasTag("moveable")) {
+                return (Player) entity;
             }
         }
+        System.out.println("⚠️ Player not found in EntityManager!");
         return null;
     }
+
+
 }

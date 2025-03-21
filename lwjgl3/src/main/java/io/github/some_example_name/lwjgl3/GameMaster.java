@@ -44,7 +44,7 @@ public class GameMaster extends ApplicationAdapter {
         movementManager = new MovementManager(speaker, collisionManager);
 
         // ✅ Instantiate player at a valid position on the board
-        player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3);
+        Player player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager);
         entityManager.addEntity(player); // ✅ Ensure player is added
 
         mouse = new Mouse(null, speaker, sceneManager);
@@ -57,7 +57,7 @@ public class GameMaster extends ApplicationAdapter {
         Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 2, movementManager);
         entityManager.addEntity(germ);
         movementManager.addEntity(germ);
-        collisionManager.addCollidable(germ);
+//        collisionManager.addCollidable(germ);
 
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
