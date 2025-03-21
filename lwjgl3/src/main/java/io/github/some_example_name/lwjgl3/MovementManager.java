@@ -22,60 +22,32 @@ public class MovementManager {
      * Adds a moveable entity to the manager.
      */
     public void addEntity(Entity entity) {
-        if (entity.hasTag("moveable")) { // ✅ Replaced EntityType with tags
+        if (entity.hasTag("moveable")) {  
             movingEntities.add((MoveableObjects) entity);
+            System.out.println("✅ Added " + entity + " to movingEntities.");
         }
     }
 
     /**
      * Applies movement to an entity based on the specified delta (dx, dy).
      */
-    public void applyMovement(Entity entity, float dx, float dy) {
-        if (!entity.hasTag("moveable")) return; // ✅ Replaced EntityType check
-        
-        int currentCol = entity.getGridX();
-        int currentRow = entity.getGridY();
-        float tileSize = entity.board.getTileSize();
-        boolean isExpanded = entity.board.getScreenWidth() > 640;
+    public void applyMovement(MoveableObjects entity, float dx, float dy) {
+        int oldCol = entity.getGridX();
+        int oldRow = entity.getGridY();
 
-        System.out.println("applyMovement called with dx: " + dx + ", dy: " + dy);
-        System.out.println("Tile size: " + tileSize);
-        
-        if (isExpanded) {
-            float scale = baseTile / tileSize;
-            dx = dx * scale;
-            dy = dy * scale;
-            System.out.println("Normalized dx: " + dx + ", dy: " + dy);
-        }
-        
-        int deltaCol = (int) dx;
-        int deltaRow = (int) dy;
+        int newCol = oldCol + (int) dx;
+        int newRow = oldRow + (int) dy;
 
-        
-        int newCol = currentCol + deltaCol;
-        int newRow = currentRow + deltaRow;
-        
-        System.out.println("Calculated grid position: (" + newCol + ", " + newRow + ")");
-        
-        newCol = Math.max(0, Math.min(entity.board.getMazeWidth() - 1, newCol));
-        newRow = Math.max(0, Math.min(entity.board.getMazeHeight() - 1, newRow));
-        
-        System.out.println("Clamped grid position: (" + newCol + ", " + newRow + ")");
-        
-        if (collisionManager.isMoveValid(newCol, newRow)) {
+        System.out.println("🔄 Attempting Move: (" + oldCol + ", " + oldRow + ") → (" + newCol + ", " + newRow + ")");
+
+        if (collisionManager != null && collisionManager.isMoveValid(newCol, newRow)) {
             entity.setGridX(newCol);
             entity.setGridY(newRow);
-            
-            entity.x = newCol * tileSize + entity.board.getStartX();
-            entity.y = (entity.board.getMazeHeight() - 1 - newRow) * tileSize + entity.board.getStartY();
-            
-            System.out.println("📌 Player moved to Grid (" + newCol + ", " + newRow + ")");
-            System.out.println("📌 Updated pixel position: (" + entity.x + ", " + entity.y + ")");
-            
-            speaker.playSound("sound");
+            entity.updatePixelPosition();
+
+            System.out.println("✅ Move Successful!");
         } else {
-            System.out.println("❌ Move blocked: Collision at (" + newCol + ", " + newRow + ")");
-            speaker.playSound("block");
+            System.out.println("❌ Collision! Cannot move to (" + newCol + ", " + newRow + ")");
         }
     }
 

@@ -29,5 +29,5 @@ public abstract class InputClass {
 
     public abstract boolean isButtonPressed(int button);
 
-    public abstract void handleInput();
+    public abstract boolean handleInput();
 }

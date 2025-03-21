@@ -19,6 +19,11 @@ public class Player extends MoveableObjects {
 
     @Override
     public void move(float dx, float dy) {
+        int oldX = getGridX();
+        int oldY = getGridY();
+        System.out.println("🚀 Player.move() called with dx: " + dx + ", dy: " + dy);
+        
+        // Update facing direction
         if (dx > 0) {
             facingDirection = "RIGHT";
             facingSide = "RIGHT";
@@ -31,37 +36,41 @@ public class Player extends MoveableObjects {
             facingDirection = "DOWN";
         }
 
+        // Apply movement
         movementManager.applyMovement(this, dx, dy);
+        updatePixelPosition();
+
+        // ✅ Force pixel position update if the grid position changed
+        if (oldX != getGridX() || oldY != getGridY()) {
+            updatePixelPosition();
+            System.out.println("✅ Player Pixel Updated: (" + getX() + ", " + getY() + ")");
+        } else {
+            System.out.println("❌ Player did NOT move! Check for collisions or input issues.");
+        }
     }
+
 
     @Override
     public void render(SpriteBatch batch) {
+        System.out.println("🎨 Rendering Player at (x=" + x + ", y=" + y + "), Grid (" + gridX + ", " + gridY + ")");
+
         Texture currentSprite = Asset.psyduckRRight; // Default sprite
 
         if (facingSide.equals("LEFT")) {
-            if (facingDirection.equals("UP")) {
-                currentSprite = Asset.psyduckLUp;
-            } else if (facingDirection.equals("DOWN")) {
-                currentSprite = Asset.psyduckLDown;
-            } else if (facingDirection.equals("LEFT")) {
-                currentSprite = Asset.psyduckLLeft;
-            } else if (facingDirection.equals("RIGHT")) {
-                currentSprite = Asset.psyduckLRight;
-            }
-        } else { // facingSide == "RIGHT"
-            if (facingDirection.equals("UP")) {
-                currentSprite = Asset.psyduckRUp;
-            } else if (facingDirection.equals("DOWN")) {
-                currentSprite = Asset.psyduckRDown;
-            } else if (facingDirection.equals("LEFT")) {
-                currentSprite = Asset.psyduckRLeft;
-            } else if (facingDirection.equals("RIGHT")) {
-                currentSprite = Asset.psyduckRRight;
-            }
+            if (facingDirection.equals("UP")) currentSprite = Asset.psyduckLUp;
+            else if (facingDirection.equals("DOWN")) currentSprite = Asset.psyduckLDown;
+            else if (facingDirection.equals("LEFT")) currentSprite = Asset.psyduckLLeft;
+            else if (facingDirection.equals("RIGHT")) currentSprite = Asset.psyduckLRight;
+        } else {
+            if (facingDirection.equals("UP")) currentSprite = Asset.psyduckRUp;
+            else if (facingDirection.equals("DOWN")) currentSprite = Asset.psyduckRDown;
+            else if (facingDirection.equals("LEFT")) currentSprite = Asset.psyduckRLeft;
+            else if (facingDirection.equals("RIGHT")) currentSprite = Asset.psyduckRRight;
         }
 
         batch.draw(currentSprite, x, y, board.getTileSize(), board.getTileSize());
     }
+
 
     public void eatFood(Food food) {
         if (food.isHealthy()) {

@@ -75,15 +75,21 @@ public class GameMaster extends ApplicationAdapter {
             if (!gameStarted) {
                 sceneManager.render(batch);
             } else {
-                System.out.println("🎮 Game is running...");
+                boolean moved = inputManager.handleInput();  // ✅ Check if input is detected
 
-                // 🔍 Check if input is being processed
-                System.out.println("🔍 Handling Input...");
-                inputManager.handleInput(); // Make sure input is still working
+                // ✅ Print logs only if movement occurs
+                if (moved) {  
+                    System.out.println("🎮 Game is running...");
+                    System.out.println("📌 Player position (render): " + player.getX() + ", " + player.getY());
+                }
 
+                boolean germMoved = false;
                 for (Entity entity : entityManager.getEntities()) {
                     if (entity instanceof Germ) {
-                        System.out.println("🦠 Germ Moving...");
+                        if (!germMoved) { // ✅ Print "Germ Moving..." only once per cycle
+//                            System.out.println("🦠 Germ Moving...");
+                            germMoved = true;
+                        }
                         ((Germ) entity).moveSmartly();
                     }
                 }
@@ -93,12 +99,9 @@ public class GameMaster extends ApplicationAdapter {
                     sessionManager.startTimer();
                     outputManager.setHasMoved(true);
                 }
+				entityManager.render(batch);
                 outputManager.handleOutput();
-
-                if (batch.isDrawing()) {
-                    boardManager.render(batch);
-                    entityManager.render(batch);
-                }
+                boardManager.render(batch);
             }
 
             if (batch.isDrawing()) {
@@ -107,13 +110,11 @@ public class GameMaster extends ApplicationAdapter {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("❌ Error occurred while rendering GameMaster!");
-
             if (batch.isDrawing()) {
                 batch.end();
             }
         }
     }
-
 
     @Override
     public void resize(int width, int height) {

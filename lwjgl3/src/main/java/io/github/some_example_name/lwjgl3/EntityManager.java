@@ -19,7 +19,9 @@ public class EntityManager {
 
     public void addEntity(Entity entity) {
         entities.add(entity);
+        System.out.println("✅ Added Entity: " + entity + " at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
     }
+
 
     public List<Entity> getEntities() {
         return entities;

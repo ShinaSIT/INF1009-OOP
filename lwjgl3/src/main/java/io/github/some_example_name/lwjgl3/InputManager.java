@@ -5,11 +5,12 @@ import com.badlogic.gdx.Input;
 import java.util.HashMap;
 
 public class InputManager extends InputClass {
-
+    
     private boolean wPressed = false;
     private boolean sPressed = false;
     private boolean aPressed = false;
     private boolean dPressed = false;
+
 
     public InputManager(MovementManager movementManager, GameObjects player, Board board, Mouse mouse) {
         super(movementManager, player, board, mouse);
@@ -40,57 +41,53 @@ public class InputManager extends InputClass {
         return Gdx.input.isButtonPressed(button);
     }
 
-    @Override
-    public void handleInput() {
+    public boolean handleInput() {
+        boolean moved = false;
         if (board == null) {
             System.err.println("Error: Board is not initialized!");
-            return;
+            return false;
         }
 
         float step = board.getTileSize();
+        int oldX = player.getGridX();  // ✅ Store old position
+        int oldY = player.getGridY();
 
-        // Move Up
+        // ✅ Use key press/release tracking but functionally act like `isKeyJustPressed()`
         if ((Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) && !wPressed) {
-            System.out.println("Moving Up");
-            movementManager.applyMovement((MoveableObjects) player, 0, step);
+            player.move(0, -1);
             wPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.W) && !Gdx.input.isKeyPressed(Input.Keys.UP)) {
             wPressed = false;
         }
 
-        // Move Down
         if ((Gdx.input.isKeyJustPressed(Input.Keys.S) || Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) && !sPressed) {
-            System.out.println("Moving Down");
-            movementManager.applyMovement((MoveableObjects) player, 0, -step);
+            player.move(0, 1);
             sPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.S) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             sPressed = false;
         }
 
-        // Move Left
         if ((Gdx.input.isKeyJustPressed(Input.Keys.A) || Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) && !aPressed) {
-            System.out.println("Moving Left");
-            movementManager.applyMovement((MoveableObjects) player, -step, 0);
+            player.move(-1, 0);
             aPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             aPressed = false;
         }
 
-        // Move Right
         if ((Gdx.input.isKeyJustPressed(Input.Keys.D) || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) && !dPressed) {
-            System.out.println("Moving Right");
-            movementManager.applyMovement((MoveableObjects) player, step, 0);
+            player.move(1, 0);
             dPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             dPressed = false;
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.exit();
+        Gdx.graphics.requestRendering();
+
+        // ✅ Only return true if position actually changed
+        if (player.getGridX() != oldX || player.getGridY() != oldY) {
+            moved = true;
         }
 
-        if (mouse != null) {
-            mouse.checkMouse();
-        }
+        return moved;
     }
 }
