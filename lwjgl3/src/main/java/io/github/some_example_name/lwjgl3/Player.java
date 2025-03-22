@@ -164,11 +164,13 @@ public class Player extends MoveableObjects implements Collidable {
     @Override
     public void setGridX(int gridX) {
         super.setGridX(gridX);
+        updatePixelPosition();
     }
 
     @Override
     public void setGridY(int gridY) {
         super.setGridY(gridY);
+        updatePixelPosition();
     }
 
     @Override

@@ -23,29 +23,40 @@ public class CollisionManager {
      * Checks if a move to the specified grid position is valid.
      */
     public boolean isMoveValid(int newCol, int newRow) {
-//        String key = newCol + "," + newRow;
-//        if (collisionCache.contains(key)) {
-//            return false; // Instantly return cached result
-//        }
-
-        // ✅ Updated: Check wall collision using tile characters
         char tile = board.getMazeLayout()[newRow][newCol];
         if (tile != ' ' && tile != '.' && tile != 'p') {
             System.out.println("🚧 Blocked by wall");
             collisionCount++;
             System.out.println("🔢 Collision count: " + collisionCount);
-//            collisionCache.add(key); // Cache invalid position
             return false;
         }
 
-        // ✅ Check against collidable objects
         for (Collidable collidable : collidableObjects) {
             if (collidable.getGridX() == newCol && collidable.getGridY() == newRow && collidable.isSolid()) {
-                System.out.println("❌ Blocked by Collidable Object");
-                collisionCount++;
-                System.out.println("🔢 Collision count: " + collisionCount);
-//                collisionCache.add(key); // Cache invalid position
-                return false;
+                if (collidable instanceof Germ) {
+                    // Collision with a Germ
+                    System.out.println("💥 Player hit by Germ! Resetting player.");
+
+                    // Find the Player object in collidableObjects and reset it.
+                    for (Collidable playerCheck : collidableObjects) {
+                        if (playerCheck instanceof Player) {
+                            Player player = (Player) playerCheck;
+                            player.setGridX(1);
+                            player.setGridY(1);
+                            player.updatePixelPosition();
+                            System.out.println("💥 Player position after reset: (" + player.getGridX() + ", " + player.getGridY() + ")");
+                            return false; // Prevent further movement after reset
+                        }
+                    }
+                    // If no player is found, return false.
+                    return false;
+                } else {
+                    // Collision with a non-Germ Collidable
+                    System.out.println("❌ Blocked by Collidable Object");
+                    collisionCount++;
+                    System.out.println("🔢 Collision count: " + collisionCount);
+                    return false;
+                }
             }
         }
 
@@ -54,7 +65,7 @@ public class CollisionManager {
     }
 
     public void checkCollisions() {
-    	collisionCache.clear();
+//    	System.out.println("Collidable Objects: " + collidableObjects);
         for (int i = 0; i < collidableObjects.size(); i++) {
             for (int j = i + 1; j < collidableObjects.size(); j++) {
                 Collidable a = collidableObjects.get(i);
@@ -76,20 +87,12 @@ public class CollisionManager {
         }
 
         if (a instanceof Germ && b instanceof Player) {
-            int dx = a.getGridX() - b.getGridX();
-            int dy = a.getGridY() - b.getGridY();
-
-            if (dx != 0) dx = dx > 0 ? 1 : -1;
-            if (dy != 0) dy = dy > 0 ? 1 : -1;
-
-            int newGridX = a.getGridX() + dx;
-            int newGridY = a.getGridY() + dy;
-
-            // Check if the new position is valid
-            if (board.getMazeLayout()[newGridY][newGridX] == ' ' && isMoveValid(newGridX, newGridY)) {
-                a.setGridX(newGridX);
-                a.setGridY(newGridY);
-            }
+            System.out.println("💥 Germ hit Player! Resetting player.");
+            Player player = (Player) b;
+            player.setGridX(1);
+            player.setGridY(1);
+            player.updatePixelPosition();
+            System.out.println("💥 Germ hit Player! Resetting player. Player position after reset: (" + player.getGridX() + ", " + player.getGridY() + ")");
         } else if (a instanceof Player && b instanceof Germ) {
             resolveCollision(b,a);
         }

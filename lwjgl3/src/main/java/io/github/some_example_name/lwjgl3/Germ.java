@@ -127,7 +127,14 @@ public class Germ extends MoveableObjects implements Collidable { // Implement C
 
     @Override
     public boolean detectCollision(Collidable other) {
-        if (other == this) return false; // No self-collision
-        return getGridX() == other.getGridX() && getGridY() == other.getGridY();
+        System.out.println("Germ.detectCollision: Germ(" + this.getGridX() + ", " + this.getGridY() + ") vs. " + other.getClass().getSimpleName() + "(" + other.getGridX() + ", " + other.getGridY() + ")");
+        // ... your collision detection logic ...
+        // Example simple collision check
+        if (this.getGridX() == other.getGridX() && this.getGridY() == other.getGridY()) {
+            return true;
+        } else {
+            return false;
+        }
     }
+
 }

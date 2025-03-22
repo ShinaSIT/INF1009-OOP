@@ -58,6 +58,7 @@ public class GameMaster extends ApplicationAdapter {
         player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager);
         entityManager.addEntity(player);
         collisionManager.addCollidable(player);
+        
 
         // ✅ Set the player reference in inputManager
         inputManager.setPlayer(player);
@@ -110,6 +111,8 @@ public class GameMaster extends ApplicationAdapter {
 				entityManager.render(batch);
                 outputManager.handleOutput();
                 boardManager.render(batch);
+                
+                collisionManager.checkCollisions();
             }
 
             if (batch.isDrawing()) {
@@ -171,7 +174,7 @@ public class GameMaster extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        System.out.println("🛑 Disposing GameMaster...");
+//        System.out.println("🛑 Disposing GameMaster...");
         AssetManager.disposeAll();
         sessionManager.stopTimer();
         boardManager.dispose();
