@@ -3,7 +3,7 @@ package io.github.some_example_name.lwjgl3;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 
-public class Player extends MoveableObjects {
+public class Player extends MoveableObjects implements Collidable {
 	private CollisionManager collisionManager;
     private int health;
     private int lives;
@@ -145,4 +145,36 @@ public class Player extends MoveableObjects {
     public int getLives() {
         return lives;
     }
+    
+    @Override
+    public boolean isSolid() {
+        return true; 
+    }
+
+    @Override
+    public int getGridX() {
+        return super.getGridX();
+    }
+
+    @Override
+    public int getGridY() {
+        return super.getGridY();
+    }
+
+    @Override
+    public void setGridX(int gridX) {
+        super.setGridX(gridX);
+    }
+
+    @Override
+    public void setGridY(int gridY) {
+        super.setGridY(gridY);
+    }
+
+    @Override
+    public boolean detectCollision(Collidable other) {
+        if (other == this) return false; // No self-collision
+        return getGridX() == other.getGridX() && getGridY() == other.getGridY();
+    }
+
 }

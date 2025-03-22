@@ -15,7 +15,7 @@ public class Germ extends MoveableObjects implements Collidable { // Implement C
     private int moveCooldown = 60;
     private int lastDirection = -1; // -1: No direction, 0: Up, 1: Right, 2: Down, 3: Left
 
-    public Germ(Board board, EntityManager entityManager, int gridX, int gridY, MovementManager movementManager) {
+    public Germ(Board board, EntityManager entityManager, int gridX, int gridY, MovementManager movementManager, CollisionManager collisionManager) {
         super(board, entityManager, gridX, gridY, movementManager);
         this.entityTags.add("moveable");
         this.random = new Random();

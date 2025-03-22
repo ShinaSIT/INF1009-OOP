@@ -57,14 +57,16 @@ public class GameMaster extends ApplicationAdapter {
 
         player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager);
         entityManager.addEntity(player);
+        collisionManager.addCollidable(player);
 
         // ✅ Set the player reference in inputManager
         inputManager.setPlayer(player);
         mouse.setIoManager(inputManager);
 
-        Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 2, movementManager);
+        Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 10, movementManager, collisionManager);
         entityManager.addEntity(germ);
         movementManager.addEntity(germ);
+        collisionManager.addCollidable(germ);
 
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
@@ -179,4 +181,8 @@ public class GameMaster extends ApplicationAdapter {
         }
         speaker.stopSound("click");
     }
+    
+//    public static void main(String[] args) {
+//    	
+//    }
 }

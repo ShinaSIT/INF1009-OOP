@@ -23,10 +23,10 @@ public class CollisionManager {
      * Checks if a move to the specified grid position is valid.
      */
     public boolean isMoveValid(int newCol, int newRow) {
-        String key = newCol + "," + newRow;
-        if (collisionCache.contains(key)) {
-            return false; // Instantly return cached result
-        }
+//        String key = newCol + "," + newRow;
+//        if (collisionCache.contains(key)) {
+//            return false; // Instantly return cached result
+//        }
 
         // ✅ Updated: Check wall collision using tile characters
         char tile = board.getMazeLayout()[newRow][newCol];
@@ -34,7 +34,7 @@ public class CollisionManager {
             System.out.println("🚧 Blocked by wall");
             collisionCount++;
             System.out.println("🔢 Collision count: " + collisionCount);
-            collisionCache.add(key); // Cache invalid position
+//            collisionCache.add(key); // Cache invalid position
             return false;
         }
 
@@ -44,7 +44,7 @@ public class CollisionManager {
                 System.out.println("❌ Blocked by Collidable Object");
                 collisionCount++;
                 System.out.println("🔢 Collision count: " + collisionCount);
-                collisionCache.add(key); // Cache invalid position
+//                collisionCache.add(key); // Cache invalid position
                 return false;
             }
         }
@@ -54,6 +54,7 @@ public class CollisionManager {
     }
 
     public void checkCollisions() {
+    	collisionCache.clear();
         for (int i = 0; i < collidableObjects.size(); i++) {
             for (int j = i + 1; j < collidableObjects.size(); j++) {
                 Collidable a = collidableObjects.get(i);
@@ -74,11 +75,23 @@ public class CollisionManager {
             return;
         }
 
-        int tempX = a.getGridX();
-        int tempY = a.getGridY();
-        a.setGridX(b.getGridX());
-        a.setGridY(b.getGridY());
-        b.setGridX(tempX);
-        b.setGridY(tempY);
+        if (a instanceof Germ && b instanceof Player) {
+            int dx = a.getGridX() - b.getGridX();
+            int dy = a.getGridY() - b.getGridY();
+
+            if (dx != 0) dx = dx > 0 ? 1 : -1;
+            if (dy != 0) dy = dy > 0 ? 1 : -1;
+
+            int newGridX = a.getGridX() + dx;
+            int newGridY = a.getGridY() + dy;
+
+            // Check if the new position is valid
+            if (board.getMazeLayout()[newGridY][newGridX] == ' ' && isMoveValid(newGridX, newGridY)) {
+                a.setGridX(newGridX);
+                a.setGridY(newGridY);
+            }
+        } else if (a instanceof Player && b instanceof Germ) {
+            resolveCollision(b,a);
+        }
     }
 }
