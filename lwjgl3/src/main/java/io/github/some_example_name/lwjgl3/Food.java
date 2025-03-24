@@ -1,19 +1,30 @@
 package io.github.some_example_name.lwjgl3;
 
+import com.badlogic.gdx.graphics.Texture;
+
 public class Food {
-    private String name;
-    private boolean isHealthy;
+    private String type; // "healthy" or "unhealthy"
+    private Texture texture;
 
-    public Food(String name, boolean isHealthy) {
-        this.name = name;
-        this.isHealthy = isHealthy;
+    public Food(String type, Texture texture) {
+        this.type = type;
+        this.texture = texture;
     }
 
-    public String getName() {
-        return name;
+    public String getType() {
+        return type;
     }
 
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public boolean isUnhealthy() {
+        return "unhealthy".equalsIgnoreCase(type);
+    }
+    
     public boolean isHealthy() {
-        return isHealthy;
+    	return "healthy".equalsIgnoreCase(type);
     }
+    
 }

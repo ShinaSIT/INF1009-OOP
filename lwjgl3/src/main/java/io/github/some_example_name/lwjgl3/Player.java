@@ -73,6 +73,19 @@ public class Player extends MoveableObjects implements Collidable {
 
         System.out.println("✅ Move Successful!");
         System.out.println("✅ Step toggled to: " + (isRightStep ? "Right" : "Left"));
+
+        // ✅ Check for food at new location
+        Food[][] foodGrid = board.getFoodGrid();
+        char[][] mazeLayout = board.getMazeLayout();
+
+        Food food = foodGrid[gridY][gridX];
+        if (food != null) {
+            eatFood(food); // 🍽️ Apply food effect
+            foodGrid[gridY][gridX] = null; // remove food
+            mazeLayout[gridY][gridX] = ' '; // clear tile on map
+            System.out.println("🍴 Ate food at (" + gridX + ", " + gridY + ")");
+        }
+
     }
 
     @Override

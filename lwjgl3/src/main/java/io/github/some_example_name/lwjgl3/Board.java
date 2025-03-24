@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.Gdx;
 
+import java.awt.Point;
+import java.util.*;
+
 public class Board {
     private ShapeRenderer shapeRenderer;
     private float tileSize;
@@ -31,6 +34,10 @@ public class Board {
             {'4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '3'}
     };
 
+    private Food[][] foodGrid = new Food[mazeLayout.length][mazeLayout[0].length];
+    private long lastRegenerateTime = System.currentTimeMillis();
+    private final long regenDelay = 15000; // 15 seconds
+
     public Board() {
         this.shapeRenderer = new ShapeRenderer();
         this.camera = new OrthographicCamera();
@@ -44,9 +51,7 @@ public class Board {
         int newWidth = Gdx.graphics.getWidth();
         int newHeight = Gdx.graphics.getHeight();
 
-        if (newWidth == lastScreenWidth && newHeight == lastScreenHeight) {
-            return;
-        }
+        if (newWidth == lastScreenWidth && newHeight == lastScreenHeight) return;
 
         lastScreenWidth = newWidth;
         lastScreenHeight = newHeight;
@@ -64,19 +69,121 @@ public class Board {
         System.out.println("✅ Board Resized: TileSize = " + tileSize + ", StartX = " + startX + ", StartY = " + startY);
     }
 
-    protected char[][] getMazeLayout() {
-        char[][] charMazeCopy = new char[mazeLayout.length][mazeLayout[0].length];
+    public void generateFoods() {
+        Random random = new Random();
+        int unhealthyCount = 0;
+        int unhealthyLimit = 2;
+        List<Point> foodSpots = new ArrayList<>();
+        Set<Point> skipPoints = Set.of(new Point(1, 1), new Point(1, 10)); // Player & Germ start
 
         for (int row = 0; row < mazeLayout.length; row++) {
             for (int col = 0; col < mazeLayout[row].length; col++) {
-                if (mazeLayout[row][col] == '.' || mazeLayout[row][col] == 'p') {
-                    charMazeCopy[row][col] = ' ';
-                } else {
-                    charMazeCopy[row][col] = mazeLayout[row][col];
+                Point point = new Point(col, row);
+                if (mazeLayout[row][col] == '.' && !skipPoints.contains(point)) {
+                    foodSpots.add(point);
                 }
             }
         }
-        return charMazeCopy;
+
+        Collections.shuffle(foodSpots);
+
+        for (Point p : foodSpots) {
+            String type;
+            Texture tex;
+
+            if (unhealthyCount < unhealthyLimit && random.nextBoolean()) {
+                type = "unhealthy";
+                tex = StaticObjectAssets.getRandomUnhealthyFood();
+                unhealthyCount++;
+            } else {
+                type = "healthy";
+                tex = StaticObjectAssets.getRandomHealthyFood();
+            }
+
+            foodGrid[p.y][p.x] = new Food(type, tex);
+            mazeLayout[p.y][p.x] = 'f';
+        }
+    }
+
+    public void updateFoodRegeneration() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastRegenerateTime >= regenDelay) {
+            regenerateOneFood();
+            lastRegenerateTime = currentTime;
+        }
+    }
+
+    private void regenerateOneFood() {
+        List<Point> emptyTiles = new ArrayList<>();
+
+        for (int row = 0; row < mazeLayout.length; row++) {
+            for (int col = 0; col < mazeLayout[row].length; col++) {
+                if (mazeLayout[row][col] == ' ') {
+                    emptyTiles.add(new Point(col, row));
+                }
+            }
+        }
+
+        if (!emptyTiles.isEmpty()) {
+            Collections.shuffle(emptyTiles);
+            Point p = emptyTiles.get(0);
+
+            boolean isHealthy = Math.random() < 0.5;
+            Texture tex = isHealthy
+                    ? StaticObjectAssets.getRandomHealthyFood()
+                    : StaticObjectAssets.getRandomUnhealthyFood();
+            String type = isHealthy ? "healthy" : "unhealthy";
+
+            foodGrid[p.y][p.x] = new Food(type, tex);
+            mazeLayout[p.y][p.x] = 'f';
+        }
+
+        if (countHealthyFoodRemaining() == 0) {
+            for (int row = 0; row < mazeLayout.length; row++) {
+                for (int col = 0; col < mazeLayout[row].length; col++) {
+                    if (mazeLayout[row][col] == '$') {
+                        mazeLayout[row][col] = ' ';
+                        System.out.println("🕊️ Bird gate removed! You may exit.");
+                    }
+                }
+            }
+        }
+    }
+
+    private int countHealthyFoodRemaining() {
+        int count = 0;
+        for (int row = 0; row < foodGrid.length; row++) {
+            for (int col = 0; col < foodGrid[row].length; col++) {
+                if (foodGrid[row][col] != null && foodGrid[row][col].isHealthy()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public char[][] getMazeLayout() {
+        return mazeLayout;
+    }
+
+    public char[][] getMazeLayoutCopy() {
+        char[][] copy = new char[mazeLayout.length][mazeLayout[0].length];
+
+        for (int row = 0; row < mazeLayout.length; row++) {
+            for (int col = 0; col < mazeLayout[row].length; col++) {
+                char c = mazeLayout[row][col];
+                if (c == '.' || c == 'p' || c == 'f' || c == ' ') {
+                    copy[row][col] = ' '; // walkable
+                } else {
+                    copy[row][col] = c; // solid
+                }
+            }
+        }
+        return copy;
+    }
+
+    public Food[][] getFoodGrid() {
+        return foodGrid;
     }
 
     public int getMazeHeight() {
@@ -110,6 +217,7 @@ public class Board {
     public void render(SpriteBatch batch) {
         try {
             updateDimensions();
+            updateFoodRegeneration();
 
             if (!batch.isDrawing()) {
                 batch.begin();
@@ -121,7 +229,7 @@ public class Board {
                     float tileY = startY + (mazeLayout.length - row - 1) * tileSize;
 
                     char symbol = mazeLayout[row][col];
-                    Texture texture = getTextureForSymbol(symbol);
+                    Texture texture = getTextureForSymbol(symbol, row, col);
 
                     if (texture != null) {
                         batch.draw(texture, tileX, tileY, tileSize, tileSize);
@@ -129,33 +237,17 @@ public class Board {
                 }
             }
 
-            batch.end();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("❌ Error occurred while rendering the maze!");
         }
     }
 
-    private Texture getTextureForSymbol(char symbol) {
-        switch (symbol) {
-            case '-': return BoardAssets.pipeHorizontal;
-            case '|': return BoardAssets.pipeVertical;
-            case '1': return BoardAssets.pipeCorner1;
-            case '2': return BoardAssets.pipeCorner2;
-            case '3': return BoardAssets.pipeCorner3;
-            case '4': return BoardAssets.pipeCorner4;
-            case 'b': return BoardAssets.block;
-            case '[': return BoardAssets.capLeft;
-            case ']': return BoardAssets.capRight;
-            case '_': return BoardAssets.capBottom;
-            case '^': return BoardAssets.capTop;
-            case '+': return BoardAssets.pipeCross;
-            case '5': return BoardAssets.pipeConnectorTop;
-            case '6': return BoardAssets.pipeConnectorRight;
-            case '7': return BoardAssets.pipeConnectorBottom;
-            case '8': return BoardAssets.pipeConnectorLeft;
-            default: return null;
+    private Texture getTextureForSymbol(char symbol, int row, int col) {
+        if (symbol == 'f') {
+            return foodGrid[row][col] != null ? foodGrid[row][col].getTexture() : null;
         }
+        return StaticObjectAssets.getStaticTexture(symbol);
     }
 
     public void dispose() {

@@ -24,7 +24,7 @@ public class CollisionManager {
      */
     public boolean isMoveValid(int newCol, int newRow) {
         char tile = board.getMazeLayout()[newRow][newCol];
-        if (tile != ' ' && tile != '.' && tile != 'p') {
+        if (tile != ' ' && tile != '.' && tile != 'p' && tile != 'f') {
             System.out.println("🚧 Blocked by wall");
             collisionCount++;
             System.out.println("🔢 Collision count: " + collisionCount);

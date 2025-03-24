@@ -93,31 +93,37 @@ public class GameMaster extends ApplicationAdapter {
                     System.out.println("📌 Player position (render): " + player.getX() + ", " + player.getY());
                 }
 
+                // ✅ Move AI enemies
                 boolean germMoved = false;
                 for (Entity entity : entityManager.getEntities()) {
                     if (entity instanceof Germ) {
-                        if (!germMoved) { 
-                            germMoved = true;
-                        }
+                        if (!germMoved) germMoved = true;
                         ((Germ) entity).moveSmartly();
                     }
                 }
 
+                // ✅ Start session timer
                 if (!outputManager.isHasMoved()) {
                     System.out.println("⏳ Timer Started: " + sessionManager.isTimerRunning());
                     sessionManager.startTimer();
                     outputManager.setHasMoved(true);
                 }
-				entityManager.render(batch);
-                outputManager.handleOutput();
+
+                // ✅ Add this line BEFORE rendering board
+                boardManager.getBoard().updateFoodRegeneration();
+
+                // ✅ Render board and entities
                 boardManager.render(batch);
-                
+                entityManager.render(batch);
+
+                outputManager.handleOutput();
                 collisionManager.checkCollisions();
             }
 
             if (batch.isDrawing()) {
                 batch.end();
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("❌ Error occurred while rendering GameMaster!");

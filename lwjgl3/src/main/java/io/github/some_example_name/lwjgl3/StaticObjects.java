@@ -99,22 +99,13 @@ public class StaticObjects extends Entity {
     }
 
     private void updateTexture() {
-        if (textureMap.isEmpty()) {
-            loadTextures();
-        }
-
-        this.texture = textureMap.get(type);
+        this.texture = StaticObjectAssets.getStaticTexture(type);
 
         if (texture == null) {
             System.err.println("⚠️ No texture found for symbol: '" + type + "' at (" + gridX + "," + gridY + ")");
         } else if (type == '$') {
             System.out.println("✅ Game Over texture loaded successfully!");
         }
-    }
-
-    private static void loadTextures() {
-        textureMap.put('.', new Texture(Gdx.files.internal("board/pellet.png")));
-        textureMap.put('$', new Texture(Gdx.files.internal("board/End.png"))); // Game Over object
     }
 
     @Override

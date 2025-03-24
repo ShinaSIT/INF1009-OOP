@@ -66,17 +66,17 @@ public class Germ extends MoveableObjects implements Collidable { // Implement C
 
     private List<Integer> getValidDirections() {
         List<Integer> directions = new ArrayList<>();
-        char[][] maze = board.getMazeLayout();
+        char[][] maze = board.getMazeLayout();  // OR use board.getMazeLayoutCopy() for more flexibility
         int currentX = getGridX();
         int currentY = getGridY();
 
-        // Bounds check first
-        if (currentY > 0 && maze[currentY - 1][currentX] == ' ') directions.add(0); // Up
-        if (currentX < maze[0].length - 1 && maze[currentY][currentX + 1] == ' ') directions.add(1); // Right
-        if (currentY < maze.length - 1 && maze[currentY + 1][currentX] == ' ') directions.add(2); // Down
-        if (currentX > 0 && maze[currentY][currentX - 1] == ' ') directions.add(3); // Left
+        // Check bounds and allow walking on ' ', 'f' (food), and optionally 'p' (player)
+        if (currentY > 0 && isWalkable(maze[currentY - 1][currentX])) directions.add(0); // Up
+        if (currentX < maze[0].length - 1 && isWalkable(maze[currentY][currentX + 1])) directions.add(1); // Right
+        if (currentY < maze.length - 1 && isWalkable(maze[currentY + 1][currentX])) directions.add(2); // Down
+        if (currentX > 0 && isWalkable(maze[currentY][currentX - 1])) directions.add(3); // Left
 
-        Collections.shuffle(directions); // ✅ Add randomness
+        Collections.shuffle(directions);
         return directions;
     }
 
@@ -93,6 +93,10 @@ public class Germ extends MoveableObjects implements Collidable { // Implement C
             case 2: movementManager.applyMovement(this, 0, 1); break;  // Down
             case 3: movementManager.applyMovement(this, -1, 0); break; // Left
         }
+    }
+    
+    private boolean isWalkable(char tile) {
+        return tile == ' ' || tile == 'f'; // Add other walkable characters if needed
     }
 
     public void dispose() {

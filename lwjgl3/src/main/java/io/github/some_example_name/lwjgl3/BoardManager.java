@@ -9,6 +9,7 @@ public class BoardManager {
 
     protected BoardManager() {
         this.board = new Board();
+        board.generateFoods();
         generateStaticObjects(); // ✅ Generate pellets & power-ups
     }
 
@@ -56,7 +57,7 @@ public class BoardManager {
                 char tile = charMaze[row][col];
 
                 // ✅ Only these are walkable
-                if (tile == '.' || tile == 'p' || tile == ' ') {
+                if (tile == '.' || tile == 'p' || tile == 'f') {
                     intMaze[row][col] = 0;
                 } else {
                     intMaze[row][col] = 1; // ✅ Treat all other characters as wall/obstacle
