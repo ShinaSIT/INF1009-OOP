@@ -33,7 +33,7 @@ public abstract class MenuScene extends Scene {
         // ✅ Create Start Button
         startButton = new TextButton("Start Game", skin);
 
-        // ✅ Create a Table for dynamic layout
+        // ✅ Create a Table 
         table = new Table();
         table.setFillParent(true);  // ✅ Make the table fill the screen
         table.center();
