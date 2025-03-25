@@ -16,13 +16,13 @@ public class GameMaster extends ApplicationAdapter {
     private SceneManager sceneManager;
     private InputManager inputManager;
     private OutputManager outputManager;
-    private SessionManager sessionManager;
+    //private SessionManager sessionManager;
     private Mouse mouse;
     private boolean gameStarted = false;
 
     public GameMaster() {
         sceneManager = new SceneManager();
-        sessionManager = new SessionManager();
+        //sessionManager = new SessionManager();
 
         mouse = new Mouse(null, null, sceneManager);
         inputManager = new InputManager(null, null, null, mouse);  // Delay initialization
@@ -33,7 +33,6 @@ public class GameMaster extends ApplicationAdapter {
     public void create() {
         AssetManager.loadAll(); // ✅ Ensure assets are loaded first
         batch = new SpriteBatch(); // ✅ Must be initialized after Gdx is ready
-        speaker = new Speaker();
 
         boardManager = new BoardManager();
         boardManager.generateBoard();
@@ -42,7 +41,7 @@ public class GameMaster extends ApplicationAdapter {
         collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
         movementManager = new MovementManager(speaker, collisionManager);
 
-         // ✅ Move here to avoid NullPointerException
+        speaker = new Speaker(); // ✅ Move here to avoid NullPointerException
         outputManager = new OutputManager(speaker); // ✅ Move here
 
         inputManager.setDependencies(movementManager, boardManager.getBoard()); // ✅ Update inputManager
@@ -66,22 +65,9 @@ public class GameMaster extends ApplicationAdapter {
         mouse.setIoManager(inputManager);
 
         Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 10, movementManager, collisionManager);
-        Germ germ2 = new Germ(boardManager.getBoard(), entityManager, 9, 1, movementManager, collisionManager);
-        Germ germ3 = new Germ(boardManager.getBoard(), entityManager, 9, 10, movementManager, collisionManager);
-        
         entityManager.addEntity(germ);
-        entityManager.addEntity(germ2);
-        entityManager.addEntity(germ3);
-        
         movementManager.addEntity(germ);
-        movementManager.addEntity(germ2);
-        movementManager.addEntity(germ3);
-        
         collisionManager.addCollidable(germ);
-        collisionManager.addCollidable(germ2);
-        collisionManager.addCollidable(germ3);
-
-        
 
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
@@ -94,20 +80,20 @@ public class GameMaster extends ApplicationAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
             if (!batch.isDrawing()) {
-                batch.begin(); // ✅ Ensures batch starts
+                batch.begin();
             }
 
-            if (!gameStarted) {
-                sceneManager.render(batch);
-            } else {
-                boolean moved = inputManager.handleInput();  // ✅ Check if input is detected
+            sceneManager.render(batch); // Always render the SceneManager
 
-                if (moved) {  
+            if (gameStarted) { // Only run game logic if gameStarted
+                boolean moved = inputManager.handleInput();
+
+                if (moved) {
                     System.out.println("🎮 Game is running...");
                     System.out.println("📌 Player position (render): " + player.getX() + ", " + player.getY());
                 }
 
-                // ✅ Move AI enemies
+                // Move AI enemies
                 boolean germMoved = false;
                 for (Entity entity : entityManager.getEntities()) {
                     if (entity instanceof Germ) {
@@ -115,18 +101,17 @@ public class GameMaster extends ApplicationAdapter {
                         ((Germ) entity).moveSmartly();
                     }
                 }
-
-                // ✅ Start session timer
+             // Start session timer
                 if (!outputManager.isHasMoved()) {
-                    System.out.println("⏳ Timer Started: " + sessionManager.isTimerRunning());
-                    sessionManager.startTimer();
+                    //System.out.println("⏳ Timer Started: " + sessionManager.isTimerRunning());
+                    //sessionManager.startTimer();
                     outputManager.setHasMoved(true);
                 }
 
-                // ✅ Add this line BEFORE rendering board
+                // Add this line BEFORE rendering board
                 boardManager.getBoard().updateFoodRegeneration();
 
-                // ✅ Render board and entities
+                // Render board and entities
                 boardManager.render(batch);
                 entityManager.render(batch);
 
@@ -196,7 +181,6 @@ public class GameMaster extends ApplicationAdapter {
     public void dispose() {
 //        System.out.println("🛑 Disposing GameMaster...");
         AssetManager.disposeAll();
-        sessionManager.stopTimer();
         boardManager.dispose();
         batch.dispose();
         if (sceneManager != null && sceneManager.getCurrentScene() != null) {
@@ -205,7 +189,7 @@ public class GameMaster extends ApplicationAdapter {
         speaker.stopSound("click");
     }
     
-    public static void main(String[] args) {
-    	Lwjgl3Launcher.main(args);
-    }
+//    public static void main(String[] args) {
+//      
+//    }
 }
