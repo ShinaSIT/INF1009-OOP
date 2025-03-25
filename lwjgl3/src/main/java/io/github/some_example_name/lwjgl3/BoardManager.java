@@ -29,7 +29,7 @@ public class BoardManager {
                 float tileX = board.getStartX() + col * board.getTileSize();
                 float tileY = board.getStartY() + (charMaze.length - row - 1) * board.getTileSize();
 
-                if (charMaze[row][col] == '.') {
+                if (charMaze[row][col] == '.' || charMaze[row][col] == 'f') {
                     staticObjects.add(new StaticObjects(board, charMaze[row][col], col, row));
                 }
             }
