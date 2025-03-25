@@ -9,8 +9,8 @@ public class BoardManager {
 
     protected BoardManager() {
         this.board = new Board();
-        board.generateFoods();
-        generateStaticObjects(); // ✅ Generate pellets & power-ups
+//        board.generateFoods();
+//        generateStaticObjects(); // ✅ Generate pellets & power-ups
     }
 
     protected void generateBoard() {
@@ -90,6 +90,15 @@ public class BoardManager {
     
     public void removeStaticObjectAt(int col, int row) {
       staticObjects.removeIf(obj -> obj.getGridX() == col && obj.getGridY() == row);
+    }
+    
+    public void init() {
+        board.generateFoods();        // ✅ Safe to call after assets are loaded
+        generateStaticObjects();
+    }
+
+    public void initGL() {
+        board.initGL();               // ✅ setup rendering (ShapeRenderer, etc.)
     }
 
     public void dispose() {

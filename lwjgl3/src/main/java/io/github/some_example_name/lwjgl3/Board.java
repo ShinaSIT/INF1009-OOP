@@ -39,10 +39,15 @@ public class Board {
     private final long regenDelay = 15000; // 15 seconds
 
     public Board() {
-        this.shapeRenderer = new ShapeRenderer();
+//        this.shapeRenderer = new ShapeRenderer();
         this.camera = new OrthographicCamera();
-        updateDimensions();
+//        updateDimensions();
         mazeLayout[1][1] = ' ';
+    }
+    
+    public void initGL() {
+        this.shapeRenderer = new ShapeRenderer(); // ✅ Safe to call after GL is ready
+        updateDimensions();
     }
 
     private int lastScreenWidth = -1;

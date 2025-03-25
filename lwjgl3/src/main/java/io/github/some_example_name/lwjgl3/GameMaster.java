@@ -22,33 +22,37 @@ public class GameMaster extends ApplicationAdapter {
 
     public GameMaster() {
         sceneManager = new SceneManager();
-        //sessionManager = new SessionManager();
-
+        speaker = new Speaker();
         mouse = new Mouse(null, null, sceneManager);
-        inputManager = new InputManager(null, null, null, mouse);  // Delay initialization
-        outputManager = null;  // Delay initialization
-    }
-
-    @Override
-    public void create() {
-        AssetManager.loadAll(); // ✅ Ensure assets are loaded first
-        batch = new SpriteBatch(); // ✅ Must be initialized after Gdx is ready
 
         boardManager = new BoardManager();
-        boardManager.generateBoard();
-
         entityManager = new EntityManager(boardManager.getBoard());
         collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
         movementManager = new MovementManager(speaker, collisionManager);
 
-        speaker = new Speaker(); // ✅ Move here to avoid NullPointerException
-        outputManager = new OutputManager(speaker); // ✅ Move here
+        inputManager = new InputManager(null, null, null, mouse); 
+    }
 
-        inputManager.setDependencies(movementManager, boardManager.getBoard()); // ✅ Update inputManager
+
+    @Override
+    public void create() {
+        AssetManager.loadAll();  
+        batch = new SpriteBatch();
+        
+        outputManager = new OutputManager(speaker); 
+
+        boardManager.getBoard().initGL();          
+        boardManager.getBoard().generateFoods();   
+        boardManager.generateStaticObjects();
+        boardManager.generateBoard();
+
+        inputManager.setDependencies(movementManager, boardManager.getBoard());
 
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.transitionTo("MenuScene");
     }
+
+
 
 
     public void startGame() {
@@ -189,7 +193,7 @@ public class GameMaster extends ApplicationAdapter {
         speaker.stopSound("click");
     }
     
-//    public static void main(String[] args) {
-//      
-//    }
+    public static void main(String[] args) {
+        Lwjgl3Launcher.main(args);
+    }
 }
