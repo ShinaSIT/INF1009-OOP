@@ -49,8 +49,8 @@ public class Speaker {
     public void playMusic(String file) {
         if (backgroundMusic == null) {  // Ensure we only create a new instance when needed
             System.out.println("Creating new music instance: " + file);
-            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/sample.mp3"));
-            backgroundMusic.setVolume(masterVolume  * 0.5f);
+            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/background.mp3"));
+            backgroundMusic.setVolume(masterVolume  * 0.1f);
             backgroundMusic.setLooping(true);
             backgroundMusic.play();
             System.out.println("Music started: " + file);

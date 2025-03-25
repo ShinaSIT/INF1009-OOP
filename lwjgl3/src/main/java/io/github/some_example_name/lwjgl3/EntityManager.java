@@ -7,10 +7,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class EntityManager {
     private List<Entity> entities;
     private Board board;
+    private Speaker speaker; 
     private BoardManager boardManager;
 
-    public EntityManager(Board board) {  // ✅ Accept Board in constructor
+    public EntityManager(Board board, Speaker speaker) {  // ✅ Accept Board in constructor
         this.board = board;
+        this.speaker = speaker;
         entities = new ArrayList<>();
         
         System.out.println("🔄 Calling generateStaticObjects() from EntityManager!");
@@ -155,7 +157,7 @@ public class EntityManager {
             CollisionManager collisionManager = new CollisionManager(board, this);
             MovementManager movementManager = new MovementManager(new Speaker(), collisionManager);
 
-            Player player = new Player(boardManager.getBoard(), this, 1, 1, movementManager, 100, 3, collisionManager, boardManager);
+            Player player = new Player(boardManager.getBoard(), this, 1, 1, movementManager, 100, 3, collisionManager, boardManager,speaker);
 
             addEntity(player);
         }

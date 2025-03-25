@@ -26,7 +26,7 @@ public class GameMaster extends ApplicationAdapter {
         mouse = new Mouse(null, null, sceneManager);
 
         boardManager = new BoardManager();
-        entityManager = new EntityManager(boardManager.getBoard());
+        entityManager = new EntityManager(boardManager.getBoard(),speaker);
         collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
         movementManager = new MovementManager(speaker, collisionManager);
 
@@ -59,7 +59,7 @@ public class GameMaster extends ApplicationAdapter {
         System.out.println("✅ startGame() called!");
         gameStarted = true;
 
-        player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager, boardManager);
+        player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager, boardManager,speaker);
         entityManager.addEntity(player);
         collisionManager.addCollidable(player);
         
@@ -68,10 +68,15 @@ public class GameMaster extends ApplicationAdapter {
         inputManager.setPlayer(player);
         mouse.setIoManager(inputManager);
 
-        Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 10, movementManager, collisionManager);
-        entityManager.addEntity(germ);
-        movementManager.addEntity(germ);
-        collisionManager.addCollidable(germ);
+        Germ germ1 = new Germ(boardManager.getBoard(), entityManager,movementManager, collisionManager);
+        entityManager.addEntity(germ1);
+        movementManager.addEntity(germ1);
+        collisionManager.addCollidable(germ1);
+        
+        Germ germ2 = new Germ(boardManager.getBoard(), entityManager,movementManager, collisionManager);
+        entityManager.addEntity(germ2);
+        movementManager.addEntity(germ2);
+        collisionManager.addCollidable(germ2);
 
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
