@@ -33,6 +33,7 @@ public class GameMaster extends ApplicationAdapter {
     public void create() {
         AssetManager.loadAll(); // ✅ Ensure assets are loaded first
         batch = new SpriteBatch(); // ✅ Must be initialized after Gdx is ready
+        speaker = new Speaker();
 
         boardManager = new BoardManager();
         boardManager.generateBoard();
@@ -41,7 +42,7 @@ public class GameMaster extends ApplicationAdapter {
         collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
         movementManager = new MovementManager(speaker, collisionManager);
 
-        speaker = new Speaker(); // ✅ Move here to avoid NullPointerException
+         // ✅ Move here to avoid NullPointerException
         outputManager = new OutputManager(speaker); // ✅ Move here
 
         inputManager.setDependencies(movementManager, boardManager.getBoard()); // ✅ Update inputManager
@@ -65,9 +66,22 @@ public class GameMaster extends ApplicationAdapter {
         mouse.setIoManager(inputManager);
 
         Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 10, movementManager, collisionManager);
+        Germ germ2 = new Germ(boardManager.getBoard(), entityManager, 9, 1, movementManager, collisionManager);
+        Germ germ3 = new Germ(boardManager.getBoard(), entityManager, 9, 10, movementManager, collisionManager);
+        
         entityManager.addEntity(germ);
+        entityManager.addEntity(germ2);
+        entityManager.addEntity(germ3);
+        
         movementManager.addEntity(germ);
+        movementManager.addEntity(germ2);
+        movementManager.addEntity(germ3);
+        
         collisionManager.addCollidable(germ);
+        collisionManager.addCollidable(germ2);
+        collisionManager.addCollidable(germ3);
+
+        
 
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
