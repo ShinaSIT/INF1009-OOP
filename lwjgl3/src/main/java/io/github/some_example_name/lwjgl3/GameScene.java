@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 public class GameScene extends Scene {
     private GameMaster gameMaster;
     private int score;
+    private int health;
     private long startTime;
     private long elapsedTime;
 
@@ -18,6 +19,7 @@ public class GameScene extends Scene {
         super(sceneManager);
         this.gameMaster = gameMaster;
         this.score = 0;
+        this.health = 3;
         this.startTime = System.currentTimeMillis();
     }
 
@@ -55,15 +57,22 @@ public class GameScene extends Scene {
         elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
         String scoreText = "Score: " + score;
         String timeText = "Time: " + elapsedTime + "s";
+        String healthText = "Health: " + health;
 
         // Debug to ensure UI elements are being rendered
-        System.out.println("Rendering Score: " + scoreText + ", Time: " + timeText);
+        System.out.println("Rendering Score: " + scoreText);
+        System.out.println("Time: " + timeText);
+        System.out.println("Health: " + healthText);
 
         // Draw the score at the top-left corner
         font.draw(batch, scoreText, 10, Gdx.graphics.getHeight() - 20);
 
         // Draw the time at the top-left corner, just below the score
         font.draw(batch, timeText, 10, Gdx.graphics.getHeight() - 40);
+        
+     // Draw the health at the top-left corner, just below the time
+        font.draw(batch, healthText, 10, Gdx.graphics.getHeight() - 60);
+        
     }
 
     private void renderBoard(SpriteBatch batch) {
@@ -132,4 +141,20 @@ public class GameScene extends Scene {
     // TODO Auto-generated method stub
     
   }
+  
+  public int getScore() {
+	    return score;
+	}
+
+	public int getHealth() {
+	    return health;
+	}
+	
+	public void setScore(int score) {
+	    this.score = score;
+	}
+
+	public void setHealth(int health) {
+	    this.health = health;
+	}
 }
