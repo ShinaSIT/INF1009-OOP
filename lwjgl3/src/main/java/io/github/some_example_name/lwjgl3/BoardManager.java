@@ -23,12 +23,8 @@ public class BoardManager {
 
     protected void generateStaticObjects() {
         char[][] charMaze = board.getMazeLayout();
-
         for (int row = 0; row < charMaze.length; row++) {
             for (int col = 0; col < charMaze[row].length; col++) {
-                float tileX = board.getStartX() + col * board.getTileSize();
-                float tileY = board.getStartY() + (charMaze.length - row - 1) * board.getTileSize();
-
                 if (charMaze[row][col] == '.' || charMaze[row][col] == 'f') {
                     staticObjects.add(new StaticObjects(board, charMaze[row][col], col, row));
                 }
@@ -93,7 +89,7 @@ public class BoardManager {
     }
     
     public void removeStaticObjectAt(int col, int row) {
-        staticObjects.removeIf(obj -> obj.getGridX() == col && obj.getGridY() == row);
+      staticObjects.removeIf(obj -> obj.getGridX() == col && obj.getGridY() == row);
     }
 
     public void dispose() {

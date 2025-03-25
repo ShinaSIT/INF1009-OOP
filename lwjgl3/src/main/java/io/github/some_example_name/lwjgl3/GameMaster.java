@@ -56,7 +56,7 @@ public class GameMaster extends ApplicationAdapter {
         System.out.println("✅ startGame() called!");
         gameStarted = true;
 
-        player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager);
+        player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager, boardManager);
         entityManager.addEntity(player);
         collisionManager.addCollidable(player);
         

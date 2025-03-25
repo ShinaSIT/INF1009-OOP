@@ -42,6 +42,7 @@ public class Board {
         this.shapeRenderer = new ShapeRenderer();
         this.camera = new OrthographicCamera();
         updateDimensions();
+        mazeLayout[1][1] = ' ';
     }
 
     private int lastScreenWidth = -1;
