@@ -85,6 +85,11 @@ public class InputManager extends InputClass {
         } else if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             dPressed = false;
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            System.out.println("👋 ESC pressed, exiting game.");
+            Gdx.app.exit();
+            return false;
+        }
 
         Gdx.graphics.requestRendering();
 

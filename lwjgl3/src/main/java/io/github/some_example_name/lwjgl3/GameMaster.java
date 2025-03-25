@@ -23,7 +23,7 @@ public class GameMaster extends ApplicationAdapter {
     public GameMaster() {
         sceneManager = new SceneManager();
         speaker = new Speaker();
-        mouse = new Mouse(null, null, sceneManager);
+      
 
         boardManager = new BoardManager();
         entityManager = new EntityManager(boardManager.getBoard(),speaker);
@@ -56,6 +56,10 @@ public class GameMaster extends ApplicationAdapter {
 
 
     public void startGame() {
+    	if (gameStarted) {
+            System.out.println("⚠️ Game already started, skipping startGame()");
+            return;
+        }
         System.out.println("✅ startGame() called!");
         gameStarted = true;
 
@@ -66,6 +70,7 @@ public class GameMaster extends ApplicationAdapter {
 
         // ✅ Set the player reference in inputManager
         inputManager.setPlayer(player);
+        mouse = new Mouse(null, speaker, sceneManager);
         mouse.setIoManager(inputManager);
 
         Germ germ1 = new Germ(boardManager.getBoard(), entityManager,movementManager, collisionManager);
@@ -96,6 +101,7 @@ public class GameMaster extends ApplicationAdapter {
 
             if (gameStarted) { // Only run game logic if gameStarted
                 boolean moved = inputManager.handleInput();
+                mouse.checkMouse();
 
                 if (moved) {
                     System.out.println("🎮 Game is running...");
