@@ -14,7 +14,7 @@ public abstract class MenuScene extends Scene {
     private GameMaster gameMaster;
     private Stage stage;
     private Skin skin;
-    private TextButton startButton, settingsButton, exitButton;
+    private TextButton startButton;
     private Table table; // ✅ Layout manager
 
     public MenuScene(SceneManager sceneManager, GameMaster gameMaster) {  
@@ -24,16 +24,14 @@ public abstract class MenuScene extends Scene {
 
     @Override
     public void create() { 
-        System.out.println("✅ Creating Meu Scene...");
+        System.out.println("✅ Creating Menu Scene...");
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
         skin = new Skin(Gdx.files.internal("uiskin.json")); // Ensure this file exists!
 
-        // ✅ Create Buttons
+        // ✅ Create Start Button
         startButton = new TextButton("Start Game", skin);
-        settingsButton = new TextButton("Settings", skin);
-        exitButton = new TextButton("Exit", skin);
 
         // ✅ Create a Table for dynamic layout
         table = new Table();
@@ -41,10 +39,8 @@ public abstract class MenuScene extends Scene {
         table.center();
         stage.addActor(table);
 
-        // ✅ Add buttons to the table (automatically aligns to center)
+        // ✅ Add the Start button to the table (automatically aligns to center)
         table.add(startButton).width(300).height(80).padBottom(20).row();
-        table.add(settingsButton).width(300).height(80).padBottom(20).row();
-        table.add(exitButton).width(300).height(80).row();
 
         // ✅ Handle Start Game button
         startButton.addListener(new ClickListener() {
@@ -54,24 +50,6 @@ public abstract class MenuScene extends Scene {
                 if (MenuScene.this instanceof MainMenuScene) {
                     ((MainMenuScene) MenuScene.this).onStartGameButtonPressed();
                 }
-            }
-        });
-
-        // ✅ Handle Settings button
-        settingsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("✅ Settings Button Clicked! (Add functionality)");
-                // TODO: Implement settings menu transition
-            }
-        });
-
-        // ✅ Handle Exit button
-        exitButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("✅ Exit Button Clicked!");
-                Gdx.app.exit();
             }
         });
     }
@@ -85,8 +63,6 @@ public abstract class MenuScene extends Scene {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
-
-
 
     @Override
     public void resize(int width, int height) {
