@@ -22,40 +22,44 @@ public class GameMaster extends ApplicationAdapter {
 
     public GameMaster() {
         sceneManager = new SceneManager();
-        //sessionManager = new SessionManager();
-
+        speaker = new Speaker();
         mouse = new Mouse(null, null, sceneManager);
-        inputManager = new InputManager(null, null, null, mouse);  // Delay initialization
-        outputManager = null;  // Delay initialization
-    }
-
-    @Override
-    public void create() {
-        AssetManager.loadAll(); // ✅ Ensure assets are loaded first
-        batch = new SpriteBatch(); // ✅ Must be initialized after Gdx is ready
 
         boardManager = new BoardManager();
-        boardManager.generateBoard();
-
-        entityManager = new EntityManager(boardManager.getBoard());
+        entityManager = new EntityManager(boardManager.getBoard(),speaker);
         collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
         movementManager = new MovementManager(speaker, collisionManager);
 
-        speaker = new Speaker(); // ✅ Move here to avoid NullPointerException
-        outputManager = new OutputManager(speaker); // ✅ Move here
+        inputManager = new InputManager(null, null, null, mouse); 
+    }
 
-        inputManager.setDependencies(movementManager, boardManager.getBoard()); // ✅ Update inputManager
+
+    @Override
+    public void create() {
+        AssetManager.loadAll();  
+        batch = new SpriteBatch();
+        
+        outputManager = new OutputManager(speaker); 
+
+        boardManager.getBoard().initGL();          
+        boardManager.getBoard().generateFoods();   
+        boardManager.generateStaticObjects();
+        boardManager.generateBoard();
+
+        inputManager.setDependencies(movementManager, boardManager.getBoard());
 
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.transitionTo("MenuScene");
     }
 
 
+
+
     public void startGame() {
         System.out.println("✅ startGame() called!");
         gameStarted = true;
 
-        player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager);
+        player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager, boardManager,speaker);
         entityManager.addEntity(player);
         collisionManager.addCollidable(player);
         
@@ -64,10 +68,15 @@ public class GameMaster extends ApplicationAdapter {
         inputManager.setPlayer(player);
         mouse.setIoManager(inputManager);
 
-        Germ germ = new Germ(boardManager.getBoard(), entityManager, 1, 10, movementManager, collisionManager);
-        entityManager.addEntity(germ);
-        movementManager.addEntity(germ);
-        collisionManager.addCollidable(germ);
+        Germ germ1 = new Germ(boardManager.getBoard(), entityManager,movementManager, collisionManager);
+        entityManager.addEntity(germ1);
+        movementManager.addEntity(germ1);
+        collisionManager.addCollidable(germ1);
+        
+        Germ germ2 = new Germ(boardManager.getBoard(), entityManager,movementManager, collisionManager);
+        entityManager.addEntity(germ2);
+        movementManager.addEntity(germ2);
+        collisionManager.addCollidable(germ2);
 
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
@@ -189,7 +198,7 @@ public class GameMaster extends ApplicationAdapter {
         speaker.stopSound("click");
     }
     
-//    public static void main(String[] args) {
-//      
-//    }
+    public static void main(String[] args) {
+        Lwjgl3Launcher.main(args);
+    }
 }

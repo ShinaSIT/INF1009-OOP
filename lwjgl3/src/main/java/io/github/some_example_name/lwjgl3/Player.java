@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Player extends MoveableObjects implements Collidable {
 	private CollisionManager collisionManager;
+	private BoardManager boardManager;
+	private Speaker speaker;
     private int health;
     private int lives;
 
@@ -14,20 +16,16 @@ public class Player extends MoveableObjects implements Collidable {
 
     // Animation toggle (used to simulate stepping)
     private boolean isRightStep = true;
-    private float stepDistance = 0f;
-    private final float STEP_TRIGGER = 20f; // toggle every 20 pixels
-    private float lastX = -1;
-    private float lastY = -1;
-
-
 
     public Player(Board board, EntityManager entityManager, int x, int y,
 	            MovementManager movementManager, int initialHealth, int initialLives,
-	            CollisionManager collisionManager) {
+	            CollisionManager collisionManager, BoardManager boardManager, Speaker speaker) {
 	  super(board, entityManager, x, y, movementManager);
 	  this.health = initialHealth;
 	  this.lives = initialLives;
 	  this.collisionManager = collisionManager;
+	  this.boardManager = boardManager;
+	  this.speaker = speaker;
 	  addTag("moveable");  
 	}
 
@@ -47,6 +45,7 @@ public class Player extends MoveableObjects implements Collidable {
         // ✅ Check if destination is valid
         if (!collisionManager.isMoveValid(targetGridX, targetGridY)) {
             System.out.println("🚧 Collision detected! Staying at (" + gridX + ", " + gridY + ")");
+            speaker.playSound("block");
             return;
         }
 
@@ -70,6 +69,12 @@ public class Player extends MoveableObjects implements Collidable {
         } else if (dy < 0) {
             facingDirection = "DOWN";
         }
+        //sound
+        if (isRightStep) {
+            speaker.playSound("step1");
+        } else {
+            speaker.playSound("step2");
+        }
 
         System.out.println("✅ Move Successful!");
         System.out.println("✅ Step toggled to: " + (isRightStep ? "Right" : "Left"));
@@ -85,6 +90,10 @@ public class Player extends MoveableObjects implements Collidable {
             mazeLayout[gridY][gridX] = ' '; // clear tile on map
             System.out.println("🍴 Ate food at (" + gridX + ", " + gridY + ")");
         }
+        
+        boardManager.removeStaticObjectAt(gridX, gridY);
+        board.getMazeLayout()[gridY][gridX] = ' ';  // Mark tile as cleared
+
 
     }
 

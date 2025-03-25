@@ -83,14 +83,10 @@ package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.Gdx;
-import java.util.HashMap;
 
 public class StaticObjects extends Entity {  
     private Texture texture;
     private char type;
-
-    private static final HashMap<Character, Texture> textureMap = new HashMap<>();
 
     public StaticObjects(Board board, char type, int gridX, int gridY) {
         super(board, gridX, gridY, "static");
