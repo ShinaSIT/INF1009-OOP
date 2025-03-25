@@ -82,29 +82,16 @@ public class SceneManager { //scenemanager class
 
     public void transitionTo(String sceneName) {
         if (scenes.containsKey(sceneName)) {
-            System.out.println("✅ SceneManager transitioning to: " + sceneName);
-
-            // ✅ Only dispose currentScene if it is NOT null
-            if (currentScene != null) {
-                System.out.println("✅ Disposing previous scene: " + currentScene.getClass().getSimpleName());
-                currentScene.dispose();
-            } else {
-                System.out.println("⚠️ Warning: No previous scene to dispose.");
-            }
-
             currentScene = scenes.get(sceneName);
-
-            if (currentScene != null) {
-                System.out.println("✅ Current scene set to: " + currentScene.getClass().getSimpleName());
+            System.out.println("Transitioned to scene: " + sceneName); // Added line
+            if (currentScene != null){
                 currentScene.create();
-            } else {
-                System.out.println("❌ ERROR: Failed to set current scene.");
             }
         } else {
-            System.out.println("❌ SceneManager: Scene not found - " + sceneName);
+            System.err.println("Scene not found: " + sceneName);
         }
     }
-
+    
     public Scene getScene(String sceneName) {
         return scenes.get(sceneName);
     }
@@ -114,7 +101,9 @@ public class SceneManager { //scenemanager class
     }
 
     public void render(SpriteBatch batch) {
+        //System.out.println("SceneManager render() called");
         if (currentScene != null) {
+            System.out.println("Current scene is: " + currentScene.getClass().getSimpleName()); // Added line
             currentScene.render(batch);
         }
     }
