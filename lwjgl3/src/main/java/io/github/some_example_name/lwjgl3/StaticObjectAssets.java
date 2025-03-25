@@ -20,7 +20,7 @@ public class StaticObjectAssets {
         // 🍔 Load unhealthy food textures
         unhealthyFoods.add(new Texture(Gdx.files.internal("food/unhealthy/Burger.png")));
         unhealthyFoods.add(new Texture(Gdx.files.internal("food/unhealthy/Cake.png")));
-        unhealthyFoods.add(new Texture(Gdx.files.internal("food/unhealthy/Ice Cream.png")));
+//        unhealthyFoods.add(new Texture(Gdx.files.internal("food/unhealthy/Ice Cream.png")));
         unhealthyFoods.add(new Texture(Gdx.files.internal("food/unhealthy/Kebab.png")));
 
         // 🧱 Load static object textures

@@ -87,7 +87,9 @@ public class Board {
 
         Collections.shuffle(foodSpots);
 
-        for (Point p : foodSpots) {
+        int foodToSpawn = foodSpots.size() / 3; 
+        for (int i = 0; i < foodToSpawn; i++) {
+            Point p = foodSpots.get(i);
             String type;
             Texture tex;
 
@@ -103,6 +105,7 @@ public class Board {
             foodGrid[p.y][p.x] = new Food(type, tex);
             mazeLayout[p.y][p.x] = 'f';
         }
+
     }
 
     public void updateFoodRegeneration() {

@@ -87,6 +87,14 @@ public class BoardManager {
     protected int getMazeWidth() {
         return board.getMazeWidth();
     }
+    
+    public ArrayList<StaticObjects> getStaticObjects() {
+        return staticObjects;
+    }
+    
+    public void removeStaticObjectAt(int col, int row) {
+        staticObjects.removeIf(obj -> obj.getGridX() == col && obj.getGridY() == row);
+    }
 
     public void dispose() {
         board.dispose();
