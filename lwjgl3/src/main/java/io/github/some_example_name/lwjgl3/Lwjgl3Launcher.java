@@ -28,7 +28,7 @@ public class Lwjgl3Launcher {
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
         
         // Set the window size (width x height)
-        configuration.setWindowedMode(1280, 720);
+        configuration.setWindowedMode(1280, 1280);
         
         // Set the window icons (make sure the paths are correct)
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");

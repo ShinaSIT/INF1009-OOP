@@ -191,7 +191,7 @@ public class GameMaster extends ApplicationAdapter {
         speaker.stopSound("click");
     }
     
-//    public static void main(String[] args) {
-//    	
-//    }
+    public static void main(String[] args) {
+    	Lwjgl3Launcher.main(args);
+    }
 }
