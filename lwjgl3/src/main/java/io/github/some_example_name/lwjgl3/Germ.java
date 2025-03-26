@@ -132,7 +132,7 @@ public class Germ extends MoveableObjects implements Collidable {
         int ny = getGridY() + dy;
         visited.add(new Point(nx, ny));
 
-        movementManager.applyMovement(this, dx, dy);
+        movementManager.applyMovement(this, dx, dy, true);
     }
 
     private boolean isWalkable(char tile) {

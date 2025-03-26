@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public abstract class MenuScene extends Scene {
     private GameMaster gameMaster;
-    private Stage stage;
+    protected Stage stage;
     private Skin skin;
     private TextButton startButton;
     private Table table; // ✅ Layout manager
@@ -70,6 +70,22 @@ public abstract class MenuScene extends Scene {
         stage.getViewport().update(width, height, true);
         stage.getViewport().apply(true);
     }
+    
+    public void applyButtonStyle(TextButton.TextButtonStyle style) {
+        if (startButton != null) {
+            startButton.setStyle(style);
+        }
+    }
+    
+    public SpriteBatch getBatch() {
+        return gameMaster != null ? gameMaster.getBatch() : null;
+    }
+    
+    public Stage getStage() {
+        return stage;
+    }
+
+
 
     @Override
     public void dispose() {

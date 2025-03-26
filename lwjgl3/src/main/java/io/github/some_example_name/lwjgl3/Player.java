@@ -30,7 +30,7 @@ public class Player extends MoveableObjects implements Collidable {
 	}
 
     @Override
-    public void move(float dx, float dy) {
+    public void move(float dx, float dy, boolean isGerm) {
         int targetGridX = gridX;
         int targetGridY = gridY;
 
@@ -43,7 +43,7 @@ public class Player extends MoveableObjects implements Collidable {
         System.out.println("🔄 Attempting Move: (" + gridX + ", " + gridY + ") → (" + targetGridX + ", " + targetGridY + ")");
 
         // ✅ Check if destination is valid
-        if (!collisionManager.isMoveValid(targetGridX, targetGridY)) {
+        if (!collisionManager.isMoveValid(targetGridX, targetGridY, isGerm)) {
             System.out.println("🚧 Collision detected! Staying at (" + gridX + ", " + gridY + ")");
             speaker.playSound("block");
             return;

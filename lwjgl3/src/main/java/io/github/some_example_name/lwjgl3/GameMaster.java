@@ -185,6 +185,10 @@ public class GameMaster extends ApplicationAdapter {
     public EntityManager getEntityManager() {
         return entityManager;
     }
+    
+    public SpriteBatch getBatch() {
+        return batch;
+    }
 
     @Override
     public void dispose() {

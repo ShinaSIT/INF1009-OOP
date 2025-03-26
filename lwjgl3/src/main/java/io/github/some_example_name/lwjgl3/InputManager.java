@@ -59,31 +59,36 @@ public class InputManager extends InputClass {
 
         // ✅ Use key press/release tracking but functionally act like `isKeyJustPressed()`
         if ((Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) && !wPressed) {
-            player.move(0, -1);
+            player.move(0, -1, false);
             wPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.W) && !Gdx.input.isKeyPressed(Input.Keys.UP)) {
             wPressed = false;
         }
 
         if ((Gdx.input.isKeyJustPressed(Input.Keys.S) || Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) && !sPressed) {
-            player.move(0, 1);
+            player.move(0, 1, false);
             sPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.S) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             sPressed = false;
         }
 
         if ((Gdx.input.isKeyJustPressed(Input.Keys.A) || Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) && !aPressed) {
-            player.move(-1, 0);
+            player.move(-1, 0, false);
             aPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             aPressed = false;
         }
 
         if ((Gdx.input.isKeyJustPressed(Input.Keys.D) || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) && !dPressed) {
-            player.move(1, 0);
+            player.move(1, 0, false);
             dPressed = true;
         } else if (!Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             dPressed = false;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            System.out.println("👋 ESC pressed, exiting game.");
+            Gdx.app.exit();
+            return false;
         }
 
         Gdx.graphics.requestRendering();

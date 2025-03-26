@@ -9,8 +9,8 @@ public class MoveableObjects extends GameObjects {
     }
 
     @Override
-    public void move(float dx, float dy) {
-        movementManager.applyMovement(this, dx, dy);
+    public void move(float dx, float dy, boolean isGerm) {
+        movementManager.applyMovement(this, dx, dy, false);
     }
 
     public void setPosition(int gridX, int gridY) {

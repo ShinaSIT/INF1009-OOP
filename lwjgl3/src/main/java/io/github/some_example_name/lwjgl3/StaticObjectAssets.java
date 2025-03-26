@@ -63,6 +63,8 @@ public class StaticObjectAssets {
         for (Texture t : healthyFoods) t.dispose();
         for (Texture t : unhealthyFoods) t.dispose();
         for (Texture t : textureMap.values()) t.dispose();
+        for (Texture t : textureMap.values()) t.dispose();
+        textureMap.clear();
     }
 }
 

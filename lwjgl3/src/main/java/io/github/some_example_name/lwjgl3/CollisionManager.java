@@ -22,10 +22,13 @@ public class CollisionManager {
     /**
      * Checks if a move to the specified grid position is valid.
      */
-    public boolean isMoveValid(int newCol, int newRow) {
+    public boolean isMoveValid(int newCol, int newRow, boolean isGerm) {
         char tile = board.getMazeLayout()[newRow][newCol];
         if (tile != ' ' && tile != '.' && tile != 'p' && tile != 'f') {
             System.out.println("🚧 Blocked by wall");
+            if(isGerm){
+                return false;
+            }
             collisionCount++;
             System.out.println("🔢 Collision count: " + collisionCount);
             return false;
@@ -50,6 +53,8 @@ public class CollisionManager {
                     }
                     // If no player is found, return false.
                     return false;
+                } else if(collidable instanceof Player && isGerm){
+                    return true; // allow the germ to move onto the player's space.
                 } else {
                     // Collision with a non-Germ Collidable
                     System.out.println("❌ Blocked by Collidable Object");
