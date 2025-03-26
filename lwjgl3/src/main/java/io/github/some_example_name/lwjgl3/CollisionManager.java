@@ -5,14 +5,16 @@ import java.util.*;
 public class CollisionManager {
     private List<Collidable> collidableObjects;
     private Board board;
+    private SceneManager sceneManager;
     private EntityManager entityManager;
     private int collisionCount = 0;
     private Set<String> collisionCache = new HashSet<>();
 
-    public CollisionManager(Board board, EntityManager entityManager) {
+    public CollisionManager(Board board, EntityManager entityManager, SceneManager sceneManager) {
         this.collidableObjects = new ArrayList<>();
         this.board = board;
         this.entityManager = entityManager;
+        this.sceneManager = sceneManager;
     }
 
     public void addCollidable(Collidable collidable) {
@@ -96,14 +98,16 @@ public class CollisionManager {
         }
 
         if (a instanceof Germ && b instanceof Player) {
-            System.out.println("💥 Germ hit Player! Resetting player.");
+            System.out.println("💥 Germ hit Player! Reducing health.");
             Player player = (Player) b;
+            GameScene gameScene = (GameScene) sceneManager.getCurrentScene(); // Assuming you have access to sceneManager
+            gameScene.setHealth(gameScene.getHealth() - 1); // Reduce health by 1
+            
             player.setGridX(1);
             player.setGridY(1);
             player.updatePixelPosition();
-            System.out.println("💥 Germ hit Player! Resetting player. Player position after reset: (" + player.getGridX() + ", " + player.getGridY() + ")");
         } else if (a instanceof Player && b instanceof Germ) {
-            resolveCollision(b,a);
+            resolveCollision(b, a); // Just call the same method with reversed parameters
         }
     }
 }

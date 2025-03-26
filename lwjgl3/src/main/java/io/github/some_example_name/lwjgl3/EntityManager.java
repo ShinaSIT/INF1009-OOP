@@ -154,7 +154,7 @@ public class EntityManager {
                 return;
             }
 
-            CollisionManager collisionManager = new CollisionManager(board, this);
+            CollisionManager collisionManager = new CollisionManager(board, this, null);
             MovementManager movementManager = new MovementManager(new Speaker(), collisionManager);
 
             Player player = new Player(boardManager.getBoard(), this, 1, 1, movementManager, 100, 3, collisionManager, boardManager,speaker);
