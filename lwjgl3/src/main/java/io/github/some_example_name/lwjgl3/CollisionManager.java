@@ -26,7 +26,7 @@ public class CollisionManager {
         char tile = board.getMazeLayout()[newRow][newCol];
         if (tile != ' ' && tile != '.' && tile != 'p' && tile != 'f') {
             System.out.println("🚧 Blocked by wall");
-            if(isGerm){
+            if (isGerm) {
                 return false;
             }
             collisionCount++;
@@ -38,22 +38,26 @@ public class CollisionManager {
             if (collidable.getGridX() == newCol && collidable.getGridY() == newRow && collidable.isSolid()) {
                 if (collidable instanceof Germ) {
                     // Collision with a Germ
-                    System.out.println("💥 Player hit by Germ! Resetting player.");
+                    if (!isGerm) { // Only reset player if the player is moving into the germ
+                        System.out.println("💥 Player hit by Germ! Resetting player.");
 
-                    // Find the Player object in collidableObjects and reset it.
-                    for (Collidable playerCheck : collidableObjects) {
-                        if (playerCheck instanceof Player) {
-                            Player player = (Player) playerCheck;
-                            player.setGridX(1);
-                            player.setGridY(1);
-                            player.updatePixelPosition();
-                            System.out.println("💥 Player position after reset: (" + player.getGridX() + ", " + player.getGridY() + ")");
-                            return false; // Prevent further movement after reset
+                        // Find the Player object in collidableObjects and reset it.
+                        for (Collidable playerCheck : collidableObjects) {
+                            if (playerCheck instanceof Player) {
+                                Player player = (Player) playerCheck;
+                                player.setGridX(1);
+                                player.setGridY(1);
+                                player.updatePixelPosition();
+                                System.out.println("💥 Player position after reset: (" + player.getGridX() + ", " + player.getGridY() + ")");
+                                return false; // Prevent further movement after reset
+                            }
                         }
+                        // If no player is found, return false.
+                        return false;
+                    } else {
+                        return true; // if the germ is moving into the player, allow the move
                     }
-                    // If no player is found, return false.
-                    return false;
-                } else if(collidable instanceof Player && isGerm){
+                } else if (collidable instanceof Player && isGerm) {
                     return true; // allow the germ to move onto the player's space.
                 } else {
                     // Collision with a non-Germ Collidable
