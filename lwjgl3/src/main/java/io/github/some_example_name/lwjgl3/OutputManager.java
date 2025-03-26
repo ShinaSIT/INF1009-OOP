@@ -16,7 +16,7 @@ public class OutputManager extends OutputClass {
 
     @Override
     protected void initializeOutput() {
-        speaker.loadSound("click", "sounds/background.mp3");
+        speaker.loadSound("click", "sounds/game.mp3");
         speaker.loadSound("step1", "sounds/duck1.mp3");
         speaker.loadSound("step2", "sounds/duck2.mp3");
         speaker.loadSound("block", "sounds/sample3.mp3");
