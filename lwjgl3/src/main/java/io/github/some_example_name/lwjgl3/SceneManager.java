@@ -103,7 +103,7 @@ public class SceneManager { //scenemanager class
     public void render(SpriteBatch batch) {
         //System.out.println("SceneManager render() called");
         if (currentScene != null) {
-            System.out.println("Current scene is: " + currentScene.getClass().getSimpleName()); // Added line
+            //System.out.println("Current scene is: " + currentScene.getClass().getSimpleName()); // Added line
             currentScene.render(batch);
         }
     }
