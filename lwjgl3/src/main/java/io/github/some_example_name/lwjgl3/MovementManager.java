@@ -31,7 +31,7 @@ public class MovementManager {
     /**
      * Applies movement to an entity based on the specified delta (dx, dy).
      */
-    public void applyMovement(MoveableObjects entity, float dx, float dy) {
+    public void applyMovement(MoveableObjects entity, float dx, float dy, boolean isGerm) {
         int oldCol = entity.getGridX();
         int oldRow = entity.getGridY();
 
@@ -40,7 +40,7 @@ public class MovementManager {
 
         System.out.println("🔄 Attempting Move: (" + oldCol + ", " + oldRow + ") → (" + newCol + ", " + newRow + ")");
 
-        if (collisionManager != null && collisionManager.isMoveValid(newCol, newRow)) {
+        if (collisionManager != null && collisionManager.isMoveValid(newCol, newRow, isGerm)) {
             entity.setGridX(newCol);
             entity.setGridY(newRow);
             entity.updatePixelPosition();

@@ -74,7 +74,7 @@ public abstract class Entity implements IMoveable {
     public abstract void render(SpriteBatch batch);
     
     @Override
-    public void move(float dx, float dy) {
+    public void move(float dx, float dy, boolean isGerm) {
         // Default empty implementation, subclasses like MoveableObjects will override it
     }
 }
