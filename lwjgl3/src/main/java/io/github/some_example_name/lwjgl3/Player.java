@@ -40,7 +40,7 @@ public class Player extends MoveableObjects implements Collidable {
         else if (dy > 0) targetGridY++;
         else if (dy < 0) targetGridY--;
 
-        System.out.println("🔄 Attempting Move: (" + gridX + ", " + gridY + ") → (" + targetGridX + ", " + targetGridY + ")");
+        //System.out.println("🔄 Attempting Move: (" + gridX + ", " + gridY + ") → (" + targetGridX + ", " + targetGridY + ")");
 
         // ✅ Check if destination is valid
         if (!collisionManager.isMoveValid(targetGridX, targetGridY, isGerm)) {
@@ -76,8 +76,8 @@ public class Player extends MoveableObjects implements Collidable {
             speaker.playSound("step2");
         }
 
-        System.out.println("✅ Move Successful!");
-        System.out.println("✅ Step toggled to: " + (isRightStep ? "Right" : "Left"));
+        //System.out.println("✅ Move Successful!");
+        //System.out.println("✅ Step toggled to: " + (isRightStep ? "Right" : "Left"));
 
         // ✅ Check for food at new location
         Food[][] foodGrid = board.getFoodGrid();
@@ -99,8 +99,8 @@ public class Player extends MoveableObjects implements Collidable {
 
     @Override
     public void render(SpriteBatch batch) {
-        System.out.println("🎨 Rendering Player at (x=" + x + ", y=" + y + "), Grid (" + gridX + ", " + gridY + ")");
-        System.out.println("🦶 Current Step: " + (isRightStep ? "Right Leg" : "Left Leg"));
+        //System.out.println("🎨 Rendering Player at (x=" + x + ", y=" + y + "), Grid (" + gridX + ", " + gridY + ")");
+        //System.out.println("🦶 Current Step: " + (isRightStep ? "Right Leg" : "Left Leg"));
 
         Texture currentSprite = CharacterAssets.psyduckRDown;
 

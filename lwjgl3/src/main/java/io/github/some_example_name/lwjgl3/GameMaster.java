@@ -81,7 +81,7 @@ public class GameMaster extends ApplicationAdapter {
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("GameScene");
     }
-
+    
     @Override
     public void render() {
         try {
@@ -98,8 +98,8 @@ public class GameMaster extends ApplicationAdapter {
                 boolean moved = inputManager.handleInput();
 
                 if (moved) {
-                    System.out.println("🎮 Game is running...");
-                    System.out.println("📌 Player position (render): " + player.getX() + ", " + player.getY());
+                    //System.out.println("🎮 Game is running...");
+                    //System.out.println("📌 Player position (render): " + player.getX() + ", " + player.getY());
                 }
 
                 // Move AI enemies
@@ -110,7 +110,7 @@ public class GameMaster extends ApplicationAdapter {
                         ((Germ) entity).moveSmartly();
                     }
                 }
-             // Start session timer
+                // Start session timer
                 if (!outputManager.isHasMoved()) {
                     //System.out.println("⏳ Timer Started: " + sessionManager.isTimerRunning());
                     //sessionManager.startTimer();
@@ -125,7 +125,17 @@ public class GameMaster extends ApplicationAdapter {
                 entityManager.render(batch);
 
                 outputManager.handleOutput();
-                collisionManager.checkCollisions();
+                // collisionManager.checkCollisions();
+
+                // Check for end game condition
+                if (player != null) {
+                    System.out.println("Player X: " + player.getGridX() + ", Player Y: " + player.getGridY());
+                    if (player.getGridX() == 10 && player.getGridY() == 11) {
+                        endGame();
+                    }
+                } else {
+                    System.out.println("Player object is NULL!");
+                }
             }
 
             if (batch.isDrawing()) {
@@ -140,7 +150,7 @@ public class GameMaster extends ApplicationAdapter {
             }
         }
     }
-
+    
     @Override
     public void resize(int width, int height) {
         System.out.println("✅ Resizing GameMaster: " + width + "x" + height);
@@ -205,4 +215,11 @@ public class GameMaster extends ApplicationAdapter {
     public static void main(String[] args) {
         Lwjgl3Launcher.main(args);
     }
+    
+    public void endGame() {
+        System.out.println("🏁 Game Ended!");
+        gameStarted = false;
+        sceneManager.transitionTo("MenuScene");
+    }
 }
+
