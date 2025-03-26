@@ -52,7 +52,11 @@ public class GameMaster extends ApplicationAdapter {
         sceneManager.transitionTo("MenuScene");
     }
 
-
+    public void instructionStart() {
+    	System.out.println("✅ instructionStart() called!");
+    	sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
+        sceneManager.transitionTo("InstructionsScene");
+    }
 
 
     public void startGame() {
@@ -125,11 +129,11 @@ public class GameMaster extends ApplicationAdapter {
                 entityManager.render(batch);
 
                 outputManager.handleOutput();
-                // collisionManager.checkCollisions();
+                collisionManager.checkCollisions();
 
                 // Check for end game condition
                 if (player != null) {
-                    System.out.println("Player X: " + player.getGridX() + ", Player Y: " + player.getGridY());
+                    //System.out.println("Player X: " + player.getGridX() + ", Player Y: " + player.getGridY());
                     if (player.getGridX() == 10 && player.getGridY() == 11) {
                         endGame();
                     }
