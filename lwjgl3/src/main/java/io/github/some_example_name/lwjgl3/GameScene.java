@@ -42,7 +42,7 @@ public class GameScene extends Scene {
 
     @Override
     public void render(SpriteBatch batch) {
-        System.out.println("GameScene render() called");
+        //System.out.println("GameScene render() called");
         if (gameMaster == null) return;
 
         // Render UI elements (score and timer) at the top of the screen
@@ -55,8 +55,14 @@ public class GameScene extends Scene {
     private void renderUI(SpriteBatch batch) {
         // Update the score and timer text
         elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
+
+        int minutes = (int) (elapsedTime / 60);
+        int seconds = (int) (elapsedTime % 60);
+
+        String formattedTime = String.format("%02d:%02d", minutes, seconds); // Format as MM:SS
+
         String scoreText = "Score: " + score;
-        String timeText = "Time: " + elapsedTime + "s";
+        String timeText = "Time: " + formattedTime; // Use formatted time string
         String healthText = "Health: " + health;
 
         // Debug to ensure UI elements are being rendered
@@ -69,10 +75,9 @@ public class GameScene extends Scene {
 
         // Draw the time at the top-left corner, just below the score
         font.draw(batch, timeText, 10, Gdx.graphics.getHeight() - 40);
-        
-     // Draw the health at the top-left corner, just below the time
+
+        // Draw the health at the top-left corner, just below the time
         font.draw(batch, healthText, 10, Gdx.graphics.getHeight() - 60);
-        
     }
 
     private void renderBoard(SpriteBatch batch) {
@@ -107,7 +112,7 @@ public class GameScene extends Scene {
     @Override
     public void dispose() {
         System.out.println("✅ Disposing Game Scene...");
-        System.out.println("Total time: " + elapsedTime + "s"); // Use the class member
+        System.out.println("Total time: " + elapsedTime / 60 + "min" + elapsedTime % 60 + "s"); // Use the class member
         font.dispose();  // Dispose of the font when done
     }
 
