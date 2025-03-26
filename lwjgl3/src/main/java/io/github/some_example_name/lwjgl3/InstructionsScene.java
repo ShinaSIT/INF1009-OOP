@@ -18,7 +18,7 @@ public class InstructionsScene extends Scene {
 
     public InstructionsScene(SceneManager sceneManager, GameMaster gameMaster) {
         super(sceneManager);
-        this.gameMaster = gameMaster;
+        //this.gameMaster = gameMaster;    
     }
 
     @Override
