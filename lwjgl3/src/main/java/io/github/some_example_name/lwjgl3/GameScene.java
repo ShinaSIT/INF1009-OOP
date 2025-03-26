@@ -11,6 +11,7 @@ public class GameScene extends Scene {
     private int health;
     private long startTime;
     private long elapsedTime;
+    protected Mouse mouse;
 
     // UI components
     private BitmapFont font;
@@ -21,6 +22,7 @@ public class GameScene extends Scene {
         this.score = 0;
         this.health = 3;
         this.startTime = System.currentTimeMillis();
+        this.mouse = gameMaster.getMouse();
     }
 
     @Override
@@ -38,6 +40,8 @@ public class GameScene extends Scene {
             System.out.println("Using default font due to error: " + e.getMessage());
         }
         font.setColor(Color.WHITE);  // Set the font color to white
+        
+        Gdx.input.setInputProcessor(mouse);
     }
 
     @Override
@@ -50,6 +54,8 @@ public class GameScene extends Scene {
 
         // Render the game board (positioned below the UI)
         renderBoard(batch);
+        
+        mouse.checkMouse(); 
     }
 
     private void renderUI(SpriteBatch batch) {

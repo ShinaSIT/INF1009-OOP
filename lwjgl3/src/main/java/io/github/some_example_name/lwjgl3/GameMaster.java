@@ -58,7 +58,7 @@ public class GameMaster extends ApplicationAdapter {
 
             if (!batch.isDrawing()) batch.begin();
             sceneManager.render(batch);
-            mouse.checkMouse(); 
+            //mouse.checkMouse(); 
 
             if (gameStarted) {
             	boolean playerAlreadyExists = false;
@@ -136,5 +136,9 @@ public class GameMaster extends ApplicationAdapter {
 
     public static void main(String[] args) {
         Lwjgl3Launcher.main(args);
+    }
+    
+    public Mouse getMouse() {
+        return mouse;
     }
 }
