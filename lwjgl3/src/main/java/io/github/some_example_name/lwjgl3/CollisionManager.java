@@ -42,6 +42,10 @@ public class CollisionManager {
                     // Collision with a Germ
                     if (!isGerm) { // Only reset player if the player is moving into the germ
                         System.out.println("💥 Player hit by Germ! Resetting player.");
+                        
+                        // Reduce player health
+                        GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
+                        gameScene.setHealth(gameScene.getHealth() - 1);
 
                         // Find the Player object in collidableObjects and reset it.
                         for (Collidable playerCheck : collidableObjects) {
@@ -76,7 +80,6 @@ public class CollisionManager {
     }
 
     public void checkCollisions() {
-//    	System.out.println("Collidable Objects: " + collidableObjects);
         for (int i = 0; i < collidableObjects.size(); i++) {
             for (int j = i + 1; j < collidableObjects.size(); j++) {
                 Collidable a = collidableObjects.get(i);
@@ -100,7 +103,7 @@ public class CollisionManager {
         if (a instanceof Germ && b instanceof Player) {
             System.out.println("💥 Germ hit Player! Reducing health.");
             Player player = (Player) b;
-            GameScene gameScene = (GameScene) sceneManager.getCurrentScene(); // Assuming you have access to sceneManager
+            GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
             gameScene.setHealth(gameScene.getHealth() - 1); // Reduce health by 1
             
             player.setGridX(1);
