@@ -65,7 +65,8 @@ public class HealthManager {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("✅ BUTTON PRESSED: Return to Menu");
-                gameMaster.returnToMenu();
+                sceneManager.transitionTo("MenuScene");
+                Gdx.input.setInputProcessor(null);
             }
         });
 

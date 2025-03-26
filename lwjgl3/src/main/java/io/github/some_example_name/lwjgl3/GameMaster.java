@@ -9,159 +9,114 @@ public class GameMaster extends ApplicationAdapter {
     private BoardManager boardManager;
     private SpriteBatch batch;
     private EntityManager entityManager;
-    private MovementManager movementManager;
-    private CollisionManager collisionManager;
     private Player player;
-    private Speaker speaker;
-    private SceneManager sceneManager;
-    private InputManager inputManager;
     private OutputManager outputManager;
-    //private SessionManager sessionManager;
-    private Mouse mouse;
-    private boolean gameStarted = false;
+    protected boolean gameStarted = false;
+    protected Mouse mouse;
+    protected MovementManager movementManager;
+    protected CollisionManager collisionManager;
+    protected Speaker speaker;
+    protected SceneManager sceneManager;
+    protected InputManager inputManager;
+    
+     
 
     public GameMaster() {
         sceneManager = new SceneManager();
         speaker = new Speaker();
         mouse = new Mouse(null, null, sceneManager);
-
         boardManager = new BoardManager();
-        entityManager = new EntityManager(boardManager.getBoard(),speaker);
+        entityManager = new EntityManager(boardManager.getBoard(), speaker);
         collisionManager = new CollisionManager(boardManager.getBoard(), entityManager, sceneManager);
         movementManager = new MovementManager(speaker, collisionManager);
-
-        inputManager = new InputManager(null, null, null, mouse); 
+        inputManager = new InputManager(null, null, null, mouse);
     }
-
 
     @Override
     public void create() {
-        AssetManager.loadAll();  
+        AssetManager.loadAll();
         batch = new SpriteBatch();
-        
-        outputManager = new OutputManager(speaker); 
+        outputManager = new OutputManager(speaker);
 
-        boardManager.getBoard().initGL();          
-        boardManager.getBoard().generateFoods();   
+        boardManager.getBoard().initGL();
+        boardManager.getBoard().generateFoods();
         boardManager.generateStaticObjects();
         boardManager.generateBoard();
-
         inputManager.setDependencies(movementManager, boardManager.getBoard());
 
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
+        sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
+        sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.transitionTo("MenuScene");
     }
 
-    public void instructionStart() {
-    	System.out.println("✅ instructionStart() called!");
-    	sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
-        sceneManager.transitionTo("InstructionsScene");
-    }
-
-
-    public void startGame() {
-        System.out.println("✅ startGame() called!");
-        gameStarted = true;
-
-        player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager, boardManager,speaker);
-        entityManager.addEntity(player);
-        collisionManager.addCollidable(player);
-        
-
-        // ✅ Set the player reference in inputManager
-        inputManager.setPlayer(player);
-        mouse.setIoManager(inputManager);
-
-        Germ germ1 = new Germ(boardManager.getBoard(), entityManager,movementManager, collisionManager);
-        entityManager.addEntity(germ1);
-        movementManager.addEntity(germ1);
-        collisionManager.addCollidable(germ1);
-        
-        Germ germ2 = new Germ(boardManager.getBoard(), entityManager,movementManager, collisionManager);
-        entityManager.addEntity(germ2);
-        movementManager.addEntity(germ2);
-        collisionManager.addCollidable(germ2);
-
-        sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
-        sceneManager.transitionTo("GameScene");
-    }
-    
     @Override
     public void render() {
         try {
             Gdx.gl.glClearColor(0, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-            if (!batch.isDrawing()) {
-                batch.begin();
-            }
+            if (!batch.isDrawing()) batch.begin();
+            sceneManager.render(batch);
 
-            sceneManager.render(batch); // Always render the SceneManager
+            if (gameStarted) {
+            	boolean playerAlreadyExists = false;
+            	for (Entity e : entityManager.getEntities()) {
+            	    if (e instanceof Player) {
+            	        player = (Player) e;
+            	        playerAlreadyExists = true;
+            	        break;
+            	    }
+            	}
 
-            if (gameStarted) { // Only run game logic if gameStarted
-                boolean moved = inputManager.handleInput();
+            	if (!playerAlreadyExists) {
+            	    player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager, boardManager, speaker);
+            	    entityManager.addEntity(player);
+            	    collisionManager.addCollidable(player);
+            	    inputManager.setPlayer(player);
+            	    mouse.setIoManager(inputManager);
+            	}
+            	boolean moved = inputManager.handleInput();
 
-                if (moved) {
-                    //System.out.println("🎮 Game is running...");
-                    //System.out.println("📌 Player position (render): " + player.getX() + ", " + player.getY());
-                }
-
-                // Move AI enemies
-                boolean germMoved = false;
                 for (Entity entity : entityManager.getEntities()) {
-                    if (entity instanceof Germ) {
-                        if (!germMoved) germMoved = true;
-                        ((Germ) entity).moveSmartly();
-                    }
+                    if (entity instanceof Germ) ((Germ) entity).moveSmartly();
                 }
-                // Start session timer
+
                 if (!outputManager.isHasMoved()) {
-                    //System.out.println("⏳ Timer Started: " + sessionManager.isTimerRunning());
-                    //sessionManager.startTimer();
                     outputManager.setHasMoved(true);
                 }
 
-                // Add this line BEFORE rendering board
                 boardManager.getBoard().updateFoodRegeneration();
-
-                // Render board and entities
                 boardManager.render(batch);
                 entityManager.render(batch);
-
                 outputManager.handleOutput();
                 collisionManager.checkCollisions();
 
-                // Check for end game condition
-                if (player != null) {
-                    //System.out.println("Player X: " + player.getGridX() + ", Player Y: " + player.getGridY());
-                    if (player.getGridX() == 10 && player.getGridY() == 11) {
-                        endGame();
-                    }
-                } else {
-                    System.out.println("Player object is NULL!");
+                if (player.getGridX() == 10 && player.getGridY() == 11) {
+                    gameStarted = false;
+                    sceneManager.transitionTo("MenuScene");
                 }
             }
 
-            if (batch.isDrawing()) {
-                batch.end();
-            }
-
+            if (batch.isDrawing()) batch.end();
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("❌ Error occurred while rendering GameMaster!");
-            if (batch.isDrawing()) {
-                batch.end();
-            }
+            if (batch.isDrawing()) batch.end();
         }
     }
-    
+
+    @Override
+    public void dispose() {
+        AssetManager.disposeAll();
+        boardManager.dispose();
+        batch.dispose();
+        if (sceneManager.getCurrentScene() != null) sceneManager.getCurrentScene().dispose();
+        speaker.stopSound("click");
+    }
+
     @Override
     public void resize(int width, int height) {
-        System.out.println("✅ Resizing GameMaster: " + width + "x" + height);
-
-        if (sceneManager.getCurrentScene() != null) {
-            sceneManager.getCurrentScene().resize(width, height);
-        }
+        if (sceneManager.getCurrentScene() != null) sceneManager.getCurrentScene().resize(width, height);
 
         if (gameStarted) {
             Board board = boardManager.getBoard();
@@ -169,61 +124,16 @@ public class GameMaster extends ApplicationAdapter {
                 entityManager.updateBoardReference(board);
                 entityManager.updateEntitiesOnResize();
                 board.render(batch);
-            } else {
-                System.out.println("⚠️ Error: Board is NULL after resizing!");
             }
-
             entityManager.ensurePlayerExists();
         }
     }
 
-    public void resetGame() {
-        System.out.println("🔄 Resetting game...");
-        gameStarted = false;
-        sceneManager.transitionTo("MenuScene");
-    }
+    public SpriteBatch getBatch() { return batch; }
+    public EntityManager getEntityManager() { return entityManager; }
+    public BoardManager getBoardManager() { return boardManager; }
 
-    public void returnToMenu() {
-        System.out.println("🔄 Returning to Menu...");
-        gameStarted = false;
-        sceneManager.transitionTo("MenuScene");
-        Gdx.input.setInputProcessor(null);
-    }
-    
-    // ✅ Returns the BoardManager instance
-    public BoardManager getBoardManager() {
-        return boardManager;
-    }
-
-    // ✅ Returns the EntityManager instance
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-    
-    public SpriteBatch getBatch() {
-        return batch;
-    }
-
-    @Override
-    public void dispose() {
-//        System.out.println("🛑 Disposing GameMaster...");
-        AssetManager.disposeAll();
-        boardManager.dispose();
-        batch.dispose();
-        if (sceneManager != null && sceneManager.getCurrentScene() != null) {
-            sceneManager.getCurrentScene().dispose();
-        }
-        speaker.stopSound("click");
-    }
-    
     public static void main(String[] args) {
         Lwjgl3Launcher.main(args);
     }
-    
-    public void endGame() {
-        System.out.println("🏁 Game Ended!");
-        gameStarted = false;
-        sceneManager.transitionTo("MenuScene");
-    }
 }
-

@@ -45,8 +45,40 @@ public class InstructionsScene extends Scene {
         continueButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (gameMaster != null) {
-                    gameMaster.startGame();
+            	if (gameMaster != null) {
+            	    gameMaster.gameStarted = true;
+
+            	    Player player = new Player(
+            	        gameMaster.getBoardManager().getBoard(),
+            	        gameMaster.getEntityManager(),
+            	        1, 1,
+            	        gameMaster.movementManager,
+            	        100, 3,
+            	        gameMaster.collisionManager,
+            	        gameMaster.getBoardManager(),
+            	        gameMaster.speaker
+            	    );
+
+            	    gameMaster.getEntityManager().addEntity(player);
+            	    gameMaster.collisionManager.addCollidable(player);
+            	    gameMaster.inputManager.setPlayer(player);
+            	    gameMaster.mouse.setIoManager(gameMaster.inputManager);
+
+            	    for (int i = 0; i < 2; i++) {
+            	        Germ germ = new Germ(
+            	            gameMaster.getBoardManager().getBoard(),
+            	            gameMaster.getEntityManager(),
+            	            gameMaster.movementManager,
+            	            gameMaster.collisionManager
+            	        );
+            	        gameMaster.getEntityManager().addEntity(germ);
+            	        gameMaster.movementManager.addEntity(germ);
+            	        gameMaster.collisionManager.addCollidable(germ);
+            	    }
+
+            	    gameMaster.sceneManager.transitionTo("GameScene");
+            	
+
                 } else {
                     System.out.println("❌ ERROR: gameMaster is NULL!");
                 }
