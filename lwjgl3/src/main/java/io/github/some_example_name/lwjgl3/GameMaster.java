@@ -24,7 +24,7 @@ public class GameMaster extends ApplicationAdapter {
     public GameMaster() {
         sceneManager = new SceneManager();
         speaker = new Speaker();
-        mouse = new Mouse(null, null, sceneManager);
+        mouse = new Mouse(null, speaker, sceneManager);
         boardManager = new BoardManager();
         entityManager = new EntityManager(boardManager.getBoard(), speaker);
         collisionManager = new CollisionManager(boardManager.getBoard(), entityManager, sceneManager);
@@ -58,6 +58,7 @@ public class GameMaster extends ApplicationAdapter {
 
             if (!batch.isDrawing()) batch.begin();
             sceneManager.render(batch);
+            mouse.checkMouse(); 
 
             if (gameStarted) {
             	boolean playerAlreadyExists = false;
