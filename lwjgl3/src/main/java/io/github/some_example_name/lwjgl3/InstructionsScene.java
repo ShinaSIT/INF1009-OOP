@@ -3,6 +3,7 @@ package io.github.some_example_name.lwjgl3;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -45,39 +46,38 @@ public class InstructionsScene extends Scene {
         continueButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-            	if (gameMaster != null) {
-            	    gameMaster.gameStarted = true;
+                if (gameMaster != null) {
+                    gameMaster.gameStarted = true;
 
-            	    Player player = new Player(
-            	        gameMaster.getBoardManager().getBoard(),
-            	        gameMaster.getEntityManager(),
-            	        1, 1,
-            	        gameMaster.movementManager,
-            	        100, 3,
-            	        gameMaster.collisionManager,
-            	        gameMaster.getBoardManager(),
-            	        gameMaster.speaker
-            	    );
+                    Player player = new Player(
+                        gameMaster.getBoardManager().getBoard(),
+                        gameMaster.getEntityManager(),
+                        1, 1,
+                        gameMaster.movementManager,
+                        100, 3,
+                        gameMaster.collisionManager,
+                        gameMaster.getBoardManager(),
+                        gameMaster.speaker
+                    );
 
-            	    gameMaster.getEntityManager().addEntity(player);
-            	    gameMaster.collisionManager.addCollidable(player);
-            	    gameMaster.inputManager.setPlayer(player);
-            	    gameMaster.mouse.setIoManager(gameMaster.inputManager);
+                    gameMaster.getEntityManager().addEntity(player);
+                    gameMaster.collisionManager.addCollidable(player);
+                    gameMaster.inputManager.setPlayer(player);
+                    gameMaster.mouse.setIoManager(gameMaster.inputManager);
 
-            	    for (int i = 0; i < 2; i++) {
-            	        Germ germ = new Germ(
-            	            gameMaster.getBoardManager().getBoard(),
-            	            gameMaster.getEntityManager(),
-            	            gameMaster.movementManager,
-            	            gameMaster.collisionManager
-            	        );
-            	        gameMaster.getEntityManager().addEntity(germ);
-            	        gameMaster.movementManager.addEntity(germ);
-            	        gameMaster.collisionManager.addCollidable(germ);
-            	    }
+                    for (int i = 0; i < 2; i++) {
+                        Germ germ = new Germ(
+                            gameMaster.getBoardManager().getBoard(),
+                            gameMaster.getEntityManager(),
+                            gameMaster.movementManager,
+                            gameMaster.collisionManager
+                        );
+                        gameMaster.getEntityManager().addEntity(germ);
+                        gameMaster.movementManager.addEntity(germ);
+                        gameMaster.collisionManager.addCollidable(germ);
+                    }
 
-            	    gameMaster.sceneManager.transitionTo("GameScene");
-            	
+                    gameMaster.sceneManager.transitionTo("GameScene");
 
                 } else {
                     System.out.println("❌ ERROR: gameMaster is NULL!");
@@ -99,29 +99,40 @@ public class InstructionsScene extends Scene {
     }
 
     private void renderUI(SpriteBatch batch) {
+        font.getData().setScale(3);
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(font, "Instructions");
+        font.draw(batch, "Instructions", 
+                 Gdx.graphics.getWidth()/2f - layout.width/2, 
+                 Gdx.graphics.getHeight() - 50);
         font.getData().setScale(2);
-        font.draw(batch, "Instructions", 10, Gdx.graphics.getHeight() - 20);
-        font.getData().setScale(1);
     }
 
     private void renderInstructions(SpriteBatch batch) {
-        float startY = Gdx.graphics.getHeight() - 80;
-        float lineSpacing = 30;
+        float startY = Gdx.graphics.getHeight() - 150;
+        float lineSpacing = 40;
+        GlyphLayout layout = new GlyphLayout();
+        
+        String[] instructions = {
+            "How to Play",
+            "• Use arrow keys to move your character",
+            "• Collect healthy foods like fruits and vegetables",
+            "",
+            "• Avoid junk food ghosts that will reduce your health",
+            "• Special power foods let you chase ghosts temporarily",
+            "• Learn about nutrition from food facts",
+            "• Complete each level by collecting all healthy foods"
+        };
 
-        font.draw(batch, "How to Play", 230, startY);
-        startY -= lineSpacing;
-        font.draw(batch, "• Use arrow keys to move your character", 120, startY);
-        startY -= lineSpacing;
-        font.draw(batch, "• Collect healthy foods like fruits and vegetables", 120, startY);
-        startY -= lineSpacing;
-        startY -= lineSpacing;
-        font.draw(batch, "• Avoid junk food ghosts that will reduce your health", 120, startY);
-        startY -= lineSpacing;
-        font.draw(batch, "• Special power foods let you chase ghosts temporarily", 120, startY);
-        startY -= lineSpacing;
-        font.draw(batch, "• Learn about nutrition from food facts", 120, startY);
-        startY -= lineSpacing;
-        font.draw(batch, "• Complete each level by collecting all healthy foods", 120, startY);
+        for (String line : instructions) {
+            if (!line.isEmpty()) {
+                layout.setText(font, line);
+                font.draw(batch, line, 
+                         Gdx.graphics.getWidth()/2f - layout.width/2, 
+                         startY);
+            }
+            startY -= lineSpacing;
+        }
     }
 
     @Override
