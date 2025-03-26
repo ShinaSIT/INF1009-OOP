@@ -58,7 +58,7 @@ public class InstructionsScene extends Scene {
 
     @Override
     public void render(SpriteBatch batch) {
-        if (gameMaster == null) return;
+        if (gameMaster == null) return;   
 
         renderUI(batch);
         renderInstructions(batch);
