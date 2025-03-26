@@ -102,36 +102,36 @@ public class Player extends MoveableObjects implements Collidable {
         //System.out.println("🎨 Rendering Player at (x=" + x + ", y=" + y + "), Grid (" + gridX + ", " + gridY + ")");
         //System.out.println("🦶 Current Step: " + (isRightStep ? "Right Leg" : "Left Leg"));
 
-        Texture currentSprite = CharacterAssets.psyduckRDown;
+        Texture currentSprite = CharacterAssets.playerRDown;
 
         if (facingSide.equals("LEFT")) {
             switch (facingDirection) {
                 case "UP":
-                    currentSprite = isRightStep ? CharacterAssets.psyduckLUp : CharacterAssets.psyduckLUp2;
+                    currentSprite = isRightStep ? CharacterAssets.playerLUp : CharacterAssets.playerLUp2;
                     break;
                 case "DOWN":
-                    currentSprite = isRightStep ? CharacterAssets.psyduckLDown : CharacterAssets.psyduckLDown2;
+                    currentSprite = isRightStep ? CharacterAssets.playerLDown : CharacterAssets.playerLDown2;
                     break;
                 case "LEFT":
-                    currentSprite = isRightStep ? CharacterAssets.psyduckLLeft : CharacterAssets.psyduckLLeft2;
+                    currentSprite = isRightStep ? CharacterAssets.playerLLeft : CharacterAssets.playerLLeft2;
                     break;
                 case "RIGHT":
-                    currentSprite = isRightStep ? CharacterAssets.psyduckLRight : CharacterAssets.psyduckLRight2;
+                    currentSprite = isRightStep ? CharacterAssets.playerLRight : CharacterAssets.playerLRight2;
                     break;
             }
         } else {
             switch (facingDirection) {
                 case "UP":
-                    currentSprite = isRightStep ? CharacterAssets.psyduckRUp : CharacterAssets.psyduckRUp2;
+                    currentSprite = isRightStep ? CharacterAssets.playerRUp : CharacterAssets.playerRUp2;
                     break;
                 case "DOWN":
-                    currentSprite = isRightStep ? CharacterAssets.psyduckRDown : CharacterAssets.psyduckRDown2;
+                    currentSprite = isRightStep ? CharacterAssets.playerRDown : CharacterAssets.playerRDown2;
                     break;
                 case "LEFT":
-                    currentSprite = isRightStep ? CharacterAssets.psyduckRLeft : CharacterAssets.psyduckRLeft2;
+                    currentSprite = isRightStep ? CharacterAssets.playerRLeft : CharacterAssets.playerRLeft2;
                     break;
                 case "RIGHT":
-                    currentSprite = isRightStep ? CharacterAssets.psyduckRRight : CharacterAssets.psyduckRRight2;
+                    currentSprite = isRightStep ? CharacterAssets.playerRRight : CharacterAssets.playerRRight2;
                     break;
             }
         }
