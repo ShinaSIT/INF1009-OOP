@@ -66,9 +66,9 @@ public class GameScene extends Scene {
         String healthText = "Health: " + health;
 
         // Debug to ensure UI elements are being rendered
-        System.out.println("Rendering Score: " + scoreText);
-        System.out.println("Time: " + timeText);
-        System.out.println("Health: " + healthText);
+        //System.out.println("Rendering Score: " + scoreText);
+        //System.out.println("Time: " + timeText);
+        //System.out.println("Health: " + healthText);
 
         // Draw the score at the top-left corner
         font.draw(batch, scoreText, 10, Gdx.graphics.getHeight() - 20);

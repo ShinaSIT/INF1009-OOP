@@ -75,7 +75,7 @@ public class CollisionManager {
             }
         }
 
-        System.out.println("✅ Free to move");
+        //System.out.println("✅ Free to move");
         return true;
     }
 
