@@ -27,7 +27,7 @@ public class GameMaster extends ApplicationAdapter {
 
         boardManager = new BoardManager();
         entityManager = new EntityManager(boardManager.getBoard(),speaker);
-        collisionManager = new CollisionManager(boardManager.getBoard(), entityManager);
+        collisionManager = new CollisionManager(boardManager.getBoard(), entityManager, sceneManager);
         movementManager = new MovementManager(speaker, collisionManager);
 
         inputManager = new InputManager(null, null, null, mouse); 
