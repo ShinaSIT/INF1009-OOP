@@ -71,12 +71,10 @@ public class GameMaster extends ApplicationAdapter {
             	}
 
             	if (!playerAlreadyExists) {
-            	    player = new Player(boardManager.getBoard(), entityManager, 1, 1, movementManager, 100, 3, collisionManager, boardManager, speaker);
-            	    entityManager.addEntity(player);
-            	    collisionManager.addCollidable(player);
-            	    inputManager.setPlayer(player);
-            	    mouse.setIoManager(inputManager);
+            	    EntityFactory factory = new EntityFactory(boardManager.getBoard(),entityManager,movementManager,collisionManager,boardManager,speaker,inputManager,mouse);
+            	    factory.getEntity("player");
             	}
+
             	boolean moved = inputManager.handleInput();
 
                 for (Entity entity : entityManager.getEntities()) {
