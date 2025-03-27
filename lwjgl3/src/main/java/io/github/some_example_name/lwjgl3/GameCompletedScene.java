@@ -63,13 +63,8 @@ public class GameCompletedScene extends Scene {
     public void create() {
         System.out.println("✅ Game Completed Scene Created");
         System.out.println("Creating GameCompletedScene with values: " + 
-                healthyFoodCount + ", " + unhealthyFoodCount + ", " + totalScore);
-        
-        try {
-            font = new BitmapFont(Gdx.files.internal("path/to/your/font.fnt"));
-        } catch (Exception e) {
+                healthyFoodCount + ", " + unhealthyFoodCount + ", " + totalScore); {
             font = new BitmapFont();
-            System.out.println("Using default font due to error: " + e.getMessage());
         }
         font.setColor(Color.WHITE);
 
@@ -127,7 +122,7 @@ public class GameCompletedScene extends Scene {
         if (gameMaster == null) return;
 
         // Clear screen
-        Gdx.gl.glClearColor(0.2f, 0.5f, 0.8f, 1);
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1);
         Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
 
         renderTitle(batch);

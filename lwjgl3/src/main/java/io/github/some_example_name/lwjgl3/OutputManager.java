@@ -7,8 +7,6 @@ import com.badlogic.gdx.audio.Sound;
 
 public class OutputManager extends OutputClass {
 
-    private boolean hasMoved = false;
-    private boolean hasTimerStarted = false;
 
     public OutputManager(Speaker speaker) {
         super(speaker);
@@ -36,19 +34,5 @@ public class OutputManager extends OutputClass {
         }
     }
 
-    public boolean isHasMoved() {
-        return hasMoved;
-    }
-
-    public void setHasMoved(boolean hasMoved) {
-        this.hasMoved = hasMoved;
-    }
-
-    public boolean isHasTimerStarted() {
-        return hasTimerStarted;
-    }
-
-    public void setHasTimerStarted(boolean hasTimerStarted) {
-        this.hasTimerStarted = hasTimerStarted;
-    }
+  
 }

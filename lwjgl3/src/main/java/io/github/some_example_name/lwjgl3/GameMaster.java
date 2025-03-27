@@ -24,7 +24,7 @@ public class GameMaster extends ApplicationAdapter {
     public GameMaster() {
         sceneManager = new SceneManager();
         speaker = new Speaker();
-        mouse = new Mouse(null, speaker, sceneManager);
+        mouse = new Mouse(null, speaker);
         boardManager = new BoardManager();
         entityManager = new EntityManager(boardManager.getBoard(), speaker);
         collisionManager = CollisionManager.getInstance(boardManager.getBoard(), entityManager, sceneManager);
@@ -46,7 +46,12 @@ public class GameMaster extends ApplicationAdapter {
 
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
-        this.gameScene = new GameScene(sceneManager, this); // Store the reference
+        sceneManager.addScene("GameScene", new GameScene(sceneManager, this, inputManager, speaker));
+        //sceneManager.addScene("GameScene", new GameScene(sceneManager, this, inputManager, speaker));
+        sceneManager.addScene("GameOverScene", new GameOverScene(sceneManager));
+        this.gameScene = new GameScene(sceneManager, this, inputManager, speaker); // Store the reference
+
+        this.gameScene = new GameScene(sceneManager, this, inputManager,speaker); // Store the reference
         sceneManager.addScene("GameScene", gameScene); // Use the stored reference
         sceneManager.transitionTo("MenuScene");
     }
@@ -76,21 +81,20 @@ public class GameMaster extends ApplicationAdapter {
             	    factory.getEntity("player");
             	}
 
-            	boolean moved = inputManager.handleInput();
+            	inputManager.handleInput();
 
                 for (Entity entity : entityManager.getEntities()) {
                     if (entity instanceof Germ) ((Germ) entity).moveSmartly();
                 }
 
-                if (!outputManager.isHasMoved()) {
-                    outputManager.setHasMoved(true);
-                }
 
                 boardManager.getBoard().updateFoodRegeneration();
                 boardManager.render(batch);
                 entityManager.render(batch);
                 outputManager.handleOutput();
                 collisionManager.checkCollisions();
+                
+                
 
                 if (player.getGridX() == 10 && player.getGridY() == 11) {
                     gameStarted = false;
@@ -100,6 +104,15 @@ public class GameMaster extends ApplicationAdapter {
                             currentGameScene.getTotalUnhealthyFoodCount(),
                             currentGameScene.getTotalScore()));
                     sceneManager.transitionTo("GameCompletedScene");
+                }
+                
+                if (!(sceneManager.getCurrentScene() instanceof GameScene)) {
+                    return; // or handle non-game scene case
+                }
+                GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
+                if (gameScene != null && gameScene.getHealth() <= 0) {
+                    gameStarted = false;
+                    sceneManager.transitionTo("GameOverScene");
                 }
             }
 
