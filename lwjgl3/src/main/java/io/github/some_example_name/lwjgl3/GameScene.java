@@ -20,13 +20,13 @@ public class GameScene extends Scene {
     private int totalHealthyFoodCount = 0;
     private int totalUnhealthyFoodCount = 0;
     private int totalScore = 0;
+    private HealthFactPopup healthFactPopup;
 
-    // UI components
     private BitmapFont font;
-    private int highScore = 0; // Added high score variable
-    private Preferences prefs; // Added Preferences
-	private InputManager inputManager;
-	private Speaker speaker;
+    private int highScore = 0;
+    private Preferences prefs;
+    private InputManager inputManager;
+    private Speaker speaker;
 
     public GameScene(SceneManager sceneManager, GameMaster gameMaster, InputManager inputManager, Speaker speaker) {
         super(sceneManager);
@@ -34,56 +34,40 @@ public class GameScene extends Scene {
         this.score = 0;
         this.health = 3;
         this.startTime = System.currentTimeMillis();
-        this.healthyFoodCount = 0;
-        this.unhealthyFoodCount = 0;
-        this.totalHealthyFoodCount = 0;
-        this.totalUnhealthyFoodCount = 0;
-        this.totalScore = 0;
         this.inputManager = inputManager;
         this.speaker = speaker;
-        
-        this.prefs = Gdx.app.getPreferences("MyGamePreferences"); // Initialize Preferences
-        this.highScore = prefs.getInteger("highScore", 0); // Load high score from Preferences
+        this.prefs = Gdx.app.getPreferences("MyGamePreferences");
+        this.highScore = prefs.getInteger("highScore", 0);
     }
 
     @Override
     public void create() {
         System.out.println("✅ Game Scene Created");
-        if (gameMaster == null) {
-            System.out.println("GameMaster is Null");
-        }
-        
         this.mouse = new Mouse(inputManager, speaker);
+        healthFactPopup = new HealthFactPopup();
 
         try {
+<<<<<<< Updated upstream
             font = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt")); //dont change this please
+=======
+            font = new BitmapFont(Gdx.files.internal("assets/fonts/menu_font.fnt"));
+>>>>>>> Stashed changes
         } catch (Exception e) {
             font = new BitmapFont();
-            font = new BitmapFont(); // Default font if the custom one fails
             System.out.println("Using default font due to error: " + e.getMessage());
         }
         font.setColor(Color.WHITE);
-        
-        // Remove this line - we'll create the completed scene when needed
-       // sceneManager.addScene("GameCompletedScene", new GameCompletedScene(sceneManager, gameMaster, this));
-        font.setColor(Color.WHITE);// Set the font color to white
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        //System.out.println("GameScene render() called");
         if (gameMaster == null) return;
 
-        // Update High Score
-        update(Gdx.graphics.getDeltaTime()); // Ensure update is called.
+        update(Gdx.graphics.getDeltaTime());
 
-        // Render UI elements (score and timer) at the top of the screen
         renderUI(batch);
-
-        // Render the game board (positioned below the UI)
         renderBoard(batch);
-        
-        //mouse.checkMouse(); 
+
         totalHealthyFoodCount = healthyFoodCount;
         totalUnhealthyFoodCount = unhealthyFoodCount;
         totalScore = score;
@@ -91,15 +75,23 @@ public class GameScene extends Scene {
         if (mouse != null) {
             mouse.checkMouse();
         }
+
+        // ✅ Render the popup after everything
+        if (healthFactPopup != null) {
+            healthFactPopup.render(batch, font);
+        }
+    }
+    
+    public HealthFactPopup getHealthFactPopup() {
+        return healthFactPopup;
     }
 
     private void renderUI(SpriteBatch batch) {
-        // Update the score and timer text
         elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
-
         int minutes = (int) (elapsedTime / 60);
         int seconds = (int) (elapsedTime % 60);
 
+<<<<<<< Updated upstream
         String formattedTime = String.format("%02d:%02d", minutes, seconds); // Format as MM:SS
         String timeText = "Time " + formattedTime; // Use formatted time string
         String healthText = "Health " + health;
@@ -119,28 +111,35 @@ public class GameScene extends Scene {
         // High Score Label & Value (Aligns High Score text and value)
         font.draw(batch, highScoreText, xPos, yStart - (4 * lineHeight));
         font.draw(batch, highScoreValue, xPos, yStart - (5 * lineHeight)); 
+=======
+        String scoreText = "Score: " + score;
+        String timeText = "Time: " + String.format("%02d:%02d", minutes, seconds);
+        String healthText = "Health: " + health;
+        String highScoreText = "High Score";
+        String highScoreValue = ": " + highScore;
+
+        font.draw(batch, scoreText, 10, Gdx.graphics.getHeight() - 20);
+        font.draw(batch, timeText, 10, Gdx.graphics.getHeight() - 40);
+        font.draw(batch, healthText, 10, Gdx.graphics.getHeight() - 60);
+        font.draw(batch, highScoreText, 10, Gdx.graphics.getHeight() - 80);
+        font.draw(batch, highScoreValue, 10, Gdx.graphics.getHeight() - 100);
+>>>>>>> Stashed changes
     }
 
     private void renderBoard(SpriteBatch batch) {
-        // After the score and timer, render the game board below the UI
         if (getBoard() != null) {
-            // Adjust the board's Y position based on the height of the score and timer
-            float boardYOffset = Gdx.graphics.getHeight() - 80; // Adjusted for high score
-
-            // Move the board's Y position down so it's not overlapping with the UI
-            batch.getProjectionMatrix().translate(0, -boardYOffset, 0); // Shift board downwards
-            getBoard().render(batch); // Render the board
-            batch.getProjectionMatrix().translate(0, boardYOffset, 0); // Reset projection matrix after rendering board
+            float boardYOffset = Gdx.graphics.getHeight() - 80;
+            batch.getProjectionMatrix().translate(0, -boardYOffset, 0);
+            getBoard().render(batch);
+            batch.getProjectionMatrix().translate(0, boardYOffset, 0);
         }
     }
 
     @Override
     public void resize(int width, int height) {
         System.out.println("✅ Resizing GameScene: " + width + "x" + height);
-
         if (gameMaster == null) return;
 
-        // Resize board and other game components as necessary
         if (getBoard() != null) {
             getBoard().updateDimensions();
             if (getEntityManager() != null) {
@@ -153,27 +152,54 @@ public class GameScene extends Scene {
     @Override
     public void dispose() {
         System.out.println("✅ Disposing Game Scene...");
-        System.out.println("Total time: " + elapsedTime / 60 + "min" + elapsedTime % 60 + "s"); // Use the class member
-        font.dispose(); // Dispose of the font when done
-        if (mouse != null) {
-            // If Mouse has cleanup methods, call them here
-        }
+        System.out.println("Total time: " + elapsedTime / 60 + "min" + elapsedTime % 60 + "s");
+        font.dispose();
     }
 
-    @Override
-    public void pause() {}
-
-    @Override
-    public void resume() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
 
     @Override
     public void update(float deltaTime) {
         if (score > highScore) {
             highScore = score;
-            prefs.putInteger("highScore", highScore); // Save high score to Preferences
-            prefs.flush(); // Save changes immediately
+            prefs.putInteger("highScore", highScore);
+            prefs.flush();
         }
     }
+
+    @Override public void update() {}
+    @Override public void render() {}
+
+    // ✅ INPUT HANDLING for closing the popup
+    public void handleInput(int screenX, int screenY) {
+        if (healthFactPopup != null && healthFactPopup.isVisible()) {
+            healthFactPopup.handleInput(screenX, screenY);
+        }
+    }
+
+    // ✅ Getters and setters
+    public int getHealthyFoodCount() { return healthyFoodCount; }
+    public int getUnhealthyFoodCount() { return unhealthyFoodCount; }
+
+    public void setHealthyFoodCount(int healthyFoodCount) {
+        this.healthyFoodCount = healthyFoodCount;
+    }
+
+    public void setUnhealthyFoodCount(int unhealthyFoodCount) {
+        if (unhealthyFoodCount > this.unhealthyFoodCount && healthFactPopup != null) {
+            healthFactPopup.showRandomFact(); // ✅ show popup on new unhealthy food
+        }
+        this.unhealthyFoodCount = unhealthyFoodCount;
+    }
+
+    public int getTotalHealthyFoodCount() { return totalHealthyFoodCount; }
+    public int getTotalUnhealthyFoodCount() { return totalUnhealthyFoodCount; }
+    public int getTotalScore() { return totalScore; }
+    public int getScore() { return score; }
+    public int getHealth() { return health; }
+    public void setScore(int score) { this.score = score; }
+    public void setHealth(int health) { this.health = health; }
 
     private Board getBoard() {
         return (gameMaster != null) ? gameMaster.getBoardManager().getBoard() : null;
@@ -182,6 +208,7 @@ public class GameScene extends Scene {
     private EntityManager getEntityManager() {
         return (gameMaster != null) ? gameMaster.getEntityManager() : null;
     }
+<<<<<<< Updated upstream
 
     @Override
     public void update() {
@@ -235,3 +262,6 @@ public class GameScene extends Scene {
         this.health = health;
     }
 }
+=======
+}
+>>>>>>> Stashed changes

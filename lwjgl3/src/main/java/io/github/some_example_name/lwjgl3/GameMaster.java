@@ -19,7 +19,6 @@ public class GameMaster extends ApplicationAdapter {
     protected SceneManager sceneManager;
     protected InputManager inputManager;
     private GameScene gameScene;
-     
 
     public GameMaster() {
         sceneManager = new SceneManager();
@@ -49,13 +48,10 @@ public class GameMaster extends ApplicationAdapter {
 
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
-        sceneManager.addScene("GameScene", new GameScene(sceneManager, this, inputManager, speaker));
-        //sceneManager.addScene("GameScene", new GameScene(sceneManager, this, inputManager, speaker));
+        this.gameScene = new GameScene(sceneManager, this, inputManager, speaker);
+        sceneManager.addScene("GameScene", gameScene);
         sceneManager.addScene("GameOverScene", new GameOverScene(sceneManager));
-        this.gameScene = new GameScene(sceneManager, this, inputManager, speaker); // Store the reference
 
-        this.gameScene = new GameScene(sceneManager, this, inputManager,speaker); // Store the reference
-        sceneManager.addScene("GameScene", gameScene); // Use the stored reference
         sceneManager.transitionTo("MenuScene");
     }
 
@@ -66,60 +62,82 @@ public class GameMaster extends ApplicationAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
             if (!batch.isDrawing()) batch.begin();
+
+            // ✅ Handle input for closing pop-up (if visible)
+            if (Gdx.input.justTouched()) {
+                int x = Gdx.input.getX();
+                int y = Gdx.input.getY();
+            }
+
+            if (sceneManager.getCurrentScene() instanceof GameScene) {
+                GameScene gs = (GameScene) sceneManager.getCurrentScene();
+
+                if (gs.getHealthFactPopup().isVisible()) {
+                    // First: handle click on the pop-up close button
+                    if (Gdx.input.justTouched()) {
+                        int x = Gdx.input.getX();
+                        int y = Gdx.input.getY();
+                        gs.handleInput(x, y);
+                    }
+
+                    // Then: pause game logic and only render popup + board
+                    sceneManager.render(batch);
+                    if (batch.isDrawing()) batch.end();
+                    return;
+                }
+            }
+
             sceneManager.render(batch);
-            //mouse.checkMouse(); 
 
             if (gameStarted) {
-            	boolean playerAlreadyExists = false;
-            	for (Entity e : entityManager.getEntities()) {
-            	    if (e instanceof Player) {
-            	        player = (Player) e;
-            	        playerAlreadyExists = true;
-            	        break;
-            	    }
-            	}
+                boolean playerAlreadyExists = false;
+                for (Entity e : entityManager.getEntities()) {
+                    if (e instanceof Player) {
+                        player = (Player) e;
+                        playerAlreadyExists = true;
+                        break;
+                    }
+                }
 
-            	if (!playerAlreadyExists) {
-            	    EntityFactory factory = new EntityFactory(boardManager.getBoard(),entityManager,movementManager,collisionManager,boardManager,speaker,inputManager,mouse);
-            	    factory.getEntity("player");
-            	}
+                if (!playerAlreadyExists) {
+                    EntityFactory factory = new EntityFactory(boardManager.getBoard(), entityManager, movementManager, collisionManager, boardManager, speaker, inputManager, mouse);
+                    factory.getEntity("player");
+                }
 
-            	inputManager.handleInput();
+                inputManager.handleInput();
 
                 for (Entity entity : entityManager.getEntities()) {
                     if (entity instanceof Germ) ((Germ) entity).moveSmartly();
                 }
-
 
                 boardManager.getBoard().updateFoodRegeneration();
                 boardManager.render(batch);
                 entityManager.render(batch);
                 outputManager.handleOutput();
                 collisionManager.checkCollisions();
-                
-                
 
+                // Win condition
                 if (player.getGridX() == 10 && player.getGridY() == 11) {
                     gameStarted = false;
                     GameScene currentGameScene = (GameScene) sceneManager.getScene("GameScene");
-                    sceneManager.addScene("GameCompletedScene", new GameCompletedScene(sceneManager, this, 
+                    sceneManager.addScene("GameCompletedScene", new GameCompletedScene(sceneManager, this,
                             currentGameScene.getTotalHealthyFoodCount(),
                             currentGameScene.getTotalUnhealthyFoodCount(),
                             currentGameScene.getTotalScore()));
                     sceneManager.transitionTo("GameCompletedScene");
                 }
-                
-                if (!(sceneManager.getCurrentScene() instanceof GameScene)) {
-                    return; // or handle non-game scene case
-                }
-                GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
-                if (gameScene != null && gameScene.getHealth() <= 0) {
-                    gameStarted = false;
-                    sceneManager.transitionTo("GameOverScene");
+
+                if (sceneManager.getCurrentScene() instanceof GameScene) {
+                    GameScene currentGameScene = (GameScene) sceneManager.getCurrentScene();
+                    if (currentGameScene.getHealth() <= 0) {
+                        gameStarted = false;
+                        sceneManager.transitionTo("GameOverScene");
+                    }
                 }
             }
 
             if (batch.isDrawing()) batch.end();
+
         } catch (Exception e) {
             e.printStackTrace();
             if (batch.isDrawing()) batch.end();
@@ -150,50 +168,44 @@ public class GameMaster extends ApplicationAdapter {
         }
     }
 
-    public SpriteBatch getBatch() { 
-    	return batch; 
+    public SpriteBatch getBatch() {
+        return batch;
     }
-    
-    public EntityManager getEntityManager() { 
-    	return entityManager; 
+
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
-    
-    public BoardManager getBoardManager() { 
-    	return boardManager; 
+
+    public BoardManager getBoardManager() {
+        return boardManager;
     }
 
     public static void main(String[] args) {
         Lwjgl3Launcher.main(args);
     }
-    
+
     public Mouse getMouse() {
         return mouse;
     }
-    
+
     public void resetGame() {
-        // 💥 Create a fresh board instance
         Board freshBoard = new Board();
         boardManager.setBoard(freshBoard);
         System.out.println("✅ BoardManager now using fresh Board: " + boardManager.getBoard());
-        
+
         this.entityManager = new EntityManager(freshBoard, speaker);
         freshBoard.setEntityManager(entityManager);
 
-        // 🔁 Refresh dependencies
         collisionManager = CollisionManager.getInstance(freshBoard, entityManager, sceneManager);
         movementManager = new MovementManager(speaker, collisionManager);
         inputManager.setDependencies(movementManager, freshBoard);
 
         freshBoard.initGL();
         freshBoard.generateFoods();
-
-        // ✅ Clear static objects before adding new ones!
         entityManager.clearStaticEntities();
-
-        boardManager.generateStaticObjects();  
+        boardManager.generateStaticObjects();
         boardManager.generateBoard();
 
-        // 🔄 New GameScene
         this.gameScene = new GameScene(sceneManager, this, inputManager, speaker);
         sceneManager.addScene("GameScene", gameScene);
     }
