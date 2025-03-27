@@ -44,46 +44,33 @@ public class InstructionsScene extends Scene {
         continueButton.setPosition(Gdx.graphics.getWidth() / 2f - continueButton.getWidth() / 2f, 50);
 
         continueButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (gameMaster != null) {
-                    gameMaster.gameStarted = true;
+        	 @Override
+        	    public void clicked(InputEvent event, float x, float y) {
+        	        if (gameMaster != null) {
+        	            gameMaster.gameStarted = true;
 
-                    Player player = new Player(
-                        gameMaster.getBoardManager().getBoard(),
-                        gameMaster.getEntityManager(),
-                        1, 1,
-                        gameMaster.movementManager,
-                        100, 3,
-                        gameMaster.collisionManager,
-                        gameMaster.getBoardManager(),
-                        gameMaster.speaker
-                    );
+        	            EntityFactory factory = new EntityFactory(
+        	                gameMaster.getBoardManager().getBoard(),
+        	                gameMaster.getEntityManager(),
+        	                gameMaster.movementManager,
+        	                gameMaster.collisionManager,
+        	                gameMaster.getBoardManager(),
+        	                gameMaster.speaker,
+        	                gameMaster.inputManager,
+        	                gameMaster.mouse
+        	            );
 
-                    gameMaster.getEntityManager().addEntity(player);
-                    gameMaster.collisionManager.addCollidable(player);
-                    gameMaster.inputManager.setPlayer(player);
-                    gameMaster.mouse.setIoManager(gameMaster.inputManager);
+        	            factory.getEntity("player");
+        	            factory.getEntity("germ");
+        	            factory.getEntity("germ");
 
-                    for (int i = 0; i < 2; i++) {
-                        Germ germ = new Germ(
-                            gameMaster.getBoardManager().getBoard(),
-                            gameMaster.getEntityManager(),
-                            gameMaster.movementManager,
-                            gameMaster.collisionManager
-                        );
-                        gameMaster.getEntityManager().addEntity(germ);
-                        gameMaster.movementManager.addEntity(germ);
-                        gameMaster.collisionManager.addCollidable(germ);
-                    }
+        	            gameMaster.sceneManager.transitionTo("GameScene");
 
-                    gameMaster.sceneManager.transitionTo("GameScene");
-
-                } else {
-                    System.out.println("❌ ERROR: gameMaster is NULL!");
-                }
-            }
-        });
+        	        } else {
+        	            System.out.println("❌ ERROR: gameMaster is NULL!");
+        	        }
+        	    }
+        	});
 
         stage.addActor(continueButton);
     }
