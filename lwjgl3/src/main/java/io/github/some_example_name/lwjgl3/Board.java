@@ -147,6 +147,10 @@ public class Board {
             mazeLayout[p.y][p.x] = 'f';
         }
 
+        checkAndRemoveBirdGate();
+    }
+
+    public void checkAndRemoveBirdGate() {
         if (countHealthyFoodRemaining() == 0) {
             for (int row = 0; row < mazeLayout.length; row++) {
                 for (int col = 0; col < mazeLayout[row].length; col++) {
@@ -158,7 +162,7 @@ public class Board {
             }
         }
     }
-
+    
     private int countHealthyFoodRemaining() {
         int count = 0;
         for (int row = 0; row < foodGrid.length; row++) {
