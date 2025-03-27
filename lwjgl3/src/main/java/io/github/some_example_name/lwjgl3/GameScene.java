@@ -83,8 +83,8 @@ public class GameScene extends Scene {
         String scoreText = "Score: " + score;
         String timeText = "Time: " + formattedTime; // Use formatted time string
         String healthText = "Health: " + health;
-        String healthyFoodCountText = "good food: " + healthyFoodCount;
-        String unhealthyFoodCountText = "bad food: " + unhealthyFoodCount;
+//        String healthyFoodCountText = "good food: " + healthyFoodCount;
+//        String unhealthyFoodCountText = "bad food: " + unhealthyFoodCount;
 
         // Debug to ensure UI elements are being rendered
         //System.out.println("Rendering Score: " + scoreText);
@@ -100,8 +100,8 @@ public class GameScene extends Scene {
         // Draw the health at the top-left corner, just below the time
         font.draw(batch, healthText, 10, Gdx.graphics.getHeight() - 60);
         
-        font.draw(batch, healthyFoodCountText, 10, Gdx.graphics.getHeight() - 80);
-        font.draw(batch, unhealthyFoodCountText, 10, Gdx.graphics.getHeight() - 100);
+//        font.draw(batch, healthyFoodCountText, 10, Gdx.graphics.getHeight() - 80);
+//        font.draw(batch, unhealthyFoodCountText, 10, Gdx.graphics.getHeight() - 100);
     }
 
     private void renderBoard(SpriteBatch batch) {

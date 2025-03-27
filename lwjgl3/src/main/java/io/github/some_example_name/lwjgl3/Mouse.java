@@ -9,13 +9,11 @@ import com.badlogic.gdx.math.Vector2;
 public class Mouse extends InputAdapter {
     private InputManager ioManager;
     private Speaker speaker;
-    private SceneManager sceneManager;
 
     // ✅ Unified constructor for both sound and scene management
     public Mouse(InputManager ioManager, Speaker speaker, SceneManager sceneManager) {
         this.ioManager = ioManager;
         this.speaker = speaker;
-        this.sceneManager = sceneManager;
     }
 
     public void checkMouse() {
