@@ -10,7 +10,9 @@ public class CollisionManager {
     private SceneManager sceneManager;
     private EntityManager entityManager;
     private int collisionCount = 0;
-
+    private int healthyFoodCount = 0;
+    private int unhealthyFoodCount = 0;
+    
     private CollisionManager(Board board, EntityManager entityManager, SceneManager sceneManager) {
         this.collidableObjects = new ArrayList<>();
         this.board = board;
@@ -113,13 +115,31 @@ public class CollisionManager {
             if (gameScene != null) {
                 int scoreChange = food.isHealthy() ? 100 : -100;
                 gameScene.setScore(gameScene.getScore() + scoreChange);
+                int healthyFoodCount = food.isHealthy() ? 1 : 0;
+                gameScene.setHealthyFoodCount(gameScene.getHealthyFoodCount() + healthyFoodCount);
+                int unhealthyFoodCount = food.isUnhealthy() ? 1 : 0;
+                gameScene.setUnhealthyFoodCount(gameScene.getUnhealthyFoodCount() + unhealthyFoodCount);
+                System.out.println("healthy food: " + healthyFoodCount);
+                System.out.println("unhealthy food: " + unhealthyFoodCount);
+//                if (food.isHealthy() == true) {
+//                	int count = 1;
+//                	healthyFoodCount = healthyFoodCount + count;
+//                	gameScene.setHealthyFoodCount(gameScene.getHealthyFoodCount() + healthyFoodCount);
+//                	System.out.println("healthy food: " + healthyFoodCount);
+//                }
+//                if (food.isUnhealthy() == true) {
+//                	int count = 1;
+//                	unhealthyFoodCount = unhealthyFoodCount + count;
+//                		gameScene.setUnhealthyFoodCount(gameScene.getUnhealthyFoodCount() + unhealthyFoodCount);
+//                		System.out.println("unhealthy food: " + unhealthyFoodCount);
+//                }
+                }
                 System.out.println(food.isHealthy() ? "🍎 +100 points" : "🍔 -100 points");
             }
             
             board.getFoodGrid()[row][col] = null;
             board.getMazeLayout()[row][col] = ' ';
         }
-    }
 
     
     private void handlePelletCollision(int col, int row) {

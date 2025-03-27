@@ -12,6 +12,11 @@ public class GameScene extends Scene {
     private long startTime;
     private long elapsedTime;
     protected Mouse mouse;
+    private int healthyFoodCount = 0;
+    private int unhealthyFoodCount = 0;
+    private int totalHealthyFoodCount = 0;
+    private int totalUnhealthyFoodCount = 0;
+    private int totalScore = 0;
 
     // UI components
     private BitmapFont font;
@@ -22,25 +27,31 @@ public class GameScene extends Scene {
         this.score = 0;
         this.health = 3;
         this.startTime = System.currentTimeMillis();
+        this.healthyFoodCount = 0;
+        this.unhealthyFoodCount = 0;
+        this.totalHealthyFoodCount = 0;
+        this.totalUnhealthyFoodCount = 0;
+        this.totalScore = 0;
+        
     }
 
     @Override
     public void create() {
         System.out.println("✅ Game Scene Created");
-        if (gameMaster == null){
+        if (gameMaster == null) {
             System.out.println("GameMaster is Null");
         }
-        
-        
 
-        // Initialize the font (you can load a custom font if needed)
         try {
-            font = new BitmapFont(Gdx.files.internal("path/to/your/font.fnt"));  // Custom font (optional)
+            font = new BitmapFont(Gdx.files.internal("path/to/your/font.fnt"));
         } catch (Exception e) {
-            font = new BitmapFont();  // Default font if the custom one fails
+            font = new BitmapFont();
             System.out.println("Using default font due to error: " + e.getMessage());
         }
-        font.setColor(Color.WHITE);  // Set the font color to white
+        font.setColor(Color.WHITE);
+        
+        // Remove this line - we'll create the completed scene when needed
+       // sceneManager.addScene("GameCompletedScene", new GameCompletedScene(sceneManager, gameMaster, this));
     }
 
     @Override
@@ -55,6 +66,9 @@ public class GameScene extends Scene {
         renderBoard(batch);
         
         //mouse.checkMouse(); 
+        totalHealthyFoodCount = healthyFoodCount;
+        totalUnhealthyFoodCount = unhealthyFoodCount;
+        totalScore = score;
     }
 
     private void renderUI(SpriteBatch batch) {
@@ -69,6 +83,8 @@ public class GameScene extends Scene {
         String scoreText = "Score: " + score;
         String timeText = "Time: " + formattedTime; // Use formatted time string
         String healthText = "Health: " + health;
+        String healthyFoodCountText = "good food: " + healthyFoodCount;
+        String unhealthyFoodCountText = "bad food: " + unhealthyFoodCount;
 
         // Debug to ensure UI elements are being rendered
         //System.out.println("Rendering Score: " + scoreText);
@@ -83,6 +99,9 @@ public class GameScene extends Scene {
 
         // Draw the health at the top-left corner, just below the time
         font.draw(batch, healthText, 10, Gdx.graphics.getHeight() - 60);
+        
+        font.draw(batch, healthyFoodCountText, 10, Gdx.graphics.getHeight() - 80);
+        font.draw(batch, unhealthyFoodCountText, 10, Gdx.graphics.getHeight() - 100);
     }
 
     private void renderBoard(SpriteBatch batch) {
@@ -167,4 +186,33 @@ public class GameScene extends Scene {
 	public void setHealth(int health) {
 	    this.health = health;
 	}
+	
+	public int getHealthyFoodCount() {
+	    return healthyFoodCount;
+	}
+
+	public int getUnhealthyFoodCount() {
+	    return unhealthyFoodCount;
+	}
+	
+	public void setHealthyFoodCount(int healthyFoodCount) {
+	    this.healthyFoodCount = healthyFoodCount;
+	}
+
+	public void setUnhealthyFoodCount(int unhealthyFoodCount) {
+	    this.unhealthyFoodCount = unhealthyFoodCount;
+	}
+	
+	public int getTotalHealthyFoodCount() {
+		return  totalHealthyFoodCount;
+	}
+	
+	public int getTotalUnhealthyFoodCount() {
+		return  totalUnhealthyFoodCount;
+	}
+	
+	public int getTotalScore() {
+		return  totalScore;
+	}
+	
 }

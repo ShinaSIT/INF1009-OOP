@@ -112,12 +112,14 @@ public class Player extends MoveableObjects implements Collidable {
             health += 10;
             if (gameScene != null) {
                 gameScene.setScore(gameScene.getScore() + 100);
+                gameScene.setHealthyFoodCount(gameScene.getHealthyFoodCount() + 1);
                 System.out.println("+100 points for healthy food!");
             }
         } else {
             health -= 10;
             if (gameScene != null) {
                 gameScene.setScore(Math.max(0, gameScene.getScore() - 100));
+                gameScene.setUnhealthyFoodCount(gameScene.getUnhealthyFoodCount() + 1);
                 System.out.println("-100 points for unhealthy food!");
             }
             

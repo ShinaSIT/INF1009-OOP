@@ -18,6 +18,7 @@ public class GameMaster extends ApplicationAdapter {
     protected Speaker speaker;
     protected SceneManager sceneManager;
     protected InputManager inputManager;
+    private GameScene gameScene;
     
      
 
@@ -46,7 +47,8 @@ public class GameMaster extends ApplicationAdapter {
 
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
-        sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
+        this.gameScene = new GameScene(sceneManager, this); // Store the reference
+        sceneManager.addScene("GameScene", gameScene); // Use the stored reference
         sceneManager.transitionTo("MenuScene");
     }
 
@@ -93,7 +95,12 @@ public class GameMaster extends ApplicationAdapter {
 
                 if (player.getGridX() == 10 && player.getGridY() == 11) {
                     gameStarted = false;
-                    sceneManager.transitionTo("MenuScene");
+                    GameScene currentGameScene = (GameScene) sceneManager.getScene("GameScene");
+                    sceneManager.addScene("GameCompletedScene", new GameCompletedScene(sceneManager, this, 
+                            currentGameScene.getTotalHealthyFoodCount(),
+                            currentGameScene.getTotalUnhealthyFoodCount(),
+                            currentGameScene.getTotalScore()));
+                    sceneManager.transitionTo("GameCompletedScene");
                 }
             }
 
