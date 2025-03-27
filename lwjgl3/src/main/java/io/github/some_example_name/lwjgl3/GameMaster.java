@@ -27,7 +27,7 @@ public class GameMaster extends ApplicationAdapter {
         mouse = new Mouse(null, speaker, sceneManager);
         boardManager = new BoardManager();
         entityManager = new EntityManager(boardManager.getBoard(), speaker);
-        collisionManager = new CollisionManager(boardManager.getBoard(), entityManager, sceneManager);
+        collisionManager = CollisionManager.getInstance(boardManager.getBoard(), entityManager, sceneManager);
         movementManager = new MovementManager(speaker, collisionManager);
         inputManager = new InputManager(null, null, null, mouse);
     }
@@ -128,9 +128,17 @@ public class GameMaster extends ApplicationAdapter {
         }
     }
 
-    public SpriteBatch getBatch() { return batch; }
-    public EntityManager getEntityManager() { return entityManager; }
-    public BoardManager getBoardManager() { return boardManager; }
+    public SpriteBatch getBatch() { 
+    	return batch; 
+    }
+    
+    public EntityManager getEntityManager() { 
+    	return entityManager; 
+    }
+    
+    public BoardManager getBoardManager() { 
+    	return boardManager; 
+    }
 
     public static void main(String[] args) {
         Lwjgl3Launcher.main(args);
