@@ -9,10 +9,13 @@ public class EntityManager {
     private Board board;
     private Speaker speaker; 
     private BoardManager boardManager;
+    private SceneController sceneController;
 
-    public EntityManager(Board board, Speaker speaker) {  
+    public EntityManager(Board board, Speaker speaker, BoardManager boardManager, SceneController sceneController) {  
         this.board = board;
         this.speaker = speaker;
+        this.boardManager = boardManager;
+        this.sceneController = sceneController;
         entities = new ArrayList<>();
     }
     
@@ -173,14 +176,26 @@ public class EntityManager {
                 return;
             }
 
-            CollisionManager collisionManager = CollisionManager.getInstance(board, this, null);
-            MovementManager movementManager = new MovementManager(new Speaker(), collisionManager);
+            CollisionChecker collisionChecker = CollisionManager.getInstance(board, this, null);
+            MovementManager movementManager = new MovementManager(speaker, collisionChecker);
 
-            Player player = new Player(boardManager.getBoard(), this, 1, 1, movementManager, 100, 3, collisionManager, boardManager,speaker);
+            Player player = new Player(
+                    boardManager.getBoard(),     // Board
+                    this,                        // EntityManager
+                    1, 1,                        // Grid x, y
+                    movementManager,            // MovementManager
+                    100,                        // Health
+                    3,                          // Lives
+                    collisionChecker,           // ✅ interface
+                    boardManager,
+                    speaker,                    // ✅ interface
+                    sceneController             // ✅ now passed properly
+                );
 
             addEntity(player);
         }
     }
+
     
     public Player getPlayer() {
         for (Entity entity : entities) {

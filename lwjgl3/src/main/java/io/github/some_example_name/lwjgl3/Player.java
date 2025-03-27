@@ -4,10 +4,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 
 public class Player extends MoveableObjects implements Collidable {
-	private CollisionManager collisionManager;
+	private CollisionChecker collisionChecker;
     private BoardManager boardManager;
     private SoundPlayer soundPlayer;
     private SceneManager sceneManager;
+    private SceneController sceneController;
     private int health;
     private int lives;
 
@@ -18,14 +19,14 @@ public class Player extends MoveableObjects implements Collidable {
 
     public Player(Board board, EntityManager entityManager, int x, int y,
                 MovementManager movementManager, int initialHealth, int initialLives,
-                CollisionManager collisionManager, BoardManager boardManager, SoundPlayer soundPlayer) {
+                CollisionChecker collisionChecker, BoardManager boardManager, SoundPlayer soundPlayer, SceneController sceneController) {
         super(board, entityManager, x, y, movementManager);
         this.health = initialHealth;
         this.lives = initialLives;
-        this.collisionManager = collisionManager;
+        this.collisionChecker  = collisionChecker ;
         this.boardManager = boardManager;
         this.soundPlayer = soundPlayer;
-        this.sceneManager = collisionManager.getSceneManager();
+        this.sceneController = sceneController;
         addTag("moveable"); 
 	}
 
@@ -39,7 +40,7 @@ public class Player extends MoveableObjects implements Collidable {
         else if (dy > 0) targetGridY++;
         else if (dy < 0) targetGridY--;
 
-        if (!collisionManager.isMoveValid(targetGridX, targetGridY, isGerm)) {
+        if (!collisionChecker.isMoveValid(targetGridX, targetGridY, isGerm)) {
         	for (Entity e : entityManager.getEntities()) {
                 if (e instanceof Germ && e.getGridX() == targetGridX && e.getGridY() == targetGridY) {
                     soundPlayer.playSound("germHit"); // 🔊 Only plays when *player* moves

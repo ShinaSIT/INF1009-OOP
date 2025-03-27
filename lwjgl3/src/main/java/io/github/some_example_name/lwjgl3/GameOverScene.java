@@ -16,9 +16,11 @@ public class GameOverScene extends Scene {
 
     private BitmapFont font;
     private Stage stage;
+    private GameMaster gameMaster;
 
-    public GameOverScene(SceneManager sceneManager) {
+    public GameOverScene(SceneManager sceneManager, GameMaster gameMaster) {
         super(sceneManager);
+        this.gameMaster = gameMaster;
     }
 
     @Override
@@ -46,6 +48,7 @@ public class GameOverScene extends Scene {
         menuButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+            	gameMaster.resetGame();
                 sceneManager.transitionTo("MenuScene");  // Ensure your main menu is registered with this name
             }
         });

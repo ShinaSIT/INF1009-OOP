@@ -19,17 +19,22 @@ public class GameMaster extends ApplicationAdapter {
     protected SceneManager sceneManager;
     protected InputManager inputManager;
     private GameScene gameScene;
+    private SceneController sceneController;
 
     public GameMaster() {
-        sceneManager = new SceneManager(this, inputManager, speaker);
         speaker = new Speaker();
+        inputManager = new InputManager(null, null, null, mouse);
+        sceneManager = new SceneManager(this, inputManager, speaker);
+        sceneController = sceneManager; // ✅ Fix: assign to class field, not shadow
         mouse = new Mouse(null, speaker);
         boardManager = new BoardManager();
-        entityManager = new EntityManager(boardManager.getBoard(), speaker);
+
+        entityManager = new EntityManager(boardManager.getBoard(), speaker, boardManager, sceneController);
         boardManager.getBoard().setEntityManager(entityManager);
+
         collisionManager = CollisionManager.getInstance(boardManager.getBoard(), entityManager, sceneManager);
         movementManager = new MovementManager(speaker, collisionManager);
-        inputManager = new InputManager(null, null, null, mouse);
+        inputManager.setDependencies(movementManager, boardManager.getBoard());
     }
 
     @Override
@@ -37,7 +42,7 @@ public class GameMaster extends ApplicationAdapter {
         AssetManager.loadAll();
         batch = new SpriteBatch();
         outputManager = new OutputManager(speaker);
-        
+
         StaticObjectAssets.loadStaticTextures();
 
         boardManager.getBoard().initGL();
@@ -48,10 +53,9 @@ public class GameMaster extends ApplicationAdapter {
 
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
-        this.gameScene = new GameScene(sceneManager, this, inputManager, speaker);
+        gameScene = new GameScene(sceneManager, this, inputManager, speaker);
         sceneManager.addScene("GameScene", gameScene);
-        sceneManager.addScene("GameOverScene", new GameOverScene(sceneManager));
-
+        sceneManager.addScene("GameOverScene", new GameOverScene(sceneManager, this));
         sceneManager.transitionTo("MenuScene");
     }
 
@@ -63,24 +67,16 @@ public class GameMaster extends ApplicationAdapter {
 
             if (!batch.isDrawing()) batch.begin();
 
-            // ✅ Handle input for closing pop-up (if visible)
-            if (Gdx.input.justTouched()) {
-                int x = Gdx.input.getX();
-                int y = Gdx.input.getY();
-            }
-
             if (sceneManager.getCurrentScene() instanceof GameScene) {
                 GameScene gs = (GameScene) sceneManager.getCurrentScene();
 
                 if (gs.getHealthFactPopup().isVisible()) {
-                    // First: handle click on the pop-up close button
                     if (Gdx.input.justTouched()) {
                         int x = Gdx.input.getX();
                         int y = Gdx.input.getY();
                         gs.handleInput(x, y);
                     }
 
-                    // Then: pause game logic and only render popup + board
                     sceneManager.render(batch);
                     if (batch.isDrawing()) batch.end();
                     return;
@@ -100,7 +96,17 @@ public class GameMaster extends ApplicationAdapter {
                 }
 
                 if (!playerAlreadyExists) {
-                    EntityFactory factory = new EntityFactory(boardManager.getBoard(), entityManager, movementManager, collisionManager, boardManager, speaker, inputManager, mouse);
+                    EntityFactory factory = new EntityFactory(
+                        boardManager.getBoard(),
+                        entityManager,
+                        movementManager,
+                        collisionManager,
+                        boardManager,
+                        speaker,
+                        inputManager,
+                        mouse,
+                        sceneManager
+                    );
                     factory.getEntity("player");
                 }
 
@@ -116,7 +122,6 @@ public class GameMaster extends ApplicationAdapter {
                 outputManager.handleOutput();
                 collisionManager.checkCollisions();
 
-                // Win condition
                 if (player.getGridX() == 10 && player.getGridY() == 11) {
                     gameStarted = false;
                     GameScene currentGameScene = (GameScene) sceneManager.getScene("GameScene");
@@ -191,9 +196,9 @@ public class GameMaster extends ApplicationAdapter {
     public void resetGame() {
         Board freshBoard = new Board();
         boardManager.setBoard(freshBoard);
-        System.out.println("✅ BoardManager now using fresh Board");
+        System.out.println("✅ BoardManager now using fresh Board: " + boardManager.getBoard());
 
-        this.entityManager = new EntityManager(freshBoard, speaker);
+        entityManager = new EntityManager(freshBoard, speaker, boardManager, sceneController);
         freshBoard.setEntityManager(entityManager);
 
         collisionManager = CollisionManager.getInstance(freshBoard, entityManager, sceneManager);
@@ -206,7 +211,7 @@ public class GameMaster extends ApplicationAdapter {
         boardManager.generateStaticObjects();
         boardManager.generateBoard();
 
-        this.gameScene = new GameScene(sceneManager, this, inputManager, speaker);
+        gameScene = new GameScene(sceneManager, this, inputManager, speaker);
         sceneManager.addScene("GameScene", gameScene);
     }
 }
