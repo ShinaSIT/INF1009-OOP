@@ -78,6 +78,19 @@ public class Board {
     }
 
     public void generateFoods() {
+        System.out.println("🍽️ Generating food...");
+
+        // 🧹 Full reset of layout and foodGrid before regenerating
+        for (int row = 0; row < foodGrid.length; row++) {
+            for (int col = 0; col < foodGrid[row].length; col++) {
+                if (foodGrid[row][col] != null || mazeLayout[row][col] == 'f') {
+                    foodGrid[row][col] = null;
+                    mazeLayout[row][col] = '.';  // Set back to pellet
+                }
+            }
+        }
+
+        // ✅ Generate new food
         Random random = new Random();
         int unhealthyCount = 0;
         int unhealthyLimit = 2;
@@ -94,8 +107,8 @@ public class Board {
         }
 
         Collections.shuffle(foodSpots);
+        int foodToSpawn = foodSpots.size() / 3;
 
-        int foodToSpawn = foodSpots.size() / 3; 
         for (int i = 0; i < foodToSpawn; i++) {
             Point p = foodSpots.get(i);
             String type;
@@ -111,9 +124,22 @@ public class Board {
             }
 
             foodGrid[p.y][p.x] = new Food(type, tex);
-            mazeLayout[p.y][p.x] = 'f';
+            mazeLayout[p.y][p.x] = 'f'; // update maze layout to mark food
         }
+        
+        int count = 0;
+        for (int r = 0; r < foodGrid.length; r++) {
+            for (int c = 0; c < foodGrid[r].length; c++) {
+                if (foodGrid[r][c] != null && mazeLayout[r][c] == '.') {
+                    System.out.println("⚠️ WARNING: Food at (" + c + "," + r + ") on a pellet tile!");
+                    count++;
+                }
+            }
+        }
+        System.out.println("⚠️ Total ghost overlaps: " + count);
 
+
+        System.out.println("🍏 Finished generating food.");
     }
 
     public void updateFoodRegeneration() {
@@ -256,10 +282,28 @@ public class Board {
                     float tileY = startY + (mazeLayout.length - row - 1) * tileSize;
 
                     char symbol = mazeLayout[row][col];
-                    Texture texture = getTextureForSymbol(symbol, row, col);
 
-                    if (texture != null) {
-                        batch.draw(texture, tileX, tileY, tileSize, tileSize);
+                    // 🧠 Skip rendering pellets if a fruit is also present
+                    if (symbol == '.' && foodGrid[row][col] != null) continue;
+
+                    if (symbol == '.' && foodGrid[row][col] == null) {
+                        Texture pelletTexture = StaticObjectAssets.getTexture('.');
+                        if (pelletTexture != null) {
+                            batch.draw(pelletTexture, tileX, tileY, tileSize, tileSize);
+                        }
+                    }
+
+                    // 2. Draw food if present
+                    if (symbol == 'f' && foodGrid[row][col] != null) {
+                        batch.draw(foodGrid[row][col].getTexture(), tileX, tileY, tileSize, tileSize);
+                    }
+
+                    // 3. Draw all other symbols (walls, gates, etc.)
+                    if (symbol != '.' && symbol != 'f') {
+                        Texture texture = StaticObjectAssets.getTexture(symbol);
+                        if (texture != null) {
+                            batch.draw(texture, tileX, tileY, tileSize, tileSize);
+                        }
                     }
                 }
             }

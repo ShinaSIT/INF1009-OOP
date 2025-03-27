@@ -19,7 +19,7 @@ public class EntityManager {
         generateStaticObjects();
     }
     
-    private void generateStaticObjects() {
+    public void generateStaticObjects() {
         System.out.println("🔄 generateStaticObjects() inline version used!");
 
         char[][] maze = board.getMazeLayout();
@@ -140,7 +140,10 @@ public class EntityManager {
         }
     }
 
-
+    public void clearStaticEntities() {
+        entities.removeIf(e -> e instanceof StaticObject);
+        System.out.println("🧹 Cleared all static entities from EntityManager!");
+    }
     public void clearStaticObjects() {
         System.out.println("⚠️ Clearing Static Objects...");
         entities.removeIf(entity -> {

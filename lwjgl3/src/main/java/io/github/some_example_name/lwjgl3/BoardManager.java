@@ -107,4 +107,8 @@ public class BoardManager {
             obj.dispose();
         }
     }
+    
+    public void setBoard(Board newBoard) {
+        this.board = newBoard;
+    }
 }
