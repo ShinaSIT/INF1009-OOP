@@ -3,13 +3,14 @@ package io.github.some_example_name.lwjgl3;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+
 
 public class GameOverScene extends Scene {
 
@@ -25,7 +26,7 @@ public class GameOverScene extends Scene {
         System.out.println("✅ Game Over Scene Created");
 
         try {
-            font = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt")); // Use your font path
+            font = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt"));
         } catch (Exception e) {
             font = new BitmapFont();
             System.out.println("Using default font due to error: " + e.getMessage());
@@ -38,17 +39,30 @@ public class GameOverScene extends Scene {
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = font;
 
-        TextButton gameOverButton = new TextButton("GAME OVER", buttonStyle);
-        gameOverButton.setPosition(Gdx.graphics.getWidth() / 2f - gameOverButton.getWidth() / 2f, Gdx.graphics.getHeight() / 2f - gameOverButton.getHeight() / 2f);
+        TextButton menuButton = new TextButton("Return to Menu", buttonStyle);
+        menuButton.setPosition(Gdx.graphics.getWidth() / 2f - menuButton.getWidth() / 2f, 
+                               Gdx.graphics.getHeight() / 2f - menuButton.getHeight() / 2f - 50);
 
-        gameOverButton.addListener(new ClickListener() {
+        menuButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit(); // Exit the application
+                sceneManager.transitionTo("MenuScene");  // Ensure your main menu is registered with this name
             }
         });
 
-        stage.addActor(gameOverButton);
+        TextButton exitButton = new TextButton("Exit", buttonStyle);
+        exitButton.setPosition(Gdx.graphics.getWidth() / 2f - exitButton.getWidth() / 2f, 
+                               Gdx.graphics.getHeight() / 2f - exitButton.getHeight() / 2f - 120);
+
+        exitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+            }
+        });
+
+        stage.addActor(menuButton);
+        stage.addActor(exitButton);
     }
 
     @Override
@@ -56,15 +70,16 @@ public class GameOverScene extends Scene {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
-        // Optionally, render "GAME OVER" in the center with a bigger font.
-        font.getData().setScale(20);
-        GlyphLayout layout = new GlyphLayout();
-        layout.setText(font, "GAME OVER");
-        batch.begin();
-        font.draw(batch, "GAME OVER", Gdx.graphics.getWidth() / 2f - layout.width / 2f, Gdx.graphics.getHeight() / 2f + layout.height / 2f);
-        batch.end();
-
-        font.getData().setScale(20); // Reset the scale for the button
+        // SceneManager likely calls batch.begin(), so you should not call it here again
+        font.getData().setScale(3);
+        GlyphLayout layout = new GlyphLayout(font, "GAME OVER");
+        
+        // Draw using the batch assuming batch.begin() was already called by SceneManager
+        font.draw(batch, "GAME OVER", 
+                  Gdx.graphics.getWidth() / 2f - layout.width / 2f,
+                  Gdx.graphics.getHeight() / 2f + 100);
+        
+        font.getData().setScale(1);
     }
 
     @Override
@@ -80,18 +95,9 @@ public class GameOverScene extends Scene {
         stage.dispose();
     }
 
-    @Override
-    public void pause() {}
-
-    @Override
-    public void resume() {}
-
-    @Override
-    public void update(float deltaTime) {}
-
-    @Override
-    public void update() {}
-
-    @Override
-    public void render() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void update(float deltaTime) {}
+    @Override public void update() {}
+    @Override public void render() {}
 }

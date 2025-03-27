@@ -21,7 +21,7 @@ public class GameMaster extends ApplicationAdapter {
     private GameScene gameScene;
 
     public GameMaster() {
-        sceneManager = new SceneManager();
+        sceneManager = new SceneManager(this, inputManager, speaker);
         speaker = new Speaker();
         mouse = new Mouse(null, speaker);
         boardManager = new BoardManager();

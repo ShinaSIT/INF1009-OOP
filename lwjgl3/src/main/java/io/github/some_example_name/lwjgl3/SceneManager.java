@@ -11,10 +11,18 @@ public class SceneManager {
     private Map<String, Scene> scenes; 
     private boolean isTransitioning;
 
-    public SceneManager() {
+    private GameMaster gameMaster;
+    private InputManager inputManager;
+    private Speaker speaker;
+
+    public SceneManager(GameMaster gameMaster, InputManager inputManager, Speaker speaker) {
         this.scenes = new HashMap<>();
         this.isTransitioning = false;
+        this.gameMaster = gameMaster;
+        this.inputManager = inputManager;
+        this.speaker = speaker;
     }
+
 
     public void loadScene(String sceneName) {
         if (scenes.containsKey(sceneName)) {
@@ -34,7 +42,11 @@ public class SceneManager {
         System.out.println();
         return scenes;
     }
-
+    
+    public void switchToGameScene() {
+        currentScene = new GameScene(this, gameMaster, inputManager, speaker);
+        currentScene.create();
+    }
 
     public void addScene(String sceneName, Scene scene) {
         scenes.put(sceneName, scene);

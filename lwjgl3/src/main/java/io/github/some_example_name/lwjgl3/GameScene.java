@@ -47,11 +47,7 @@ public class GameScene extends Scene {
         healthFactPopup = new HealthFactPopup();
 
         try {
-<<<<<<< Updated upstream
-            font = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt")); //dont change this please
-=======
             font = new BitmapFont(Gdx.files.internal("assets/fonts/menu_font.fnt"));
->>>>>>> Stashed changes
         } catch (Exception e) {
             font = new BitmapFont();
             System.out.println("Using default font due to error: " + e.getMessage());
@@ -91,27 +87,6 @@ public class GameScene extends Scene {
         int minutes = (int) (elapsedTime / 60);
         int seconds = (int) (elapsedTime % 60);
 
-<<<<<<< Updated upstream
-        String formattedTime = String.format("%02d:%02d", minutes, seconds); // Format as MM:SS
-        String timeText = "Time " + formattedTime; // Use formatted time string
-        String healthText = "Health " + health;
-        String scoreText = "Score " + score;
-        String highScoreText = "High Score"; 
-        String highScoreValue = String.valueOf(highScore);
-
-        float xPos = 20; // Left padding
-        float yStart = Gdx.graphics.getHeight() - 30; // Start position (from top)
-        float lineHeight = 40; // Space between lines
-        
-        // Padding while drawing text
-        font.draw(batch, timeText, xPos, yStart);
-        font.draw(batch, healthText, xPos, yStart - lineHeight);
-        font.draw(batch, scoreText, xPos, yStart - (2 * lineHeight));
-        
-        // High Score Label & Value (Aligns High Score text and value)
-        font.draw(batch, highScoreText, xPos, yStart - (4 * lineHeight));
-        font.draw(batch, highScoreValue, xPos, yStart - (5 * lineHeight)); 
-=======
         String scoreText = "Score: " + score;
         String timeText = "Time: " + String.format("%02d:%02d", minutes, seconds);
         String healthText = "Health: " + health;
@@ -123,7 +98,6 @@ public class GameScene extends Scene {
         font.draw(batch, healthText, 10, Gdx.graphics.getHeight() - 60);
         font.draw(batch, highScoreText, 10, Gdx.graphics.getHeight() - 80);
         font.draw(batch, highScoreValue, 10, Gdx.graphics.getHeight() - 100);
->>>>>>> Stashed changes
     }
 
     private void renderBoard(SpriteBatch batch) {
@@ -208,60 +182,4 @@ public class GameScene extends Scene {
     private EntityManager getEntityManager() {
         return (gameMaster != null) ? gameMaster.getEntityManager() : null;
     }
-<<<<<<< Updated upstream
-
-    @Override
-    public void update() {
-    }
-
-    @Override
-    public void render() {
-    }
-	
-	public int getHealthyFoodCount() {
-	    return healthyFoodCount;
-	}
-
-	public int getUnhealthyFoodCount() {
-	    return unhealthyFoodCount;
-	}
-	
-	public void setHealthyFoodCount(int healthyFoodCount) {
-	    this.healthyFoodCount = healthyFoodCount;
-	}
-
-	public void setUnhealthyFoodCount(int unhealthyFoodCount) {
-	    this.unhealthyFoodCount = unhealthyFoodCount;
-	}
-	
-	public int getTotalHealthyFoodCount() {
-		return  totalHealthyFoodCount;
-	}
-	
-	public int getTotalUnhealthyFoodCount() {
-		return  totalUnhealthyFoodCount;
-	}
-	
-	public int getTotalScore() {
-		return  totalScore;
-	}
-	
-    public int getScore() {
-        return score;
-    }
-
-    public int getHealth() {
-        return health;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
-    }
 }
-=======
-}
->>>>>>> Stashed changes
