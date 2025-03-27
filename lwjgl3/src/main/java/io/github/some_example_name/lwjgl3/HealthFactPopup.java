@@ -23,15 +23,20 @@ public class HealthFactPopup {
     private Texture background;
     private Texture closeButton;
     private Rectangle closeBounds;
+    private BitmapFont font;
+    
 
     private final int popupWidth = 600;
     private final int popupHeight = 200;
-    private final int closeSize = 36; // slightly smaller for better fit
+    private final int closeSize = 36; 
+    private boolean visible;
 
-    public HealthFactPopup() {
+    public HealthFactPopup(BitmapFont font) {
         background = new Texture("popups/fact_bg.png");
         closeButton = new Texture("popups/x_button.png");
         closeBounds = new Rectangle(0, 0, closeSize, closeSize);
+        this.font = font;
+        visible = false;
     }
 
     public void showRandomFact() {

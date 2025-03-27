@@ -76,11 +76,9 @@ public class GameCompletedScene extends Scene {
         buttonStyle.font = font;
 
         // Exit Button
-        TextButton exitButton = new TextButton(">Exit<", buttonStyle);
-        exitButton.setPosition(
-            Gdx.graphics.getWidth() / 2f - exitButton.getWidth() / 2f, 
-            50   // Lower Y position than Play Again
-        );
+        TextButton exitButton = new TextButton("> Exit <", buttonStyle);
+        exitButton.setPosition(Gdx.graphics.getWidth() / 2f - exitButton.getWidth() / 2f, 120);
+
 
         exitButton.addListener(new ClickListener() {
             @Override
@@ -114,7 +112,7 @@ public class GameCompletedScene extends Scene {
     }
 
     private void renderTitle(SpriteBatch batch) {
-        font.getData().setScale(3);
+        font.getData().setScale(2f);
         GlyphLayout layout = new GlyphLayout(font, "Game Completed!");
         font.draw(batch, "Game Completed!", 
                  Gdx.graphics.getWidth()/2f - layout.width/2, 
@@ -123,8 +121,10 @@ public class GameCompletedScene extends Scene {
     }
 
     private void renderResults(SpriteBatch batch) {
-        float startY = Gdx.graphics.getHeight() - 150;
-        float lineSpacing = 40;
+    	float startY = Gdx.graphics.getHeight() - 180;
+    	float lineSpacing = 90; 
+    	float paddingLeft = 100; 
+    	font.getData().setScale(1.5f);
         
         String[] results = {
             "Your Results",
@@ -132,32 +132,48 @@ public class GameCompletedScene extends Scene {
             "Unhealthy Foods Collected: " + unhealthyFoodCount,
             "Total Score: " + totalScore
         };
-
         for (String line : results) {
-            GlyphLayout layout = new GlyphLayout(font, line);
             font.draw(batch, line, 
-                     Gdx.graphics.getWidth()/2f - layout.width/2, 
-                     startY);
+                      paddingLeft, // Align text properly
+                      startY);
             startY -= lineSpacing;
         }
     }
 
     private void renderFunFact(SpriteBatch batch) {
-        float startY = Gdx.graphics.getHeight() - 320;
-        float lineSpacing = 30;
-        
-        // Split the fun fact into lines
-        String[] lines = currentFunFact.split("\n");
-        
+        float startY = Gdx.graphics.getHeight() - 700; // Adjusted for proper placement
+        float paddingLeft = 100; // Left padding to align text properly
+        float maxWidth = Gdx.graphics.getWidth() - 200; // Maximum width for text wrapping
+
+        GlyphLayout layout = new GlyphLayout();
+        String wrappedText = wrapText(currentFunFact, maxWidth);
+        String[] lines = wrappedText.split("\n");
+
         for (String line : lines) {
             if (!line.trim().isEmpty()) {
-                GlyphLayout layout = new GlyphLayout(font, line);
-                font.draw(batch, line, 
-                         Gdx.graphics.getWidth()/2f - layout.width/2, 
-                         startY);
-                startY -= lineSpacing;
+                layout.setText(font, line);
+                font.draw(batch, line, paddingLeft, startY);
+                startY -= layout.height + 20; // Ensure correct line spacing
             }
         }
+    }
+    
+    private String wrapText(String text, float maxWidth) {
+        StringBuilder wrappedText = new StringBuilder();
+        String[] words = text.split(" ");
+        String line = "";
+
+        for (String word : words) {
+            GlyphLayout testLayout = new GlyphLayout(font, line + word);
+            if (testLayout.width > maxWidth) {
+                wrappedText.append(line).append("\n"); // Add new line
+                line = word + " ";
+            } else {
+                line += word + " ";
+            }
+        }
+        wrappedText.append(line.trim()); // Append the final line
+        return wrappedText.toString();
     }
 
     @Override

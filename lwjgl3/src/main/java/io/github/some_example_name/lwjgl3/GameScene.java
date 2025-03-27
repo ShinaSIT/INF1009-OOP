@@ -5,11 +5,9 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 
 public class GameScene extends Scene {
     private GameMaster gameMaster;
-    private Texture crownTexture;
     private int score;
     private int health;
     private long startTime;
@@ -21,8 +19,8 @@ public class GameScene extends Scene {
     private int totalUnhealthyFoodCount = 0;
     private int totalScore = 0;
     private HealthFactPopup healthFactPopup;
-
     private BitmapFont font;
+    private BitmapFont defaultFont;
     private int highScore = 0;
     private Preferences prefs;
     private InputManager inputManager;
@@ -44,7 +42,8 @@ public class GameScene extends Scene {
     public void create() {
         System.out.println("✅ Game Scene Created");
         this.mouse = new Mouse(inputManager, speaker);
-        healthFactPopup = new HealthFactPopup();
+        healthFactPopup = new HealthFactPopup(defaultFont);
+        defaultFont = new BitmapFont();
 
         try {
             font = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt"));
@@ -72,9 +71,9 @@ public class GameScene extends Scene {
             mouse.checkMouse();
         }
 
-        // ✅ Render the popup after everything
+        // Render the popup after everything
         if (healthFactPopup != null) {
-            healthFactPopup.render(batch, font);
+            healthFactPopup.render(batch, defaultFont);
         }
     }
     
