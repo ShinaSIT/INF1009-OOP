@@ -42,7 +42,12 @@ public class CollisionManager {
         // Handle food collision first
         if (tile == 'f' && !isGerm) {
             handleFoodCollision(newCol, newRow);
-            return true; // Always allow moving onto food tiles
+            return true;
+        }
+        
+        if (tile == '.' && !isGerm) {
+            handlePelletCollision(newCol, newRow);
+            return true;
         }
 
         // Wall collision check
@@ -111,12 +116,21 @@ public class CollisionManager {
                 System.out.println(food.isHealthy() ? "🍎 +100 points" : "🍔 -100 points");
             }
             
-            // Remove the food
             board.getFoodGrid()[row][col] = null;
             board.getMazeLayout()[row][col] = ' ';
         }
     }
 
+    
+    private void handlePelletCollision(int col, int row) {
+        GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
+        if (gameScene != null) {
+            gameScene.setScore(gameScene.getScore() + 10);
+            System.out.println("🍪 +10 points");
+        }
+        board.getMazeLayout()[row][col] = ' ';
+    }
+    
     public void checkCollisions() {
         for (int i = 0; i < collidableObjects.size(); i++) {
             for (int j = i + 1; j < collidableObjects.size(); j++) {
