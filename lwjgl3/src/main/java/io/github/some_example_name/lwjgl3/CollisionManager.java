@@ -53,7 +53,7 @@ public class CollisionManager {
         }
 
         // Wall collision check
-        if (tile != ' ' && tile != '.' && tile != 'p') {
+        if (tile != ' ' && tile != '.' && tile != 'p' && tile != 'f') {
             if (!isGerm) {
                 collisionCount++;
                 System.out.println("🚧 Wall collision at (" + newCol + "," + newRow + ")");
