@@ -27,6 +27,7 @@ public class GameMaster extends ApplicationAdapter {
         mouse = new Mouse(null, speaker);
         boardManager = new BoardManager();
         entityManager = new EntityManager(boardManager.getBoard(), speaker);
+        boardManager.getBoard().setEntityManager(entityManager);
         collisionManager = CollisionManager.getInstance(boardManager.getBoard(), entityManager, sceneManager);
         movementManager = new MovementManager(speaker, collisionManager);
         inputManager = new InputManager(null, null, null, mouse);
@@ -167,5 +168,33 @@ public class GameMaster extends ApplicationAdapter {
     
     public Mouse getMouse() {
         return mouse;
+    }
+    
+    public void resetGame() {
+        // 💥 Create a fresh board instance
+        Board freshBoard = new Board();
+        boardManager.setBoard(freshBoard);
+        System.out.println("✅ BoardManager now using fresh Board: " + boardManager.getBoard());
+        
+        this.entityManager = new EntityManager(freshBoard, speaker);
+        freshBoard.setEntityManager(entityManager);
+
+        // 🔁 Refresh dependencies
+        collisionManager = CollisionManager.getInstance(freshBoard, entityManager, sceneManager);
+        movementManager = new MovementManager(speaker, collisionManager);
+        inputManager.setDependencies(movementManager, freshBoard);
+
+        freshBoard.initGL();
+        freshBoard.generateFoods();
+
+        // ✅ Clear static objects before adding new ones!
+        entityManager.clearStaticEntities();
+
+        boardManager.generateStaticObjects();  
+        boardManager.generateBoard();
+
+        // 🔄 New GameScene
+        this.gameScene = new GameScene(sceneManager, this, inputManager, speaker);
+        sceneManager.addScene("GameScene", gameScene);
     }
 }

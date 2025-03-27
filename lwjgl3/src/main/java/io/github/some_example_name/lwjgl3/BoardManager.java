@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 public class BoardManager {
     private Board board;
-    private ArrayList<StaticObjects> staticObjects = new ArrayList<>(); 
+
+    private ArrayList<StaticObject> staticObjects = new ArrayList<>(); 
 
     protected BoardManager() {
         this.board = new Board();
@@ -24,7 +25,7 @@ public class BoardManager {
         for (int row = 0; row < charMaze.length; row++) {
             for (int col = 0; col < charMaze[row].length; col++) {
                 if (charMaze[row][col] == '.' || charMaze[row][col] == 'f') {
-                    staticObjects.add(new StaticObjects(board, charMaze[row][col], col, row));
+                    staticObjects.add(new StaticObject(board, charMaze[row][col], col, row));
                 }
             }
         }
@@ -33,7 +34,7 @@ public class BoardManager {
     public void render(SpriteBatch batch) {
         board.render(batch);
 
-        for (StaticObjects obj : staticObjects) { 
+        for (StaticObject obj : staticObjects) { 
             obj.render(batch);
         }
     }
@@ -82,7 +83,7 @@ public class BoardManager {
         return board.getMazeWidth();
     }
     
-    public ArrayList<StaticObjects> getStaticObjects() {
+    public ArrayList<StaticObject> getStaticObjects() {
         return staticObjects;
     }
     
@@ -101,8 +102,12 @@ public class BoardManager {
 
     public void dispose() {
         board.dispose();
-        for (StaticObjects obj : staticObjects) {
+        for (StaticObject obj : staticObjects) {
             obj.dispose();
         }
+    }
+    
+    public void setBoard(Board newBoard) {
+        this.board = newBoard;
     }
 }

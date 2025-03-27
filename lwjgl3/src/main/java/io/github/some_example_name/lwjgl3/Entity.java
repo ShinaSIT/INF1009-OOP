@@ -13,17 +13,15 @@ public abstract class Entity implements IMoveable {
 
     public Entity(Board board, int gridX, int gridY, String tag) {
         if (board == null) {
-            throw new IllegalArgumentException("❌ Error: Board cannot be null in Entity constructor!");
+            throw new IllegalArgumentException("❌ Board cannot be null!");
         }
-        
-        this.board = board; 
+        this.board = board;
         this.gridX = gridX;
         this.gridY = gridY;
         this.tag = tag;
-        this.entityTags = new HashSet<>(); 
-        updatePixelPosition(); 
+        this.entityTags = new HashSet<>();
+        updatePixelPosition();
     }
-
 
     public float getX() { return x; }
     public float getY() { return y; }

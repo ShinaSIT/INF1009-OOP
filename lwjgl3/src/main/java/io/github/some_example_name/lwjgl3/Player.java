@@ -77,9 +77,9 @@ public class Player extends MoveableObjects implements Collidable {
             board.getMazeLayout()[gridY][gridX] = ' ';
             System.out.println("Ate food at (" + gridX + ", " + gridY + ")");
         }
+        board.getMazeLayout()[gridY][gridX] = ' ';
         board.checkAndRemoveBirdGate();
         boardManager.removeStaticObjectAt(gridX, gridY);
-        board.getMazeLayout()[gridY][gridX] = ' ';
     }
 
     @Override

@@ -125,7 +125,7 @@ public class StaticObjects extends Entity {
     }
     
     private void updateTexture() {
-        this.texture = StaticObjectAssets.getStaticTexture(type);
+        this.texture = StaticObjectAssets.getTexture(type);
     }
 
     

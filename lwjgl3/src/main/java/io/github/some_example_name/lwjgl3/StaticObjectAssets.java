@@ -6,9 +6,10 @@ import com.badlogic.gdx.graphics.Texture;
 import java.util.*;
 
 public class StaticObjectAssets {
-    public static List<Texture> healthyFoods = new ArrayList<>();
-    public static List<Texture> unhealthyFoods = new ArrayList<>();
-    public static Map<Character, Texture> textureMap = new HashMap<>();
+    private static final List<Texture> healthyFoods = new ArrayList<>();
+    private static final List<Texture> unhealthyFoods = new ArrayList<>();
+    private static final Map<Character, Texture> textureMap = new HashMap<>();
+    private static final Random random = new Random();
 
     public static void load() {
         // 🍎 Load healthy food textures
@@ -20,7 +21,6 @@ public class StaticObjectAssets {
         // 🍔 Load unhealthy food textures
         unhealthyFoods.add(new Texture(Gdx.files.internal("food/unhealthy/Burger.png")));
         unhealthyFoods.add(new Texture(Gdx.files.internal("food/unhealthy/Cake.png")));
-//        unhealthyFoods.add(new Texture(Gdx.files.internal("food/unhealthy/Ice Cream.png")));
         unhealthyFoods.add(new Texture(Gdx.files.internal("food/unhealthy/Kebab.png")));
 
         // 🧱 Load static object textures
@@ -44,27 +44,25 @@ public class StaticObjectAssets {
         textureMap.put('5', new Texture(Gdx.files.internal("board/pipeConnectorTop.png")));
         textureMap.put('7', new Texture(Gdx.files.internal("board/pipeConnectorBottom.png")));
         textureMap.put('b', new Texture(Gdx.files.internal("board/block.png")));
-        // Add more if needed
+        // Add more symbols as needed
     }
 
-    public static Texture getStaticTexture(char symbol) {
+    public static Texture getTexture(char symbol) {
         return textureMap.get(symbol);
     }
 
     public static Texture getRandomHealthyFood() {
-        return healthyFoods.get(new Random().nextInt(healthyFoods.size()));
+        return healthyFoods.get(random.nextInt(healthyFoods.size()));
     }
 
     public static Texture getRandomUnhealthyFood() {
-        return unhealthyFoods.get(new Random().nextInt(unhealthyFoods.size()));
+        return unhealthyFoods.get(random.nextInt(unhealthyFoods.size()));
     }
 
     public static void dispose() {
-        for (Texture t : healthyFoods) t.dispose();
-        for (Texture t : unhealthyFoods) t.dispose();
-        for (Texture t : textureMap.values()) t.dispose();
-        for (Texture t : textureMap.values()) t.dispose();
+        healthyFoods.forEach(Texture::dispose);
+        unhealthyFoods.forEach(Texture::dispose);
+        textureMap.values().forEach(Texture::dispose);
         textureMap.clear();
     }
 }
-

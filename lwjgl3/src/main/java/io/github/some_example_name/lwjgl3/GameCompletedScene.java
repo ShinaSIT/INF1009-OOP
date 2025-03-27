@@ -86,7 +86,7 @@ public class GameCompletedScene extends Scene {
             @Override
             public void clicked(InputEvent event, float x, float y) {
             	if (gameMaster != null) {
-                  //gameMaster.gameStarted = true;
+                  gameMaster.resetGame();
                   gameMaster.sceneManager.transitionTo("MenuScene");
               } else {
                   System.out.println("❌ ERROR: gameMaster is NULL!");
