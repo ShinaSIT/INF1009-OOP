@@ -19,7 +19,7 @@ public class Lwjgl3Launcher {
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-        configuration.setTitle("OOP Project P6-T3");
+        configuration.setTitle("Munch Quest");
 
         // Enable VSync for smoother rendering
         configuration.useVsync(true);
@@ -28,10 +28,10 @@ public class Lwjgl3Launcher {
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
         
         // Set the window size (width x height)
-        configuration.setWindowedMode(1280, 1280);
+        configuration.setWindowedMode(2000, 1280);
         
         // Set the window icons (make sure the paths are correct)
-        configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+        configuration.setWindowIcon("Watermelon.png");
 
         return configuration;
     }

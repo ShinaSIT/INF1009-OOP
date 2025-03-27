@@ -3,16 +3,10 @@ package io.github.some_example_name.lwjgl3;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
 public class MainMenuScene extends MenuScene {
     private GameMaster gameMaster;
-    private BitmapFont titleFont;
-    private BitmapFont buttonFont;
     private Texture background;
 
     public MainMenuScene(SceneManager sceneManager, GameMaster gameMaster) {
@@ -25,21 +19,7 @@ public class MainMenuScene extends MenuScene {
         super.create();
         System.out.println("✅ Main Menu Scene Created");
 
-        // Load pixel-style font from assets/fonts/
-        titleFont = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt"));
-        titleFont.setColor(1, 1, 1, 1);  // white with full alpha
-        titleFont.getData().setScale(3f);  // Bigger for title
-
-        // Load smaller font for button
-        buttonFont = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt"));
-        buttonFont.getData().setScale(1.5f);  // Smaller for "Start Game"
-
-        // Apply smaller font to button style
-        TextButtonStyle style = new TextButtonStyle();
-        style.font = buttonFont;
-        applyButtonStyle(style);
-
-        // Optional: Load background image
+        // Load background image
         background = new Texture(Gdx.files.internal("menu_background.png"));
     }
 
@@ -64,7 +44,6 @@ public class MainMenuScene extends MenuScene {
             System.out.println("❌ Background texture is NULL!");
         }
 
-        titleFont.draw(batch, "Munch Quest", 100, 400);
         batch.end();
 
         // draw UI last
@@ -85,4 +64,10 @@ public class MainMenuScene extends MenuScene {
     @Override public void resume() {}
     @Override public void update(float deltaTime) {}
     @Override public void pause() {}
+    
+    @Override
+    public void dispose() {
+        super.dispose();
+        background.dispose();
+    }
 }

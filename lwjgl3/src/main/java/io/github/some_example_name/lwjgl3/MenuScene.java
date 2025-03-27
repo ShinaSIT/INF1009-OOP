@@ -1,11 +1,12 @@
 package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -14,10 +15,12 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 public abstract class MenuScene extends Scene {
     private GameMaster gameMaster;
     protected Stage stage;
-    private Skin skin;
+    private Texture backgroundTexture;
     private TextButton startButton;
-    private Table table; // ✅ Layout manager
-    private Label welcomeLabel; // New welcome label
+    private Table table;
+    private Label welcomeLabel; 
+    private BitmapFont buttonFont;
+    private BitmapFont titleFont;
 
     public MenuScene(SceneManager sceneManager, GameMaster gameMaster) {
         super(sceneManager);
@@ -29,18 +32,26 @@ public abstract class MenuScene extends Scene {
         System.out.println("✅ Creating Menu Scene...");
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
+        
+        // Load the background texture
+        backgroundTexture = new Texture(Gdx.files.internal("menu_background.png"));
 
-        skin = new Skin(Gdx.files.internal("uiskin.json")); // Ensure this file exists!
+        // Create Welcome Label using the pixel-style font
+        titleFont = new BitmapFont(Gdx.files.internal("fonts/title.fnt"));
+        titleFont.getData().setScale(2.5f);
+        Label.LabelStyle welcomeStyle = new Label.LabelStyle();
+        welcomeStyle.font = titleFont;
+        welcomeLabel = new Label("Munch Quest", welcomeStyle);      
+        
 
-        // ✅ Create Welcome Label
-        Label.LabelStyle welcomeStyle = new Label.LabelStyle(skin.getFont("default-font"), skin.getColor("white"));
-        welcomeStyle.font.getData().setScale(3f); // Make the font bigger than start button
-        welcomeLabel = new Label("Welcome to the Game!", welcomeStyle);
+        // Create Start Button with matching font style
+        buttonFont = new BitmapFont(Gdx.files.internal("fonts/start.fnt"));
+        buttonFont.getData().setScale(1.5f);
+        
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.font = buttonFont;
 
-        // ✅ Create Start Button
-        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle(skin.get("default", TextButton.TextButtonStyle.class));
-        buttonStyle.font.getData().setScale(1.5f); // Make the button font bigger
-        startButton = new TextButton("Start Game", buttonStyle);
+        startButton = new TextButton(">Start Game<", buttonStyle);
 
         // ✅ Create a Table
         table = new Table();
@@ -64,6 +75,8 @@ public abstract class MenuScene extends Scene {
                 }
             }
         });
+        System.out.println("Stage Elements: " + stage.getActors().size);
+
     }
 
     @Override
@@ -72,9 +85,22 @@ public abstract class MenuScene extends Scene {
             Gdx.input.setInputProcessor(stage);
         }
 
+        if (!batch.isDrawing()) { // ✅ Prevent duplicate batch.begin()
+            batch.begin();
+        }
+
+        batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        if (batch.isDrawing()) { // ✅ Ensure batch is ended before rendering UI
+            batch.end();
+        }
+
+        // ✅ Render UI elements after ending batch
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
+
+
 
     @Override
     public void resize(int width, int height) {
@@ -101,6 +127,7 @@ public abstract class MenuScene extends Scene {
     public void dispose() {
         System.out.println("✅ Disposing Menu Scene...");
         stage.dispose();
-        skin.dispose();
+        backgroundTexture.dispose();  // ✅ Dispose of the background texture
+        buttonFont.dispose();
     }
 }
