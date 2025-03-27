@@ -5,28 +5,28 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Player extends MoveableObjects implements Collidable {
 	private CollisionManager collisionManager;
-	private BoardManager boardManager;
-	private Speaker speaker;
+    private BoardManager boardManager;
+    private Speaker speaker;
+    private SceneManager sceneManager;
     private int health;
     private int lives;
 
     // Character facing
-    private String facingDirection = "RIGHT";  // Default facing right
-    private String facingSide = "RIGHT";       // Default using right-facing sprites
-
-    // Animation toggle (used to simulate stepping)
+    private String facingDirection = "RIGHT";
+    private String facingSide = "RIGHT";
     private boolean isRightStep = true;
 
     public Player(Board board, EntityManager entityManager, int x, int y,
-	            MovementManager movementManager, int initialHealth, int initialLives,
-	            CollisionManager collisionManager, BoardManager boardManager, Speaker speaker) {
-	  super(board, entityManager, x, y, movementManager);
-	  this.health = initialHealth;
-	  this.lives = initialLives;
-	  this.collisionManager = collisionManager;
-	  this.boardManager = boardManager;
-	  this.speaker = speaker;
-	  addTag("moveable");  
+                MovementManager movementManager, int initialHealth, int initialLives,
+                CollisionManager collisionManager, BoardManager boardManager, Speaker speaker) {
+        super(board, entityManager, x, y, movementManager);
+        this.health = initialHealth;
+        this.lives = initialLives;
+        this.collisionManager = collisionManager;
+        this.boardManager = boardManager;
+        this.speaker = speaker;
+        this.sceneManager = collisionManager.getSceneManager();
+        addTag("moveable"); 
 	}
 
     @Override
@@ -34,30 +34,21 @@ public class Player extends MoveableObjects implements Collidable {
         int targetGridX = gridX;
         int targetGridY = gridY;
 
-        // Convert float movement to grid-based movement
         if (dx > 0) targetGridX++;
         else if (dx < 0) targetGridX--;
         else if (dy > 0) targetGridY++;
         else if (dy < 0) targetGridY--;
 
-        //System.out.println("🔄 Attempting Move: (" + gridX + ", " + gridY + ") → (" + targetGridX + ", " + targetGridY + ")");
-
-        // ✅ Check if destination is valid
         if (!collisionManager.isMoveValid(targetGridX, targetGridY, isGerm)) {
-            System.out.println("🚧 Collision detected! Staying at (" + gridX + ", " + gridY + ")");
             speaker.playSound("block");
             return;
         }
 
-        // ✅ Update grid position
         setGridX(targetGridX);
         setGridY(targetGridY);
         updatePixelPosition();
-
-        // ✅ Toggle walking animation step
         isRightStep = !isRightStep;
 
-        // ✅ Update facing direction
         if (dx > 0) {
             facingDirection = "RIGHT";
             facingSide = "RIGHT";
@@ -69,88 +60,67 @@ public class Player extends MoveableObjects implements Collidable {
         } else if (dy < 0) {
             facingDirection = "DOWN";
         }
-        //sound
-        if (isRightStep) {
-            speaker.playSound("step1");
-        } else {
-            speaker.playSound("step2");
-        }
 
-        //System.out.println("✅ Move Successful!");
-        //System.out.println("✅ Step toggled to: " + (isRightStep ? "Right" : "Left"));
+        speaker.playSound(isRightStep ? "step1" : "step2");
 
-        // ✅ Check for food at new location
-        Food[][] foodGrid = board.getFoodGrid();
-        char[][] mazeLayout = board.getMazeLayout();
-
-        Food food = foodGrid[gridY][gridX];
+        Food food = board.getFoodGrid()[gridY][gridX];
         if (food != null) {
-            eatFood(food); // 🍽️ Apply food effect
-            foodGrid[gridY][gridX] = null; // remove food
-            mazeLayout[gridY][gridX] = ' '; // clear tile on map
-            System.out.println("🍴 Ate food at (" + gridX + ", " + gridY + ")");
+            eatFood(food);
+            board.getFoodGrid()[gridY][gridX] = null;
+            board.getMazeLayout()[gridY][gridX] = ' ';
+            System.out.println("Ate food at (" + gridX + ", " + gridY + ")");
         }
         
         boardManager.removeStaticObjectAt(gridX, gridY);
-        board.getMazeLayout()[gridY][gridX] = ' ';  // Mark tile as cleared
-
-
+        board.getMazeLayout()[gridY][gridX] = ' ';
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        //System.out.println("🎨 Rendering Player at (x=" + x + ", y=" + y + "), Grid (" + gridX + ", " + gridY + ")");
-        //System.out.println("🦶 Current Step: " + (isRightStep ? "Right Leg" : "Left Leg"));
-
         Texture currentSprite = CharacterAssets.playerRDown;
 
         if (facingSide.equals("LEFT")) {
             switch (facingDirection) {
-                case "UP":
-                    currentSprite = isRightStep ? CharacterAssets.playerLUp : CharacterAssets.playerLUp2;
-                    break;
-                case "DOWN":
-                    currentSprite = isRightStep ? CharacterAssets.playerLDown : CharacterAssets.playerLDown2;
-                    break;
-                case "LEFT":
-                    currentSprite = isRightStep ? CharacterAssets.playerLLeft : CharacterAssets.playerLLeft2;
-                    break;
-                case "RIGHT":
-                    currentSprite = isRightStep ? CharacterAssets.playerLRight : CharacterAssets.playerLRight2;
-                    break;
+                case "UP": currentSprite = isRightStep ? CharacterAssets.playerLUp : CharacterAssets.playerLUp2; break;
+                case "DOWN": currentSprite = isRightStep ? CharacterAssets.playerLDown : CharacterAssets.playerLDown2; break;
+                case "LEFT": currentSprite = isRightStep ? CharacterAssets.playerLLeft : CharacterAssets.playerLLeft2; break;
+                case "RIGHT": currentSprite = isRightStep ? CharacterAssets.playerLRight : CharacterAssets.playerLRight2; break;
             }
         } else {
             switch (facingDirection) {
-                case "UP":
-                    currentSprite = isRightStep ? CharacterAssets.playerRUp : CharacterAssets.playerRUp2;
-                    break;
-                case "DOWN":
-                    currentSprite = isRightStep ? CharacterAssets.playerRDown : CharacterAssets.playerRDown2;
-                    break;
-                case "LEFT":
-                    currentSprite = isRightStep ? CharacterAssets.playerRLeft : CharacterAssets.playerRLeft2;
-                    break;
-                case "RIGHT":
-                    currentSprite = isRightStep ? CharacterAssets.playerRRight : CharacterAssets.playerRRight2;
-                    break;
+                case "UP": currentSprite = isRightStep ? CharacterAssets.playerRUp : CharacterAssets.playerRUp2; break;
+                case "DOWN": currentSprite = isRightStep ? CharacterAssets.playerRDown : CharacterAssets.playerRDown2; break;
+                case "LEFT": currentSprite = isRightStep ? CharacterAssets.playerRLeft : CharacterAssets.playerRLeft2; break;
+                case "RIGHT": currentSprite = isRightStep ? CharacterAssets.playerRRight : CharacterAssets.playerRRight2; break;
             }
         }
 
         batch.draw(currentSprite, x, y, board.getTileSize(), board.getTileSize());
     }
 
-
-
     public void eatFood(Food food) {
+        GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
+        
         if (food.isHealthy()) {
             health += 10;
+            if (gameScene != null) {
+                gameScene.setScore(gameScene.getScore() + 100);
+                System.out.println("+100 points for healthy food!");
+            }
         } else {
             health -= 10;
+            if (gameScene != null) {
+                gameScene.setScore(Math.max(0, gameScene.getScore() - 100));
+                System.out.println("-100 points for unhealthy food!");
+            }
+            
             if (health <= 0) {
                 loseLife();
             }
         }
+        speaker.playSound("eat");
     }
+
 
     private void loseLife() {
         lives--;

@@ -8,7 +8,6 @@ public class CollisionManager {
     private SceneManager sceneManager;
     private EntityManager entityManager;
     private int collisionCount = 0;
-    private Set<String> collisionCache = new HashSet<>();
 
     public CollisionManager(Board board, EntityManager entityManager, SceneManager sceneManager) {
         this.collidableObjects = new ArrayList<>();
@@ -17,66 +16,95 @@ public class CollisionManager {
         this.sceneManager = sceneManager;
     }
 
-    public void addCollidable(Collidable collidable) {
-        collidableObjects.add(collidable);
+    public SceneManager getSceneManager() {
+        return sceneManager;
     }
 
-    /**
-     * Checks if a move to the specified grid position is valid.
-     */
+    public void addCollidable(Collidable collidable) {
+        if (!collidableObjects.contains(collidable)) {
+            collidableObjects.add(collidable);
+        }
+    }
+
     public boolean isMoveValid(int newCol, int newRow, boolean isGerm) {
         char tile = board.getMazeLayout()[newRow][newCol];
-        if (tile != ' ' && tile != '.' && tile != 'p' && tile != 'f') {
-            System.out.println("🚧 Blocked by wall");
-            if (isGerm) {
-                return false;
+        
+        // Handle food collision first
+        if (tile == 'f' && !isGerm) {
+            handleFoodCollision(newCol, newRow);
+            return true; // Always allow moving onto food tiles
+        }
+
+        // Wall collision check
+        if (tile != ' ' && tile != '.' && tile != 'p') {
+            if (!isGerm) {
+                collisionCount++;
+                System.out.println("🚧 Wall collision at (" + newCol + "," + newRow + ")");
             }
-            collisionCount++;
-            System.out.println("🔢 Collision count: " + collisionCount);
             return false;
         }
 
+        // Entity collision check
         for (Collidable collidable : collidableObjects) {
             if (collidable.getGridX() == newCol && collidable.getGridY() == newRow && collidable.isSolid()) {
-                if (collidable instanceof Germ) {
-                    // Collision with a Germ
-                    if (!isGerm) { // Only reset player if the player is moving into the germ
-                        System.out.println("💥 Player hit by Germ! Resetting player.");
-                        
-                        // Reduce player health
-                        GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
-                        gameScene.setHealth(gameScene.getHealth() - 1);
-
-                        // Find the Player object in collidableObjects and reset it.
-                        for (Collidable playerCheck : collidableObjects) {
-                            if (playerCheck instanceof Player) {
-                                Player player = (Player) playerCheck;
-                                player.setGridX(1);
-                                player.setGridY(1);
-                                player.updatePixelPosition();
-                                System.out.println("💥 Player position after reset: (" + player.getGridX() + ", " + player.getGridY() + ")");
-                                return false; // Prevent further movement after reset
-                            }
-                        }
-                        // If no player is found, return false.
-                        return false;
-                    } else {
-                        return true; // if the germ is moving into the player, allow the move
-                    }
-                } else if (collidable instanceof Player && isGerm) {
-                    return true; // allow the germ to move onto the player's space.
-                } else {
-                    // Collision with a non-Germ Collidable
-                    System.out.println("❌ Blocked by Collidable Object");
-                    collisionCount++;
-                    System.out.println("🔢 Collision count: " + collisionCount);
-                    return false;
-                }
+                return handleEntityCollision(collidable, isGerm);
             }
         }
 
-        //System.out.println("✅ Free to move");
         return true;
+    }
+
+    private boolean handleEntityCollision(Collidable collidable, boolean isGerm) {
+        if (collidable instanceof Germ) {
+            if (!isGerm) {
+                handlePlayerGermCollision();
+                return false;
+            }
+            return true; // Germs can move through each other
+        } else if (collidable instanceof Player && isGerm) {
+            return true; // Germs can move onto player
+        } else {
+            collisionCount++;
+            System.out.println("❌ Collision with " + collidable.getClass().getSimpleName());
+            return false;
+        }
+    }
+
+    private void handlePlayerGermCollision() {
+        System.out.println("💥 Player hit by Germ!");
+        
+        // Update game state
+        GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
+        if (gameScene != null) {
+            gameScene.setHealth(gameScene.getHealth() - 1);
+        }
+
+        // Reset player position
+        for (Collidable playerCheck : collidableObjects) {
+            if (playerCheck instanceof Player) {
+                Player player = (Player) playerCheck;
+                player.setGridX(1);
+                player.setGridY(1);
+                player.updatePixelPosition();
+                break;
+            }
+        }
+    }
+
+    private void handleFoodCollision(int col, int row) {
+        Food food = board.getFoodGrid()[row][col];
+        if (food != null) {
+            GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
+            if (gameScene != null) {
+                int scoreChange = food.isHealthy() ? 100 : -100;
+                gameScene.setScore(gameScene.getScore() + scoreChange);
+                System.out.println(food.isHealthy() ? "🍎 +100 points" : "🍔 -100 points");
+            }
+            
+            // Remove the food
+            board.getFoodGrid()[row][col] = null;
+            board.getMazeLayout()[row][col] = ' ';
+        }
     }
 
     public void checkCollisions() {
@@ -86,9 +114,6 @@ public class CollisionManager {
                 Collidable b = collidableObjects.get(j);
 
                 if (a.detectCollision(b)) {
-                    System.out.println("⚠️ Collision Detected between: " +
-                            a.getClass().getSimpleName() + " and " +
-                            b.getClass().getSimpleName());
                     resolveCollision(a, b);
                 }
             }
@@ -101,16 +126,29 @@ public class CollisionManager {
         }
 
         if (a instanceof Germ && b instanceof Player) {
-            System.out.println("💥 Germ hit Player! Reducing health.");
-            Player player = (Player) b;
-            GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
-            gameScene.setHealth(gameScene.getHealth() - 1); // Reduce health by 1
-            
-            player.setGridX(1);
-            player.setGridY(1);
-            player.updatePixelPosition();
+            handleGermPlayerCollision((Player) b);
         } else if (a instanceof Player && b instanceof Germ) {
-            resolveCollision(b, a); // Just call the same method with reversed parameters
+            handleGermPlayerCollision((Player) a);
         }
+    }
+
+    private void handleGermPlayerCollision(Player player) {
+        System.out.println("💥 Germ hit Player!");
+        GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
+        if (gameScene != null) {
+            gameScene.setHealth(gameScene.getHealth() - 1);
+        }
+        
+        player.setGridX(1);
+        player.setGridY(1);
+        player.updatePixelPosition();
+    }
+
+    public void removeCollidable(Collidable collidable) {
+        collidableObjects.remove(collidable);
+    }
+
+    public void clearCollidables() {
+        collidableObjects.clear();
     }
 }
