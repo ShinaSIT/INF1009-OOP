@@ -46,13 +46,10 @@ public class GameMaster extends ApplicationAdapter {
 
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
-<<<<<<< HEAD
-        sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
+        sceneManager.addScene("GameScene", new GameScene(sceneManager, this, inputManager, speaker));
         sceneManager.addScene("GameOverScene", new GameOverScene(sceneManager));
-=======
-        this.gameScene = new GameScene(sceneManager, this); // Store the reference
+        this.gameScene = new GameScene(sceneManager, this, inputManager, speaker); // Store the reference
         sceneManager.addScene("GameScene", gameScene); // Use the stored reference
->>>>>>> branch 'main' of git@github.com:ShinaSIT/INF1009-OOP.git
         sceneManager.transitionTo("MenuScene");
     }
 
@@ -106,6 +103,9 @@ public class GameMaster extends ApplicationAdapter {
                     sceneManager.transitionTo("GameCompletedScene");
                 }
                 
+                if (!(sceneManager.getCurrentScene() instanceof GameScene)) {
+                    return; // or handle non-game scene case
+                }
                 GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
                 if (gameScene != null && gameScene.getHealth() <= 0) {
                     gameStarted = false;

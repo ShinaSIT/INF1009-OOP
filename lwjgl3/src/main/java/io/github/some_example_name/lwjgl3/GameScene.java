@@ -25,8 +25,10 @@ public class GameScene extends Scene {
     private BitmapFont font;
     private int highScore = 0; // Added high score variable
     private Preferences prefs; // Added Preferences
+	private InputManager inputManager;
+	private Speaker speaker;
 
-    public GameScene(SceneManager sceneManager, GameMaster gameMaster) {
+    public GameScene(SceneManager sceneManager, GameMaster gameMaster, InputManager inputManager, Speaker speaker) {
         super(sceneManager);
         this.gameMaster = gameMaster;
         this.score = 0;
@@ -37,6 +39,8 @@ public class GameScene extends Scene {
         this.totalHealthyFoodCount = 0;
         this.totalUnhealthyFoodCount = 0;
         this.totalScore = 0;
+        this.inputManager = inputManager;
+        this.speaker = speaker;
         
         this.prefs = Gdx.app.getPreferences("MyGamePreferences"); // Initialize Preferences
         this.highScore = prefs.getInteger("highScore", 0); // Load high score from Preferences
@@ -48,6 +52,8 @@ public class GameScene extends Scene {
         if (gameMaster == null) {
             System.out.println("GameMaster is Null");
         }
+        
+        this.mouse = new Mouse(inputManager, speaker);
 
         try {
             font = new BitmapFont(Gdx.files.internal("path/to/your/font.fnt"));
@@ -83,7 +89,9 @@ public class GameScene extends Scene {
         totalUnhealthyFoodCount = unhealthyFoodCount;
         totalScore = score;
 
-        //mouse.checkMouse();
+        if (mouse != null) {
+            mouse.checkMouse();
+        }
     }
 
     private void renderUI(SpriteBatch batch) {
@@ -162,6 +170,9 @@ public class GameScene extends Scene {
         System.out.println("✅ Disposing Game Scene...");
         System.out.println("Total time: " + elapsedTime / 60 + "min" + elapsedTime % 60 + "s"); // Use the class member
         font.dispose(); // Dispose of the font when done
+        if (mouse != null) {
+            // If Mouse has cleanup methods, call them here
+        }
     }
 
     @Override
