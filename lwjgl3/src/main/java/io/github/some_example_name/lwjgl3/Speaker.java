@@ -6,7 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
 
-public class Speaker {
+public class Speaker implements SoundPlayer {
     private Map<String, Sound> soundEffect;  // Holds all loaded sound effects
     private Music backgroundMusic;  // Background music
     private float masterVolume;  // Volume control
@@ -21,8 +21,9 @@ public class Speaker {
         Sound sound = Gdx.audio.newSound(Gdx.files.internal(file));
         soundEffect.put(name, sound);
     }
-
+    
     // Play a sound by name
+    @Override
     public void playSound(String name) {
         if (soundEffect.containsKey(name)) {
             soundEffect.get(name).play(masterVolume);

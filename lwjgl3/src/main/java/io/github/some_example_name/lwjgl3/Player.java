@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 public class Player extends MoveableObjects implements Collidable {
 	private CollisionManager collisionManager;
     private BoardManager boardManager;
-    private Speaker speaker;
+    private SoundPlayer soundPlayer;
     private SceneManager sceneManager;
     private int health;
     private int lives;
@@ -18,13 +18,13 @@ public class Player extends MoveableObjects implements Collidable {
 
     public Player(Board board, EntityManager entityManager, int x, int y,
                 MovementManager movementManager, int initialHealth, int initialLives,
-                CollisionManager collisionManager, BoardManager boardManager, Speaker speaker) {
+                CollisionManager collisionManager, BoardManager boardManager, SoundPlayer soundPlayer) {
         super(board, entityManager, x, y, movementManager);
         this.health = initialHealth;
         this.lives = initialLives;
         this.collisionManager = collisionManager;
         this.boardManager = boardManager;
-        this.speaker = speaker;
+        this.soundPlayer = soundPlayer;
         this.sceneManager = collisionManager.getSceneManager();
         addTag("moveable"); 
 	}
@@ -42,12 +42,12 @@ public class Player extends MoveableObjects implements Collidable {
         if (!collisionManager.isMoveValid(targetGridX, targetGridY, isGerm)) {
         	for (Entity e : entityManager.getEntities()) {
                 if (e instanceof Germ && e.getGridX() == targetGridX && e.getGridY() == targetGridY) {
-                    speaker.playSound("germHit"); // 🔊 Only plays when *player* moves
+                    soundPlayer.playSound("germHit"); // 🔊 Only plays when *player* moves
                     return;
                 }
             }
             System.out.println("🚧 Collision detected! Staying at (" + gridX + ", " + gridY + ")");
-            speaker.playSound("block");
+            soundPlayer.playSound("block");
             return;
         }
 
@@ -68,7 +68,7 @@ public class Player extends MoveableObjects implements Collidable {
             facingDirection = "DOWN";
         }
 
-        speaker.playSound(isRightStep ? "step1" : "step2");
+        soundPlayer.playSound(isRightStep ? "step1" : "step2");
 
         Food food = board.getFoodGrid()[gridY][gridX];
         if (food != null) {
@@ -127,7 +127,7 @@ public class Player extends MoveableObjects implements Collidable {
                 loseLife();
             }
         }
-        speaker.playSound("eat");
+        soundPlayer.playSound("eat");
     }
 
 
@@ -180,7 +180,7 @@ public class Player extends MoveableObjects implements Collidable {
         boolean collided = getGridX() == other.getGridX() && getGridY() == other.getGridY();
 
         if (collided && other instanceof Germ) {
-            speaker.playSound("germHit"); // 🔊 Play sound only when Player touches Germ
+        	soundPlayer.playSound("germHit"); // 🔊 Play sound only when Player touches Germ
             System.out.println("💥 Player collided with Germ!");
         }
 
