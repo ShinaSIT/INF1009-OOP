@@ -13,16 +13,9 @@ public class Germ extends MoveableObjects implements Collidable {
     private Random random;
     private int moveCooldown;
     private int lastDirection = -1;
-
     private Set<Point> visited = new HashSet<>();
 
-    // ✅ Original constructor (fixed position)
-    public Germ(Board board, EntityManager entityManager, int gridX, int gridY, MovementManager movementManager, CollisionManager collisionManager) {
-        super(board, entityManager, gridX, gridY, movementManager);
-        init();
-    }
 
-    // ✅ New constructor (random spawn position)
     public Germ(Board board, EntityManager entityManager, MovementManager movementManager, CollisionManager collisionManager) {
         super(board, entityManager, 0, 0, movementManager); // temp grid
         Point spawn = getRandomWalkablePosition(board);

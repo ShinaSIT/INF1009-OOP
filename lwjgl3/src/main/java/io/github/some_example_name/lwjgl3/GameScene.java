@@ -1,12 +1,15 @@
 package io.github.some_example_name.lwjgl3;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 
 public class GameScene extends Scene {
     private GameMaster gameMaster;
+    private Texture crownTexture;
     private int score;
     private int health;
     private long startTime;
@@ -20,6 +23,8 @@ public class GameScene extends Scene {
 
     // UI components
     private BitmapFont font;
+    private int highScore = 0; // Added high score variable
+    private Preferences prefs; // Added Preferences
 
     public GameScene(SceneManager sceneManager, GameMaster gameMaster) {
         super(sceneManager);
@@ -33,6 +38,8 @@ public class GameScene extends Scene {
         this.totalUnhealthyFoodCount = 0;
         this.totalScore = 0;
         
+        this.prefs = Gdx.app.getPreferences("MyGamePreferences"); // Initialize Preferences
+        this.highScore = prefs.getInteger("highScore", 0); // Load high score from Preferences
     }
 
     @Override
@@ -44,20 +51,26 @@ public class GameScene extends Scene {
 
         try {
             font = new BitmapFont(Gdx.files.internal("path/to/your/font.fnt"));
+            font = new BitmapFont(Gdx.files.internal("/OOP Project P6-T3-lwjgl3/assets/fonts/menu_font.fnt")); // Custom font (optional)
         } catch (Exception e) {
             font = new BitmapFont();
+            font = new BitmapFont(); // Default font if the custom one fails
             System.out.println("Using default font due to error: " + e.getMessage());
         }
         font.setColor(Color.WHITE);
         
         // Remove this line - we'll create the completed scene when needed
        // sceneManager.addScene("GameCompletedScene", new GameCompletedScene(sceneManager, gameMaster, this));
+        font.setColor(Color.WHITE);// Set the font color to white
     }
 
     @Override
     public void render(SpriteBatch batch) {
         //System.out.println("GameScene render() called");
         if (gameMaster == null) return;
+
+        // Update High Score
+        update(Gdx.graphics.getDeltaTime()); // Ensure update is called.
 
         // Render UI elements (score and timer) at the top of the screen
         renderUI(batch);
@@ -69,6 +82,8 @@ public class GameScene extends Scene {
         totalHealthyFoodCount = healthyFoodCount;
         totalUnhealthyFoodCount = unhealthyFoodCount;
         totalScore = score;
+
+        //mouse.checkMouse();
     }
 
     private void renderUI(SpriteBatch batch) {
@@ -83,8 +98,12 @@ public class GameScene extends Scene {
         String scoreText = "Score: " + score;
         String timeText = "Time: " + formattedTime; // Use formatted time string
         String healthText = "Health: " + health;
-        String healthyFoodCountText = "good food: " + healthyFoodCount;
-        String unhealthyFoodCountText = "bad food: " + unhealthyFoodCount;
+
+//        String healthyFoodCountText = "good food: " + healthyFoodCount;
+//        String unhealthyFoodCountText = "bad food: " + unhealthyFoodCount;
+        String highScoreText = "High Score "; // Added high score text
+        String highScoreValue = ": " + highScore;
+
 
         // Debug to ensure UI elements are being rendered
         //System.out.println("Rendering Score: " + scoreText);
@@ -100,20 +119,25 @@ public class GameScene extends Scene {
         // Draw the health at the top-left corner, just below the time
         font.draw(batch, healthText, 10, Gdx.graphics.getHeight() - 60);
         
-        font.draw(batch, healthyFoodCountText, 10, Gdx.graphics.getHeight() - 80);
-        font.draw(batch, unhealthyFoodCountText, 10, Gdx.graphics.getHeight() - 100);
+//        font.draw(batch, healthyFoodCountText, 10, Gdx.graphics.getHeight() - 80);
+//        font.draw(batch, unhealthyFoodCountText, 10, Gdx.graphics.getHeight() - 100);
+
+        //Draw the highscore below the health
+        font.draw(batch, highScoreText, 10, Gdx.graphics.getHeight() - 80);
+
+        font.draw(batch, highScoreValue, 10, Gdx.graphics.getHeight() - 100);
     }
 
     private void renderBoard(SpriteBatch batch) {
         // After the score and timer, render the game board below the UI
         if (getBoard() != null) {
             // Adjust the board's Y position based on the height of the score and timer
-            float boardYOffset = Gdx.graphics.getHeight() - 60; // Adjust as needed (60 = 20 for score + 40 for timer)
+            float boardYOffset = Gdx.graphics.getHeight() - 80; // Adjusted for high score
 
             // Move the board's Y position down so it's not overlapping with the UI
-            batch.getProjectionMatrix().translate(0, -boardYOffset, 0);  // Shift board downwards
-            getBoard().render(batch);  // Render the board
-            batch.getProjectionMatrix().translate(0, boardYOffset, 0);  // Reset projection matrix after rendering board
+            batch.getProjectionMatrix().translate(0, -boardYOffset, 0); // Shift board downwards
+            getBoard().render(batch); // Render the board
+            batch.getProjectionMatrix().translate(0, boardYOffset, 0); // Reset projection matrix after rendering board
         }
     }
 
@@ -137,7 +161,7 @@ public class GameScene extends Scene {
     public void dispose() {
         System.out.println("✅ Disposing Game Scene...");
         System.out.println("Total time: " + elapsedTime / 60 + "min" + elapsedTime % 60 + "s"); // Use the class member
-        font.dispose();  // Dispose of the font when done
+        font.dispose(); // Dispose of the font when done
     }
 
     @Override
@@ -148,10 +172,13 @@ public class GameScene extends Scene {
 
     @Override
     public void update(float deltaTime) {
-        // Update score or other gameplay mechanics
-        // Example: Increase score based on some game conditions
+        if (score > highScore) {
+            highScore = score;
+            prefs.putInteger("highScore", highScore); // Save high score to Preferences
+            prefs.flush(); // Save changes immediately
+        }
     }
-    
+
     private Board getBoard() {
         return (gameMaster != null) ? gameMaster.getBoardManager().getBoard() : null;
     }
@@ -165,27 +192,11 @@ public class GameScene extends Scene {
         // You may have specific gameplay update logic here
     }
 
-  @Override
-  public void render() {
-    // TODO Auto-generated method stub
-    
-  }
-  
-  public int getScore() {
-	    return score;
-	}
+    @Override
+    public void render() {
+        // TODO Auto-generated method stub
 
-	public int getHealth() {
-	    return health;
-	}
-	
-	public void setScore(int score) {
-	    this.score = score;
-	}
-
-	public void setHealth(int health) {
-	    this.health = health;
-	}
+    }
 	
 	public int getHealthyFoodCount() {
 	    return healthyFoodCount;
@@ -215,4 +226,19 @@ public class GameScene extends Scene {
 		return  totalScore;
 	}
 	
+    public int getScore() {
+        return score;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
 }
