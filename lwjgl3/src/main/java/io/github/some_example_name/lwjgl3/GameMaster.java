@@ -19,7 +19,6 @@ public class GameMaster extends ApplicationAdapter {
     protected SceneManager sceneManager;
     protected InputManager inputManager;
     private GameScene gameScene;
-    
      
 
     public GameMaster() {

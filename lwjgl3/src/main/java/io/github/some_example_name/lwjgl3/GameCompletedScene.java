@@ -80,11 +80,11 @@ public class GameCompletedScene extends Scene {
         buttonStyle.font = font;
 
         // Play Again Button (positioned above Exit button)
-        TextButton playAgainButton = new TextButton("Play Again", buttonStyle);
-        playAgainButton.setPosition(
-            Gdx.graphics.getWidth() / 2f - playAgainButton.getWidth() / 2f, 
-            120  // Higher Y position than Exit button
-        );
+//        TextButton playAgainButton = new TextButton("Play Again", buttonStyle);
+//        playAgainButton.setPosition(
+//            Gdx.graphics.getWidth() / 2f - playAgainButton.getWidth() / 2f, 
+//            120  // Higher Y position than Exit button
+//        );
 
         // Exit Button
         TextButton exitButton = new TextButton("Exit", buttonStyle);
@@ -93,21 +93,32 @@ public class GameCompletedScene extends Scene {
             50   // Lower Y position than Play Again
         );
 
-        playAgainButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-//                gameMaster.sceneManager.setScene(new GameScene(gameMaster.sceneManager, gameMaster));
-            }
-        });
+//        playAgainButton.addListener(new ClickListener() {
+//        	@Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                if (gameMaster != null) {
+//                    gameMaster.gameStarted = true;
+//                    gameMaster.sceneManager.transitionTo("GameScene");
+//                } else {
+//                    System.out.println("❌ ERROR: gameMaster is NULL!");
+//                }
+//            }
+//        });
 
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit();
+            	if (gameMaster != null) {
+                  //gameMaster.gameStarted = true;
+                  gameMaster.sceneManager.transitionTo("MenuScene");
+              } else {
+                  System.out.println("❌ ERROR: gameMaster is NULL!");
+              }
             }
         });
 
-        stage.addActor(playAgainButton);
+
+//        stage.addActor(playAgainButton);
         stage.addActor(exitButton);
     }
 
