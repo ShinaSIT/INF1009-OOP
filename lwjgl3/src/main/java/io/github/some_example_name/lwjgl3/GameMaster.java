@@ -47,8 +47,11 @@ public class GameMaster extends ApplicationAdapter {
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this, inputManager, speaker));
+        //sceneManager.addScene("GameScene", new GameScene(sceneManager, this, inputManager, speaker));
         sceneManager.addScene("GameOverScene", new GameOverScene(sceneManager));
         this.gameScene = new GameScene(sceneManager, this, inputManager, speaker); // Store the reference
+
+        this.gameScene = new GameScene(sceneManager, this, inputManager,speaker); // Store the reference
         sceneManager.addScene("GameScene", gameScene); // Use the stored reference
         sceneManager.transitionTo("MenuScene");
     }

@@ -25,7 +25,7 @@ public class GameOverScene extends Scene {
         System.out.println("✅ Game Over Scene Created");
 
         try {
-            font = new BitmapFont(Gdx.files.internal("menu_font.fnt")); // Use your font path
+            font = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt")); // Use your font path
         } catch (Exception e) {
             font = new BitmapFont();
             System.out.println("Using default font due to error: " + e.getMessage());
