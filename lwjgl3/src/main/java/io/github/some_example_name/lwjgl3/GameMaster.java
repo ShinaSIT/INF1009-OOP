@@ -24,7 +24,7 @@ public class GameMaster extends ApplicationAdapter {
     public GameMaster() {
         sceneManager = new SceneManager();
         speaker = new Speaker();
-        mouse = new Mouse(null, speaker, sceneManager);
+        mouse = new Mouse(null, speaker);
         boardManager = new BoardManager();
         entityManager = new EntityManager(boardManager.getBoard(), speaker);
         collisionManager = CollisionManager.getInstance(boardManager.getBoard(), entityManager, sceneManager);
@@ -76,15 +76,12 @@ public class GameMaster extends ApplicationAdapter {
             	    factory.getEntity("player");
             	}
 
-            	boolean moved = inputManager.handleInput();
+            	inputManager.handleInput();
 
                 for (Entity entity : entityManager.getEntities()) {
                     if (entity instanceof Germ) ((Germ) entity).moveSmartly();
                 }
 
-                if (!outputManager.isHasMoved()) {
-                    outputManager.setHasMoved(true);
-                }
 
                 boardManager.getBoard().updateFoodRegeneration();
                 boardManager.render(batch);

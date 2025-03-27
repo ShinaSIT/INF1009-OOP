@@ -11,7 +11,7 @@ public class Mouse extends InputAdapter {
     private Speaker speaker;
 
     // ✅ Unified constructor for both sound and scene management
-    public Mouse(InputManager ioManager, Speaker speaker, SceneManager sceneManager) {
+    public Mouse(InputManager ioManager, Speaker speaker) {
         this.ioManager = ioManager;
         this.speaker = speaker;
     }
