@@ -191,7 +191,7 @@ public class GameMaster extends ApplicationAdapter {
     public void resetGame() {
         Board freshBoard = new Board();
         boardManager.setBoard(freshBoard);
-        System.out.println("✅ BoardManager now using fresh Board: " + boardManager.getBoard());
+        System.out.println("✅ BoardManager now using fresh Board");
 
         this.entityManager = new EntityManager(freshBoard, speaker);
         freshBoard.setEntityManager(entityManager);
