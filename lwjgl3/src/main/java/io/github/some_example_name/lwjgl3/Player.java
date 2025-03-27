@@ -40,6 +40,16 @@ public class Player extends MoveableObjects implements Collidable {
         else if (dy < 0) targetGridY--;
 
         if (!collisionManager.isMoveValid(targetGridX, targetGridY, isGerm)) {
+<<<<<<< HEAD
+=======
+        	for (Entity e : entityManager.getEntities()) {
+                if (e instanceof Germ && e.getGridX() == targetGridX && e.getGridY() == targetGridY) {
+                    speaker.playSound("germHit"); // 🔊 Only plays when *player* moves
+                    return;
+                }
+            }
+            System.out.println("🚧 Collision detected! Staying at (" + gridX + ", " + gridY + ")");
+>>>>>>> branch 'main' of git@github.com:ShinaSIT/INF1009-OOP.git
             speaker.playSound("block");
             return;
         }
@@ -168,7 +178,14 @@ public class Player extends MoveableObjects implements Collidable {
     @Override
     public boolean detectCollision(Collidable other) {
         if (other == this) return false; // No self-collision
-        return getGridX() == other.getGridX() && getGridY() == other.getGridY();
+        boolean collided = getGridX() == other.getGridX() && getGridY() == other.getGridY();
+
+        if (collided && other instanceof Germ) {
+            speaker.playSound("germHit"); // 🔊 Play sound only when Player touches Germ
+            System.out.println("💥 Player collided with Germ!");
+        }
+
+        return collided;
     }
 
 }
