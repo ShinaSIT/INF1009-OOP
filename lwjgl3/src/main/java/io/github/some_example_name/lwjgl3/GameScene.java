@@ -30,6 +30,8 @@ public class GameScene extends Scene {
         if (gameMaster == null){
             System.out.println("GameMaster is Null");
         }
+        
+        //
 
         // Initialize the font (you can load a custom font if needed)
         try {
