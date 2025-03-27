@@ -18,13 +18,13 @@ public class GameMaster extends ApplicationAdapter {
     protected Speaker speaker;
     protected SceneManager sceneManager;
     protected InputManager inputManager;
-    
+    private GameScene gameScene;
      
 
     public GameMaster() {
         sceneManager = new SceneManager();
         speaker = new Speaker();
-        mouse = new Mouse(null, speaker, sceneManager);
+        mouse = new Mouse(null, speaker);
         boardManager = new BoardManager();
         entityManager = new EntityManager(boardManager.getBoard(), speaker);
         collisionManager = CollisionManager.getInstance(boardManager.getBoard(), entityManager, sceneManager);
@@ -46,8 +46,13 @@ public class GameMaster extends ApplicationAdapter {
 
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
+<<<<<<< HEAD
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
         sceneManager.addScene("GameOverScene", new GameOverScene(sceneManager));
+=======
+        this.gameScene = new GameScene(sceneManager, this); // Store the reference
+        sceneManager.addScene("GameScene", gameScene); // Use the stored reference
+>>>>>>> branch 'main' of git@github.com:ShinaSIT/INF1009-OOP.git
         sceneManager.transitionTo("MenuScene");
     }
 
@@ -76,15 +81,12 @@ public class GameMaster extends ApplicationAdapter {
             	    factory.getEntity("player");
             	}
 
-            	boolean moved = inputManager.handleInput();
+            	inputManager.handleInput();
 
                 for (Entity entity : entityManager.getEntities()) {
                     if (entity instanceof Germ) ((Germ) entity).moveSmartly();
                 }
 
-                if (!outputManager.isHasMoved()) {
-                    outputManager.setHasMoved(true);
-                }
 
                 boardManager.getBoard().updateFoodRegeneration();
                 boardManager.render(batch);
@@ -96,7 +98,12 @@ public class GameMaster extends ApplicationAdapter {
 
                 if (player.getGridX() == 10 && player.getGridY() == 11) {
                     gameStarted = false;
-                    sceneManager.transitionTo("MenuScene");
+                    GameScene currentGameScene = (GameScene) sceneManager.getScene("GameScene");
+                    sceneManager.addScene("GameCompletedScene", new GameCompletedScene(sceneManager, this, 
+                            currentGameScene.getTotalHealthyFoodCount(),
+                            currentGameScene.getTotalUnhealthyFoodCount(),
+                            currentGameScene.getTotalScore()));
+                    sceneManager.transitionTo("GameCompletedScene");
                 }
                 
                 GameScene gameScene = (GameScene) sceneManager.getCurrentScene();

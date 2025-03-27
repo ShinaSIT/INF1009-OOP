@@ -15,6 +15,11 @@ public class GameScene extends Scene {
     private long startTime;
     private long elapsedTime;
     protected Mouse mouse;
+    private int healthyFoodCount = 0;
+    private int unhealthyFoodCount = 0;
+    private int totalHealthyFoodCount = 0;
+    private int totalUnhealthyFoodCount = 0;
+    private int totalScore = 0;
 
     // UI components
     private BitmapFont font;
@@ -27,6 +32,12 @@ public class GameScene extends Scene {
         this.score = 0;
         this.health = 3;
         this.startTime = System.currentTimeMillis();
+        this.healthyFoodCount = 0;
+        this.unhealthyFoodCount = 0;
+        this.totalHealthyFoodCount = 0;
+        this.totalUnhealthyFoodCount = 0;
+        this.totalScore = 0;
+        
         this.prefs = Gdx.app.getPreferences("MyGamePreferences"); // Initialize Preferences
         this.highScore = prefs.getInteger("highScore", 0); // Load high score from Preferences
     }
@@ -38,13 +49,18 @@ public class GameScene extends Scene {
             System.out.println("GameMaster is Null");
         }
 
-        // Initialize the font (you can load a custom font if needed)
         try {
+            font = new BitmapFont(Gdx.files.internal("path/to/your/font.fnt"));
             font = new BitmapFont(Gdx.files.internal("/OOP Project P6-T3-lwjgl3/assets/fonts/menu_font.fnt")); // Custom font (optional)
         } catch (Exception e) {
+            font = new BitmapFont();
             font = new BitmapFont(); // Default font if the custom one fails
             System.out.println("Using default font due to error: " + e.getMessage());
         }
+        font.setColor(Color.WHITE);
+        
+        // Remove this line - we'll create the completed scene when needed
+       // sceneManager.addScene("GameCompletedScene", new GameCompletedScene(sceneManager, gameMaster, this));
         font.setColor(Color.WHITE);// Set the font color to white
     }
 
@@ -61,6 +77,11 @@ public class GameScene extends Scene {
 
         // Render the game board (positioned below the UI)
         renderBoard(batch);
+        
+        //mouse.checkMouse(); 
+        totalHealthyFoodCount = healthyFoodCount;
+        totalUnhealthyFoodCount = unhealthyFoodCount;
+        totalScore = score;
 
         //mouse.checkMouse();
     }
@@ -77,8 +98,12 @@ public class GameScene extends Scene {
         String scoreText = "Score: " + score;
         String timeText = "Time: " + formattedTime; // Use formatted time string
         String healthText = "Health: " + health;
+
+//        String healthyFoodCountText = "good food: " + healthyFoodCount;
+//        String unhealthyFoodCountText = "bad food: " + unhealthyFoodCount;
         String highScoreText = "High Score "; // Added high score text
         String highScoreValue = ": " + highScore;
+
 
         // Debug to ensure UI elements are being rendered
         //System.out.println("Rendering Score: " + scoreText);
@@ -93,6 +118,9 @@ public class GameScene extends Scene {
 
         // Draw the health at the top-left corner, just below the time
         font.draw(batch, healthText, 10, Gdx.graphics.getHeight() - 60);
+        
+//        font.draw(batch, healthyFoodCountText, 10, Gdx.graphics.getHeight() - 80);
+//        font.draw(batch, unhealthyFoodCountText, 10, Gdx.graphics.getHeight() - 100);
 
         //Draw the highscore below the health
         font.draw(batch, highScoreText, 10, Gdx.graphics.getHeight() - 80);
@@ -169,7 +197,35 @@ public class GameScene extends Scene {
         // TODO Auto-generated method stub
 
     }
+	
+	public int getHealthyFoodCount() {
+	    return healthyFoodCount;
+	}
 
+	public int getUnhealthyFoodCount() {
+	    return unhealthyFoodCount;
+	}
+	
+	public void setHealthyFoodCount(int healthyFoodCount) {
+	    this.healthyFoodCount = healthyFoodCount;
+	}
+
+	public void setUnhealthyFoodCount(int unhealthyFoodCount) {
+	    this.unhealthyFoodCount = unhealthyFoodCount;
+	}
+	
+	public int getTotalHealthyFoodCount() {
+		return  totalHealthyFoodCount;
+	}
+	
+	public int getTotalUnhealthyFoodCount() {
+		return  totalUnhealthyFoodCount;
+	}
+	
+	public int getTotalScore() {
+		return  totalScore;
+	}
+	
     public int getScore() {
         return score;
     }
