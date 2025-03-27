@@ -38,16 +38,16 @@ public class MovementManager {
         int newCol = oldCol + (int) dx;
         int newRow = oldRow + (int) dy;
 
-        System.out.println("🔄 Attempting Move: (" + oldCol + ", " + oldRow + ") → (" + newCol + ", " + newRow + ")");
+        //System.out.println("🔄 Attempting Move: (" + oldCol + ", " + oldRow + ") → (" + newCol + ", " + newRow + ")");
 
         if (collisionManager != null && collisionManager.isMoveValid(newCol, newRow, isGerm)) {
             entity.setGridX(newCol);
             entity.setGridY(newRow);
             entity.updatePixelPosition();
 
-            System.out.println("✅ Move Successful!");
+            //System.out.println("✅ Move Successful!");
         } else {
-            System.out.println("❌ Collision! Cannot move to (" + newCol + ", " + newRow + ")");
+            //System.out.println("❌ Collision! Cannot move to (" + newCol + ", " + newRow + ")");
         }
     }
 
