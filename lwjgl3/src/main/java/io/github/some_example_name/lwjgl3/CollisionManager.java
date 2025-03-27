@@ -3,17 +3,27 @@ package io.github.some_example_name.lwjgl3;
 import java.util.*;
 
 public class CollisionManager {
+	private static CollisionManager instance; // Singleton instance
+	
     private List<Collidable> collidableObjects;
     private Board board;
     private SceneManager sceneManager;
     private EntityManager entityManager;
     private int collisionCount = 0;
 
-    public CollisionManager(Board board, EntityManager entityManager, SceneManager sceneManager) {
+    private CollisionManager(Board board, EntityManager entityManager, SceneManager sceneManager) {
         this.collidableObjects = new ArrayList<>();
         this.board = board;
         this.entityManager = entityManager;
         this.sceneManager = sceneManager;
+    }
+    
+    // Public method to get the Singleton instance
+    public static CollisionManager getInstance(Board board, EntityManager entityManager, SceneManager sceneManager) {
+        if (instance == null) {
+            instance = new CollisionManager(board, entityManager, sceneManager);
+        }
+        return instance;
     }
 
     public SceneManager getSceneManager() {
