@@ -91,7 +91,7 @@ public class Board {
         // ✅ Generate new food
         Random random = new Random();
         int unhealthyCount = 0;
-        int unhealthyLimit = 2;
+        int unhealthyLimit = 5;
         List<Point> foodSpots = new ArrayList<>();
         Set<Point> skipPoints = Set.of(new Point(1, 1), new Point(1, 10));
 
