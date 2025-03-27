@@ -47,6 +47,7 @@ public class GameMaster extends ApplicationAdapter {
         sceneManager.addScene("MenuScene", new MainMenuScene(sceneManager, this));
         sceneManager.addScene("InstructionsScene", new InstructionsScene(sceneManager, this));
         sceneManager.addScene("GameScene", new GameScene(sceneManager, this));
+        sceneManager.addScene("GameOverScene", new GameOverScene(sceneManager));
         sceneManager.transitionTo("MenuScene");
     }
 
@@ -90,10 +91,18 @@ public class GameMaster extends ApplicationAdapter {
                 entityManager.render(batch);
                 outputManager.handleOutput();
                 collisionManager.checkCollisions();
+                
+                
 
                 if (player.getGridX() == 10 && player.getGridY() == 11) {
                     gameStarted = false;
                     sceneManager.transitionTo("MenuScene");
+                }
+                
+                GameScene gameScene = (GameScene) sceneManager.getCurrentScene();
+                if (gameScene != null && gameScene.getHealth() <= 0) {
+                    gameStarted = false;
+                    sceneManager.transitionTo("GameOverScene");
                 }
             }
 
