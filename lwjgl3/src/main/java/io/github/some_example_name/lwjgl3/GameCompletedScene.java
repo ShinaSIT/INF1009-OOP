@@ -127,7 +127,7 @@ public class GameCompletedScene extends Scene {
         if (gameMaster == null) return;
 
         // Clear screen
-        Gdx.gl.glClearColor(0.2f, 0.5f, 0.8f, 1);
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1);
         Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
 
         renderTitle(batch);
