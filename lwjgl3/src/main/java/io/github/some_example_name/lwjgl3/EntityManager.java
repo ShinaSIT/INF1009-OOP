@@ -14,7 +14,6 @@ public class EntityManager {
         this.board = board;
         this.speaker = speaker;
         entities = new ArrayList<>();
-        StaticObjects.generateStaticObjects(board, this);
     }
     
     public void generateStaticObjects() {

@@ -47,7 +47,7 @@ public class GameScene extends Scene {
         healthFactPopup = new HealthFactPopup();
 
         try {
-            font = new BitmapFont(Gdx.files.internal("assets/fonts/menu_font.fnt"));
+            font = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt"));
         } catch (Exception e) {
             font = new BitmapFont();
             System.out.println("Using default font due to error: " + e.getMessage());
@@ -83,21 +83,31 @@ public class GameScene extends Scene {
     }
 
     private void renderUI(SpriteBatch batch) {
+    	// Update the score and timer text
         elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
+
         int minutes = (int) (elapsedTime / 60);
         int seconds = (int) (elapsedTime % 60);
 
-        String scoreText = "Score: " + score;
-        String timeText = "Time: " + String.format("%02d:%02d", minutes, seconds);
-        String healthText = "Health: " + health;
-        String highScoreText = "High Score";
-        String highScoreValue = ": " + highScore;
+        String formattedTime = String.format("%02d:%02d", minutes, seconds); // Format as MM:SS
+        String timeText = "Time " + formattedTime; // Use formatted time string
+        String healthText = "Health " + health;
+        String scoreText = "Score " + score;
+        String highScoreText = "High Score"; 
+        String highScoreValue = String.valueOf(highScore);
 
-        font.draw(batch, scoreText, 10, Gdx.graphics.getHeight() - 20);
-        font.draw(batch, timeText, 10, Gdx.graphics.getHeight() - 40);
-        font.draw(batch, healthText, 10, Gdx.graphics.getHeight() - 60);
-        font.draw(batch, highScoreText, 10, Gdx.graphics.getHeight() - 80);
-        font.draw(batch, highScoreValue, 10, Gdx.graphics.getHeight() - 100);
+        float xPos = 20; // Left padding
+        float yStart = Gdx.graphics.getHeight() - 30; // Start position (from top)
+        float lineHeight = 40; // Space between lines
+        
+        // Padding while drawing text
+        font.draw(batch, timeText, xPos, yStart);
+        font.draw(batch, healthText, xPos, yStart - lineHeight);
+        font.draw(batch, scoreText, xPos, yStart - (2 * lineHeight));
+        
+        // High Score Label & Value (Aligns High Score text and value)
+        font.draw(batch, highScoreText, xPos, yStart - (4 * lineHeight));
+        font.draw(batch, highScoreValue, xPos, yStart - (5 * lineHeight)); 
     }
 
     private void renderBoard(SpriteBatch batch) {
