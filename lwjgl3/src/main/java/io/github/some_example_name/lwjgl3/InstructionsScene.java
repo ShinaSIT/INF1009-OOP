@@ -24,13 +24,8 @@ public class InstructionsScene extends Scene {
 
     @Override
     public void create() {
-        System.out.println("✅ Instructions Scene Created");
-
-        try {
-            font = new BitmapFont(Gdx.files.internal("path/to/your/font.fnt")); // Use your font path
-        } catch (Exception e) {
+        System.out.println("✅ Instructions Scene Created");{
             font = new BitmapFont();
-            System.out.println("Using default font due to error: " + e.getMessage());
         }
         font.setColor(Color.WHITE);
 

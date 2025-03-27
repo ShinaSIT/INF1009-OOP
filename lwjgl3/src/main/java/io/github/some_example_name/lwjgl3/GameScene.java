@@ -50,8 +50,7 @@ public class GameScene extends Scene {
         }
 
         try {
-            font = new BitmapFont(Gdx.files.internal("path/to/your/font.fnt"));
-            font = new BitmapFont(Gdx.files.internal("/OOP Project P6-T3-lwjgl3/assets/fonts/menu_font.fnt")); // Custom font (optional)
+            font = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt"));
         } catch (Exception e) {
             font = new BitmapFont();
             font = new BitmapFont(); // Default font if the custom one fails

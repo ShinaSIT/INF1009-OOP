@@ -63,13 +63,8 @@ public class GameCompletedScene extends Scene {
     public void create() {
         System.out.println("✅ Game Completed Scene Created");
         System.out.println("Creating GameCompletedScene with values: " + 
-                healthyFoodCount + ", " + unhealthyFoodCount + ", " + totalScore);
-        
-        try {
-            font = new BitmapFont(Gdx.files.internal("path/to/your/font.fnt"));
-        } catch (Exception e) {
+                healthyFoodCount + ", " + unhealthyFoodCount + ", " + totalScore); {
             font = new BitmapFont();
-            System.out.println("Using default font due to error: " + e.getMessage());
         }
         font.setColor(Color.WHITE);
 
