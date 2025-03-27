@@ -26,9 +26,6 @@ public class StaticObject extends Entity {
         }
     }
     public void dispose() {
-        // Optionally log disposal
-        System.out.println("🧹 Disposing static object: " + symbol);
-        // If you're using textures dynamically, no need to dispose them here — handled by StaticObjectAssets
     }
 
 }
