@@ -17,6 +17,8 @@ public class Board {
     private int screenWidth;
     private int screenHeight;
     private OrthographicCamera camera;
+    private EntityManager entityManager;
+
 
     private final char[][] mazeLayout = {
             {'1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'},
@@ -156,7 +158,14 @@ public class Board {
                 for (int col = 0; col < mazeLayout[row].length; col++) {
                     if (mazeLayout[row][col] == '$') {
                         mazeLayout[row][col] = ' ';
-                        System.out.println("🕊️ Bird gate removed! You may exit.");
+                        System.out.println("🕊️ Bird gate removed at (" + col + ", " + row + ")");
+
+                        // ✅ Remove static visual from entity system
+                        if (entityManager != null) {
+                            entityManager.removeStaticAtPosition(col, row);
+                        } else {
+                            System.err.println("⚠️ entityManager is NULL in Board!");
+                        }
                     }
                 }
             }
@@ -193,6 +202,11 @@ public class Board {
             }
         }
         return copy;
+    }
+    
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+        System.out.println("✅ Board linked to EntityManager!");
     }
 
     public Food[][] getFoodGrid() {
@@ -260,10 +274,11 @@ public class Board {
         if (symbol == 'f') {
             return foodGrid[row][col] != null ? foodGrid[row][col].getTexture() : null;
         }
-        return StaticObjectAssets.getStaticTexture(symbol);
+        return StaticObjectAssets.getTexture(symbol);
     }
 
     public void dispose() {
         shapeRenderer.dispose();
     }
+    
 }

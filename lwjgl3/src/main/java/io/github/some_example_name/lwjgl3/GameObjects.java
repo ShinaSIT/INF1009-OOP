@@ -10,7 +10,7 @@ public class GameObjects extends Entity {
     protected EntityManager entityManager;
 
     public GameObjects(Board board, EntityManager entityManager, int gridX, int gridY, String tags) {
-        super(board, gridX, gridY, tags); 
+        super(board, gridX, gridY, tags);
         this.board = board;
         this.entityManager = entityManager;
         this.shapeRenderer = new ShapeRenderer();

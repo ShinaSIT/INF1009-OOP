@@ -16,7 +16,30 @@ public class EntityManager {
         entities = new ArrayList<>();
         
         System.out.println("🔄 Calling generateStaticObjects() from EntityManager!");
-        StaticObjects.generateStaticObjects(board, this);
+        generateStaticObjects();
+    }
+    
+    private void generateStaticObjects() {
+        System.out.println("🔄 generateStaticObjects() inline version used!");
+
+        char[][] maze = board.getMazeLayout();
+
+        for (int row = 0; row < maze.length; row++) {
+            for (int col = 0; col < maze[row].length; col++) {
+                char symbol = maze[row][col];
+
+                if (symbol == '.' || symbol == 'p' || symbol == 'f' || symbol == ' ') {
+                    continue; // skip food and pellets
+                }
+
+                StaticObject staticObj = new StaticObject(board, symbol, col, row);
+                addEntity(staticObj);
+
+                if (symbol == '$') {
+                    System.out.println("✅ Bird gate (goal) placed at (" + col + ", " + row + ")");
+                }
+            }
+        }
     }
 
 
@@ -171,6 +194,18 @@ public class EntityManager {
         }
         System.out.println("⚠️ Player not found in EntityManager!");
         return null;
+    }
+
+    public void removeStaticAtPosition(int gridX, int gridY) {
+        entities.removeIf(entity -> {
+            boolean shouldRemove = entity.hasTag("static") &&
+                                   entity.getGridX() == gridX &&
+                                   entity.getGridY() == gridY;
+            if (shouldRemove) {
+                System.out.println("❌ Removed static at (" + gridX + ", " + gridY + ")");
+            }
+            return shouldRemove;
+        });
     }
 
 

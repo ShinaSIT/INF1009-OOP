@@ -1,5 +1,8 @@
 package io.github.some_example_name.lwjgl3;
 
+import com.badlogic.gdx.graphics.Texture; // ✅ Needed for getTexture()
+import io.github.some_example_name.lwjgl3.StaticObject; // ✅ Make sure StaticObject exists
+
 public class EntityFactory {
 
     private Board board;
@@ -46,4 +49,11 @@ public class EntityFactory {
         System.out.println("❌ Unknown entity type: " + type);
         return null;
     }
+
+    public StaticObject createStatic(char symbol, int gridX, int gridY) {
+        StaticObject obj = new StaticObject(board, symbol, gridX, gridY);
+        entityManager.addEntity(obj);
+        return obj;
+    }
+
 }
