@@ -49,12 +49,12 @@ public class Speaker implements SoundPlayer {
     // Play background music (already fixed in previous responses)
     public void playMusic(String file) {
         if (backgroundMusic == null) {  // Ensure we only create a new instance when needed
-            System.out.println("Creating new music instance: " + file);
+            System.out.println("🔄 Generating Background Music");
             backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/game.mp3"));
             backgroundMusic.setVolume(masterVolume  * 0.4f);
             backgroundMusic.setLooping(true);
             backgroundMusic.play();
-            System.out.println("Music started: " + file);
+            System.out.println("✅ Playing Background Music");
             return;
         }
 
@@ -65,7 +65,6 @@ public class Speaker implements SoundPlayer {
             System.out.println("Music already playing, no need to restart.");
         }
     }
-
 
     // Stop the background music
     public void stopMusic() {
@@ -79,6 +78,7 @@ public class Speaker implements SoundPlayer {
             System.out.println("No music instance to stop.");
         }
     }
+    
     public boolean isMusicPlaying() {
         return backgroundMusic != null && backgroundMusic.isPlaying();
     }
@@ -87,8 +87,7 @@ public class Speaker implements SoundPlayer {
     public void pauseMusic() {
         if (backgroundMusic != null && backgroundMusic.isPlaying()) {
             backgroundMusic.pause(); // Pause music so it can resume later
+            System.out.println("Music Paused");
         }
-    }
-
-   
+    }   
 }

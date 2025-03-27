@@ -52,7 +52,6 @@ public class MainMenuScene extends MenuScene {
     }
 
     public void onStartGameButtonPressed() {
-        System.out.println("🎮 Start Game Button Clicked in MainMenuScene!");
         if (gameMaster != null) {
         	sceneManager.transitionTo("InstructionsScene");
         } else {

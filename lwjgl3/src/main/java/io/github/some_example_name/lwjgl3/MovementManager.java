@@ -18,19 +18,13 @@ public class MovementManager {
         this.collisionManager = collisionManager;
     }
 
-    /**
-     * Adds a moveable entity to the manager.
-     */
     public void addEntity(Entity entity) {
         if (entity.hasTag("moveable")) {  
             movingEntities.add((MoveableObjects) entity);
-            System.out.println("✅ Added " + entity + " to movingEntities.");
+            System.out.println("✅ Added Moveable Object - AI (Germ)");
         }
     }
 
-    /**
-     * Applies movement to an entity based on the specified delta (dx, dy).
-     */
     public void applyMovement(MoveableObjects entity, float dx, float dy, boolean isGerm) {
         int oldCol = entity.getGridX();
         int oldRow = entity.getGridY();
@@ -38,25 +32,16 @@ public class MovementManager {
         int newCol = oldCol + (int) dx;
         int newRow = oldRow + (int) dy;
 
-        //System.out.println("🔄 Attempting Move: (" + oldCol + ", " + oldRow + ") → (" + newCol + ", " + newRow + ")");
-
         if (collisionManager != null && collisionManager.isMoveValid(newCol, newRow, isGerm)) {
             entity.setGridX(newCol);
             entity.setGridY(newRow);
             entity.updatePixelPosition();
-
-            //System.out.println("✅ Move Successful!");
-        } else {
-            //System.out.println("❌ Collision! Cannot move to (" + newCol + ", " + newRow + ")");
         }
     }
 
-    /**
-     * Applies physics to an entity (e.g., gravity, collisions).
-     */
+
     public void applyPhysics(MoveableObjects entity) {
         if (physicsEnabled) {
-            // Implement gravity, collisions, etc.
         }
     }
 }

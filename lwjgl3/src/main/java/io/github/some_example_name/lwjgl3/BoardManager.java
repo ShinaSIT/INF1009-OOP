@@ -5,12 +5,10 @@ import java.util.ArrayList;
 
 public class BoardManager {
     private Board board;
-    private ArrayList<StaticObjects> staticObjects = new ArrayList<>(); // ✅ Store pellets & power-ups
+    private ArrayList<StaticObjects> staticObjects = new ArrayList<>(); 
 
     protected BoardManager() {
         this.board = new Board();
-//        board.generateFoods();
-//        generateStaticObjects(); // ✅ Generate pellets & power-ups
     }
 
     protected void generateBoard() {
@@ -33,9 +31,9 @@ public class BoardManager {
     }
 
     public void render(SpriteBatch batch) {
-        board.render(batch); // ✅ Render the maze first
+        board.render(batch);
 
-        for (StaticObjects obj : staticObjects) { // ✅ Render all pellets & power-ups
+        for (StaticObjects obj : staticObjects) { 
             obj.render(batch);
         }
     }
@@ -52,11 +50,11 @@ public class BoardManager {
             for (int col = 0; col < charMaze[row].length; col++) {
                 char tile = charMaze[row][col];
 
-                // ✅ Only these are walkable
+                // Only these are walkable
                 if (tile == '.' || tile == 'p' || tile == 'f') {
                     intMaze[row][col] = 0;
                 } else {
-                    intMaze[row][col] = 1; // ✅ Treat all other characters as wall/obstacle
+                    intMaze[row][col] = 1; // All other characters as wall
                 }
             }
         }
@@ -93,12 +91,12 @@ public class BoardManager {
     }
     
     public void init() {
-        board.generateFoods();        // ✅ Safe to call after assets are loaded
+        board.generateFoods(); 
         generateStaticObjects();
     }
 
     public void initGL() {
-        board.initGL();               // ✅ setup rendering (ShapeRenderer, etc.)
+        board.initGL();
     }
 
     public void dispose() {

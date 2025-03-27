@@ -3,7 +3,7 @@ package io.github.some_example_name.lwjgl3;
 import com.badlogic.gdx.graphics.Texture;
 
 public class Food {
-    private String type; // "healthy" or "unhealthy"
+    private String type;
     private Texture texture;
     private int scoreValue;
 

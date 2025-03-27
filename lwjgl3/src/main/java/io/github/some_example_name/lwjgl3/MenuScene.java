@@ -51,7 +51,7 @@ public abstract class MenuScene extends Scene {
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = buttonFont;
 
-        startButton = new TextButton(">Start Game<", buttonStyle);
+        startButton = new TextButton("> Start Game <", buttonStyle);
 
         // ✅ Create a Table
         table = new Table();
@@ -69,7 +69,7 @@ public abstract class MenuScene extends Scene {
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("✅ Start Game Button Clicked!");
+                System.out.println("🎮 Start Game!");
                 if (MenuScene.this instanceof MainMenuScene) {
                     ((MainMenuScene) MenuScene.this).onStartGameButtonPressed();
                 }
@@ -100,11 +100,8 @@ public abstract class MenuScene extends Scene {
         stage.draw();
     }
 
-
-
     @Override
     public void resize(int width, int height) {
-        System.out.println("✅ Resizing Menu Scene: " + width + "x" + height);
         stage.getViewport().update(width, height, true);
         stage.getViewport().apply(true);
     }

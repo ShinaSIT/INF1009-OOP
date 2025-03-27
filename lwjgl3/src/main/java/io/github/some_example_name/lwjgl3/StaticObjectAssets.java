@@ -27,7 +27,7 @@ public class StaticObjectAssets {
         loadStaticTextures();
     }
 
-    private static void loadStaticTextures() {
+    static void loadStaticTextures() {
         textureMap.put('.', new Texture(Gdx.files.internal("board/pellet.png")));
         textureMap.put('$', new Texture(Gdx.files.internal("board/End.png")));
         textureMap.put('-', new Texture(Gdx.files.internal("board/pipeHorizontal.png")));

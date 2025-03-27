@@ -121,18 +121,7 @@ public class CollisionManager {
                 gameScene.setUnhealthyFoodCount(gameScene.getUnhealthyFoodCount() + unhealthyFoodCount);
                 System.out.println("healthy food: " + healthyFoodCount);
                 System.out.println("unhealthy food: " + unhealthyFoodCount);
-//                if (food.isHealthy() == true) {
-//                	int count = 1;
-//                	healthyFoodCount = healthyFoodCount + count;
-//                	gameScene.setHealthyFoodCount(gameScene.getHealthyFoodCount() + healthyFoodCount);
-//                	System.out.println("healthy food: " + healthyFoodCount);
-//                }
-//                if (food.isUnhealthy() == true) {
-//                	int count = 1;
-//                	unhealthyFoodCount = unhealthyFoodCount + count;
-//                		gameScene.setUnhealthyFoodCount(gameScene.getUnhealthyFoodCount() + unhealthyFoodCount);
-//                		System.out.println("unhealthy food: " + unhealthyFoodCount);
-//                }
+
                 }
                 System.out.println(food.isHealthy() ? "🍎 +100 points" : "🍔 -100 points");
             }

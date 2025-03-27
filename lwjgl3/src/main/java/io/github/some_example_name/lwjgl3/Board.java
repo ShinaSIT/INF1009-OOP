@@ -39,14 +39,12 @@ public class Board {
     private final long regenDelay = 15000; // 15 seconds
 
     public Board() {
-//        this.shapeRenderer = new ShapeRenderer();
         this.camera = new OrthographicCamera();
-//        updateDimensions();
         mazeLayout[1][1] = ' ';
     }
     
     public void initGL() {
-        this.shapeRenderer = new ShapeRenderer(); // ✅ Safe to call after GL is ready
+        this.shapeRenderer = new ShapeRenderer();
         updateDimensions();
     }
 
@@ -72,7 +70,7 @@ public class Board {
         camera.setToOrtho(false, screenWidth, screenHeight);
         camera.update();
 
-        System.out.println("✅ Board Resized: TileSize = " + tileSize + ", StartX = " + startX + ", StartY = " + startY);
+        System.out.println("✅ Board Created");
     }
 
     public void generateFoods() {
@@ -80,7 +78,7 @@ public class Board {
         int unhealthyCount = 0;
         int unhealthyLimit = 2;
         List<Point> foodSpots = new ArrayList<>();
-        Set<Point> skipPoints = Set.of(new Point(1, 1), new Point(1, 10)); // Player & Germ start
+        Set<Point> skipPoints = Set.of(new Point(1, 1), new Point(1, 10));
 
         for (int row = 0; row < mazeLayout.length; row++) {
             for (int col = 0; col < mazeLayout[row].length; col++) {
@@ -186,9 +184,9 @@ public class Board {
             for (int col = 0; col < mazeLayout[row].length; col++) {
                 char c = mazeLayout[row][col];
                 if (c == '.' || c == 'p' || c == 'f' || c == ' ') {
-                    copy[row][col] = ' '; // walkable
+                    copy[row][col] = ' '; // path
                 } else {
-                    copy[row][col] = c; // solid
+                    copy[row][col] = c; // walls
                 }
             }
         }

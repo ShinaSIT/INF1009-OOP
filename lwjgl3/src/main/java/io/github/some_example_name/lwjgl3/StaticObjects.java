@@ -94,16 +94,6 @@ public class StaticObjects extends Entity {
         updateTexture();
     }
 
-    private void updateTexture() {
-        this.texture = StaticObjectAssets.getStaticTexture(type);
-
-        if (texture == null) {
-            System.err.println("⚠️ No texture found for symbol: '" + type + "' at (" + gridX + "," + gridY + ")");
-        } else if (type == '$') {
-            System.out.println("✅ Game Over texture loaded successfully!");
-        }
-    }
-
     @Override
     public void render(SpriteBatch batch) {
         if (texture != null) {
@@ -120,8 +110,8 @@ public class StaticObjects extends Entity {
             for (int col = 0; col < maze[row].length; col++) {
                 char type = maze[row][col];
 
-                if (type == '.' || type == 'p') {
-                    continue;
+                if (type != '.' && type != '$') {
+                    continue; 
                 }
 
                 StaticObjects staticObject = new StaticObjects(board, type, col, row);
@@ -133,6 +123,11 @@ public class StaticObjects extends Entity {
             }
         }
     }
+    
+    private void updateTexture() {
+        this.texture = StaticObjectAssets.getStaticTexture(type);
+    }
+
     
   public void dispose() {
   if (texture != null) {

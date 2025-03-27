@@ -37,6 +37,8 @@ public class GameMaster extends ApplicationAdapter {
         AssetManager.loadAll();
         batch = new SpriteBatch();
         outputManager = new OutputManager(speaker);
+        
+        StaticObjectAssets.loadStaticTextures();
 
         boardManager.getBoard().initGL();
         boardManager.getBoard().generateFoods();

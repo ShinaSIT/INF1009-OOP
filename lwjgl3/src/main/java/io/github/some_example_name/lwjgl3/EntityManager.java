@@ -10,19 +10,16 @@ public class EntityManager {
     private Speaker speaker; 
     private BoardManager boardManager;
 
-    public EntityManager(Board board, Speaker speaker) {  // ✅ Accept Board in constructor
+    public EntityManager(Board board, Speaker speaker) {  
         this.board = board;
         this.speaker = speaker;
         entities = new ArrayList<>();
         
-        System.out.println("🔄 Calling generateStaticObjects() from EntityManager!");
         StaticObjects.generateStaticObjects(board, this);
     }
 
-
     public void addEntity(Entity entity) {
         entities.add(entity);
-        System.out.println("✅ Added Entity: " + entity + " at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
     }
 
 
@@ -39,14 +36,12 @@ public class EntityManager {
         System.out.println("🔄 Updating EntityManager's Board Reference...");
         this.board = newBoard;
 
-        // ✅ Ensure all entities now have the correct board reference
+        // Ensure all entities now have the correct board reference
         for (Entity entity : entities) {
             entity.board = newBoard;
-            entity.updatePixelPosition(); // ✅ Recalculate positions based on new board dimensions
+            entity.updatePixelPosition(); // Recalculate positions based on new board dimensions
         }
     }
-
-
     
     public void updatePositions(Board board) {
         for (Entity entity : entities) {
@@ -72,7 +67,7 @@ public class EntityManager {
         }
 
         for (Entity entity : entities) {
-            entity.render(batch); // ✅ Render *all* entities, not just StaticObjects
+            entity.render(batch); // Render *all* entities, not just StaticObjects
         }
 
         batch.end();
@@ -86,7 +81,7 @@ public class EntityManager {
         }
 
         for (Entity entity : entities) {
-            if (entity == null) continue; // ✅ Skip null entities
+            if (entity == null) continue; // Skip null entities
 
             if (entity.hasTag("moveable")) {
                 System.out.println("📌 MOVEABLE entity retained at (" + entity.getGridX() + ", " + entity.getGridY() + ")");
@@ -112,7 +107,7 @@ public class EntityManager {
         }
 
         for (Entity entity : entities) {
-            entity.updatePixelPosition(); // ✅ Ensure entities reposition correctly
+            entity.updatePixelPosition(); // Ensure entities reposition correctly
             System.out.println("📌 " + entity.getTags() + " repositioned to (" + entity.getGridX() + ", " + entity.getGridY() + ")");
         }
     }

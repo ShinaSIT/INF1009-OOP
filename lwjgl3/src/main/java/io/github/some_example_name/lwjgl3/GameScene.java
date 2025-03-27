@@ -56,7 +56,7 @@ public class GameScene extends Scene {
         this.mouse = new Mouse(inputManager, speaker);
 
         try {
-            font = new BitmapFont(Gdx.files.internal("assets/fonts/menu_font.fnt")); //dont change this please
+            font = new BitmapFont(Gdx.files.internal("fonts/menu_font.fnt")); //dont change this please
         } catch (Exception e) {
             font = new BitmapFont();
             font = new BitmapFont(); // Default font if the custom one fails
@@ -101,38 +101,24 @@ public class GameScene extends Scene {
         int seconds = (int) (elapsedTime % 60);
 
         String formattedTime = String.format("%02d:%02d", minutes, seconds); // Format as MM:SS
+        String timeText = "Time " + formattedTime; // Use formatted time string
+        String healthText = "Health " + health;
+        String scoreText = "Score " + score;
+        String highScoreText = "High Score"; 
+        String highScoreValue = String.valueOf(highScore);
 
-        String scoreText = "Score: " + score;
-        String timeText = "Time: " + formattedTime; // Use formatted time string
-        String healthText = "Health: " + health;
-
-//        String healthyFoodCountText = "good food: " + healthyFoodCount;
-//        String unhealthyFoodCountText = "bad food: " + unhealthyFoodCount;
-        String highScoreText = "High Score "; // Added high score text
-        String highScoreValue = ": " + highScore;
-
-
-        // Debug to ensure UI elements are being rendered
-        //System.out.println("Rendering Score: " + scoreText);
-        //System.out.println("Time: " + timeText);
-        //System.out.println("Health: " + healthText);
-
-        // Draw the score at the top-left corner
-        font.draw(batch, scoreText, 10, Gdx.graphics.getHeight() - 20);
-
-        // Draw the time at the top-left corner, just below the score
-        font.draw(batch, timeText, 10, Gdx.graphics.getHeight() - 40);
-
-        // Draw the health at the top-left corner, just below the time
-        font.draw(batch, healthText, 10, Gdx.graphics.getHeight() - 60);
+        float xPos = 20; // Left padding
+        float yStart = Gdx.graphics.getHeight() - 30; // Start position (from top)
+        float lineHeight = 40; // Space between lines
         
-//        font.draw(batch, healthyFoodCountText, 10, Gdx.graphics.getHeight() - 80);
-//        font.draw(batch, unhealthyFoodCountText, 10, Gdx.graphics.getHeight() - 100);
-
-        //Draw the highscore below the health
-        font.draw(batch, highScoreText, 10, Gdx.graphics.getHeight() - 80);
-
-        font.draw(batch, highScoreValue, 10, Gdx.graphics.getHeight() - 100);
+        // Padding while drawing text
+        font.draw(batch, timeText, xPos, yStart);
+        font.draw(batch, healthText, xPos, yStart - lineHeight);
+        font.draw(batch, scoreText, xPos, yStart - (2 * lineHeight));
+        
+        // High Score Label & Value (Aligns High Score text and value)
+        font.draw(batch, highScoreText, xPos, yStart - (4 * lineHeight));
+        font.draw(batch, highScoreValue, xPos, yStart - (5 * lineHeight)); 
     }
 
     private void renderBoard(SpriteBatch batch) {
@@ -199,13 +185,10 @@ public class GameScene extends Scene {
 
     @Override
     public void update() {
-        // You may have specific gameplay update logic here
     }
 
     @Override
     public void render() {
-        // TODO Auto-generated method stub
-
     }
 	
 	public int getHealthyFoodCount() {

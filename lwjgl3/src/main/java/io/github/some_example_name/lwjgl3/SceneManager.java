@@ -5,10 +5,10 @@ import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class SceneManager { //scenemanager class
+public class SceneManager { 
     private Scene currentScene;
     private Scene nextScene;
-    private Map<String, Scene> scenes; //Dictionary for sceneData
+    private Map<String, Scene> scenes; 
     private boolean isTransitioning;
 
     public SceneManager() {
@@ -28,7 +28,6 @@ public class SceneManager { //scenemanager class
     }
 
     public Map<String, Scene> getScenes() {
-        System.out.print("🧐 getScenes() called. Currently stored scenes: ");
         for (String key : scenes.keySet()) {
             System.out.print(key + " ");
         }
@@ -38,17 +37,7 @@ public class SceneManager { //scenemanager class
 
 
     public void addScene(String sceneName, Scene scene) {
-        System.out.println("✅ SceneManager.addScene() called with: " + sceneName);
-        System.out.println("🧐 SceneManager instance inside addScene: " + this);
-
         scenes.put(sceneName, scene);
-
-        // ✅ Print all stored scenes after adding
-        System.out.print("📌 Stored Scenes after adding: ");
-        for (String key : scenes.keySet()) {
-            System.out.print(key + " ");
-        }
-        System.out.println();
 
         if (scenes.containsKey(sceneName)) {
             System.out.println("✅ Scene '" + sceneName + "' successfully added!");

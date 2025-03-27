@@ -25,7 +25,7 @@ public class InstructionsScene extends Scene {
     @Override
     public void create() {
         System.out.println("✅ Instructions Scene Created");{
-            font = new BitmapFont();
+        	font = new BitmapFont(Gdx.files.internal("fonts/start.fnt"));
         }
         font.setColor(Color.WHITE);
 
@@ -35,8 +35,8 @@ public class InstructionsScene extends Scene {
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = font;
 
-        TextButton continueButton = new TextButton("Continue", buttonStyle);
-        continueButton.setPosition(Gdx.graphics.getWidth() / 2f - continueButton.getWidth() / 2f, 50);
+        TextButton continueButton = new TextButton("> Proceed to Game <", buttonStyle);
+        continueButton.setPosition(Gdx.graphics.getWidth() / 2f - continueButton.getWidth() / 2f, 150);
 
         continueButton.addListener(new ClickListener() {
         	 @Override
@@ -81,7 +81,7 @@ public class InstructionsScene extends Scene {
     }
 
     private void renderUI(SpriteBatch batch) {
-        font.getData().setScale(3);
+        font.getData().setScale(2);
         GlyphLayout layout = new GlyphLayout();
         layout.setText(font, "Instructions");
         font.draw(batch, "Instructions", 
@@ -91,29 +91,41 @@ public class InstructionsScene extends Scene {
     }
 
     private void renderInstructions(SpriteBatch batch) {
-        float startY = Gdx.graphics.getHeight() - 150;
-        float lineSpacing = 40;
+        float startY = Gdx.graphics.getHeight() - 200; // Start lower to avoid overlap
+        float sectionSpacing = 65; // Space between sections
+        float lineSpacing = 50; // Space between lines
+        float leftMargin = 50; // Left margin for better readability
+        float wrapWidth = Gdx.graphics.getWidth() - (leftMargin * 2); // Width limit for text wrapping
+
         GlyphLayout layout = new GlyphLayout();
-        
-        String[] instructions = {
-            "How to Play",
-            "• Use arrow keys to move your character",
-            "• Collect healthy foods like fruits and vegetables",
-            "",
-            "• Avoid junk food ghosts that will reduce your health",
-            "• Special power foods let you chase ghosts temporarily",
-            "• Learn about nutrition from food facts",
-            "• Complete each level by collecting all healthy foods"
+
+        String[][] instructions = {
+            {"How to Play", 
+             "Use arrow keys or 'W', 'A', 'S', 'D' to move", 
+             "Gather healthy foods like fruits and vegetables"},
+            {"Rules", 
+             "Avoid junk food & ghosts - they reduce health", 
+             "Collect ALL healthy foods to exit the maze"},
+            {"Game Purpose", 
+             "Learn about nutrition from food facts"}
         };
 
-        for (String line : instructions) {
-            if (!line.isEmpty()) {
-                layout.setText(font, line);
-                font.draw(batch, line, 
-                         Gdx.graphics.getWidth()/2f - layout.width/2, 
-                         startY);
+        for (String[] section : instructions) {
+            // Section title in bold and slightly larger
+            font.getData().setScale(1.2f); // Reduced size
+            layout.setText(font, section[0]);
+            font.draw(batch, section[0], leftMargin, startY);
+            startY -= sectionSpacing; // Extra space before details
+
+            // Content with word wrapping
+            font.getData().setScale(1f); // Smaller size for content
+            for (int i = 1; i < section.length; i++) {
+                layout.setText(font, section[i], Color.WHITE, wrapWidth, 1, true);
+                font.draw(batch, layout, leftMargin, startY);
+                startY -= layout.height + lineSpacing;
             }
-            startY -= lineSpacing;
+
+            startY -= sectionSpacing; // Extra space before next section
         }
     }
 

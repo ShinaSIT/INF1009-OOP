@@ -64,7 +64,8 @@ public class GameCompletedScene extends Scene {
         System.out.println("✅ Game Completed Scene Created");
         System.out.println("Creating GameCompletedScene with values: " + 
                 healthyFoodCount + ", " + unhealthyFoodCount + ", " + totalScore); {
-            font = new BitmapFont();
+        font = new BitmapFont(Gdx.files.internal("fonts/start.fnt"));
+        
         }
         font.setColor(Color.WHITE);
 
@@ -74,31 +75,12 @@ public class GameCompletedScene extends Scene {
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = font;
 
-        // Play Again Button (positioned above Exit button)
-//        TextButton playAgainButton = new TextButton("Play Again", buttonStyle);
-//        playAgainButton.setPosition(
-//            Gdx.graphics.getWidth() / 2f - playAgainButton.getWidth() / 2f, 
-//            120  // Higher Y position than Exit button
-//        );
-
         // Exit Button
-        TextButton exitButton = new TextButton("Exit", buttonStyle);
+        TextButton exitButton = new TextButton(">Exit<", buttonStyle);
         exitButton.setPosition(
             Gdx.graphics.getWidth() / 2f - exitButton.getWidth() / 2f, 
             50   // Lower Y position than Play Again
         );
-
-//        playAgainButton.addListener(new ClickListener() {
-//        	@Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                if (gameMaster != null) {
-//                    gameMaster.gameStarted = true;
-//                    gameMaster.sceneManager.transitionTo("GameScene");
-//                } else {
-//                    System.out.println("❌ ERROR: gameMaster is NULL!");
-//                }
-//            }
-//        });
 
         exitButton.addListener(new ClickListener() {
             @Override
@@ -112,8 +94,6 @@ public class GameCompletedScene extends Scene {
             }
         });
 
-
-//        stage.addActor(playAgainButton);
         stage.addActor(exitButton);
     }
 
