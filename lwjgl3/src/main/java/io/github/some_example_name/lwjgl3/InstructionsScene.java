@@ -52,7 +52,8 @@ public class InstructionsScene extends Scene {
         	                gameMaster.getBoardManager(),
         	                gameMaster.speaker,
         	                gameMaster.inputManager,
-        	                gameMaster.mouse
+        	                gameMaster.mouse,
+        	                gameMaster.sceneManager
         	            );
 
         	            factory.getEntity("player");

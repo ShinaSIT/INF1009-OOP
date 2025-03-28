@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class SceneManager { 
+public class SceneManager implements SceneController{ 
     private Scene currentScene;
     private Scene nextScene;
     private Map<String, Scene> scenes; 

@@ -2,7 +2,7 @@ package io.github.some_example_name.lwjgl3;
 
 import java.util.*;
 
-public class CollisionManager {
+public class CollisionManager implements CollisionChecker {
 	private static CollisionManager instance; // Singleton instance
 	
     private List<Collidable> collidableObjects;
@@ -30,12 +30,6 @@ public class CollisionManager {
 
     public SceneManager getSceneManager() {
         return sceneManager;
-    }
-
-    public void addCollidable(Collidable collidable) {
-        if (!collidableObjects.contains(collidable)) {
-            collidableObjects.add(collidable);
-        }
     }
 
     public boolean isMoveValid(int newCol, int newRow, boolean isGerm) {
@@ -176,11 +170,20 @@ public class CollisionManager {
         player.setGridY(1);
         player.updatePixelPosition();
     }
+    
+    @Override
+    public void addCollidable(Collidable collidable) {
+        if (!collidableObjects.contains(collidable)) {
+            collidableObjects.add(collidable);
+        }
+    }
 
+    @Override
     public void removeCollidable(Collidable collidable) {
         collidableObjects.remove(collidable);
     }
 
+    @Override
     public void clearCollidables() {
         collidableObjects.clear();
     }

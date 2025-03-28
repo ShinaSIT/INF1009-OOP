@@ -7,15 +7,15 @@ public class MovementManager {
     private List<MoveableObjects> movingEntities;
     private boolean physicsEnabled;
     private Speaker speaker;
-    private CollisionManager collisionManager;
+    private CollisionChecker collisionChecker;
     
     private final float baseTile = 42.666668f;
 
-    public MovementManager(Speaker speaker, CollisionManager collisionManager) {
+    public MovementManager(Speaker speaker, CollisionChecker collisionChecker) {
         this.movingEntities = new ArrayList<>();
         this.physicsEnabled = true;
         this.speaker = speaker;
-        this.collisionManager = collisionManager;
+        this.collisionChecker = collisionChecker;
     }
 
     public void addEntity(Entity entity) {
@@ -32,7 +32,7 @@ public class MovementManager {
         int newCol = oldCol + (int) dx;
         int newRow = oldRow + (int) dy;
 
-        if (collisionManager != null && collisionManager.isMoveValid(newCol, newRow, isGerm)) {
+        if (collisionChecker != null && collisionChecker.isMoveValid(newCol, newRow, isGerm)) {
             entity.setGridX(newCol);
             entity.setGridY(newRow);
             entity.updatePixelPosition();
